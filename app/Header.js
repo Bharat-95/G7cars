@@ -1,0 +1,39 @@
+"use client"
+import React, { useState, useEffect } from "react";
+import Logo from "../public/1.png";
+import Image from "next/image";
+import Link from "next/link";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+
+
+
+
+const Header = () => {
+
+
+  return (
+    <div className="lg:py-6 py-2 md:py-4 lg:px-20 md:px-10 px-6 flex items-center justify-between text-white bg-black w-screen">
+      <div>
+        <Image src={Logo} alt="No Logo Found" className="lg:w-40 md:w-20 lg:h-20 md:h-10 h-4 w-6" />
+      </div>
+      <div>
+        <ul className="flex lg:space-x-20 md:space-x-10 space-x-4">
+          <Link href="/"><li className="hover:text-rose-200 lg:text-md md:text-md text-[10px]">Home</li></Link>
+          <Link href="/offers"><li className="hover:text-rose-200 lg:text-md md:text-md text-[10px]">Offers</li></Link>
+          <Link href="/about"><li className="hover:text-rose-200 lg:text-md md:text-md text-[10px]">About Us</li></Link>
+        </ul>
+      </div>
+      <Link href="/contact" className="hover:opacity-90 bg-rose-900  h-12 w-40 lg:flex md:flex justify-center items-center hidden  rounded-2xl shadow-md" target="_blank">Attach Your Car</Link>
+      <div className="flex justify-center">
+      <SignedOut>
+      <Link href='sign-in' className="hover:opacity-90 bg-rose-900 lg:h-12 lg:w-40 h-10 w-20 md:h-12 md:w-32 flex justify-center items-center rounded-2xl shadow-md">Sign In </Link>
+      </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
+      </div>
+    </div>
+  );
+};
+
+export default Header;
