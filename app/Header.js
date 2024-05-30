@@ -17,7 +17,7 @@ const Header = () => {
         <Image src={Logo} alt="No Logo Found" className="lg:w-40 md:w-20 lg:h-20 md:h-10 h-4 w-6" />
       </div>
       <div>
-        <ul className="flex lg:space-x-20 md:space-x-10 space-x-4 text-[20px]">
+        <ul className="flex lg:space-x-20 md:space-x-10 space-x-4 lg:text-lg text-[10px]">
           <Link href="/"><li className="hover:text-rose-200 ">Home</li></Link>
           <Link href="/offers"><li className="hover:text-rose-200 ">Offers</li></Link>
           <Link href="/about"><li className="hover:text-rose-200">About Us</li></Link>
@@ -26,7 +26,7 @@ const Header = () => {
       <Link href="/contact" className="hover:opacity-90 bg-rose-900  h-12 w-40 lg:flex md:flex justify-center items-center hidden  rounded-2xl shadow-md" target="_blank">Attach Your Car</Link>
       <div className="flex justify-center">
       <SignedOut>
-      <Link href='sign-in' className="hover:opacity-90 bg-rose-900 lg:h-12 lg:w-40 h-10 w-20 md:h-12 md:w-32 flex justify-center items-center rounded-2xl shadow-md">Sign In </Link>
+      <Link href='sign-in' className="hover:opacity-90 bg-rose-900 lg:h-12 lg:w-40 h-8 w-20 md:h-12 md:w-32 flex justify-center items-center lg:rounded-2xl md:rounded-xl rounded-lg shadow-md">Sign In </Link>
       </SignedOut>
       <SignedIn>
         <UserButton />

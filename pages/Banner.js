@@ -63,7 +63,7 @@ const Banner = () => {
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             placeholderText="Pick-up"
-                            className='bg-rose-950 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-36 lg:p-4 md:p-4 p-1 opacity-80 outline-none rounded-l-xl flex text-center cursor-pointer'
+                            className='bg-rose-950 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 opacity-80 outline-none rounded-l-xl flex text-center cursor-pointer'
                             minDate={minPickupDateTime}
                             filterTime={filterTime}
                         />
@@ -78,7 +78,7 @@ const Banner = () => {
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             placeholderText="Drop-off"
-                            className='bg-rose-950 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-36 lg:p-4 md:p-4 p-1 opacity-80 outline-none flex text-center rounded-r-xl cursor-pointer'
+                            className='bg-rose-950 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-1 opacity-80 outline-none flex text-center rounded-r-xl cursor-pointer'
                             minDate={pickupDateTime || minPickupDateTime}
                             filterTime={handleMinDropOffTime}
                         />
