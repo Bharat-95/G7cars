@@ -7,7 +7,7 @@ import '../../../app/globals.css';
 export default function Page() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
-  const redirectUrl = router.query.redirectUrl ? decodeURIComponent(router.query.redirectUrl) : '/';
+  const redirectUrl = router.query?.redirectUrl ? decodeURIComponent(router.query.redirectUrl) : '/';
 
   useEffect(() => {
     if (isSignedIn) {
