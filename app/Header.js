@@ -17,10 +17,10 @@ const Header = () => {
         <Image src={Logo} alt="No Logo Found" className="lg:w-40 md:w-20 lg:h-20 md:h-10 h-4 w-6" />
       </div>
       <div>
-        <ul className="flex lg:space-x-20 md:space-x-10 space-x-4">
-          <Link href="/"><li className="hover:text-rose-200 lg:text-md md:text-md text-[10px]">Home</li></Link>
-          <Link href="/offers"><li className="hover:text-rose-200 lg:text-md md:text-md text-[10px]">Offers</li></Link>
-          <Link href="/about"><li className="hover:text-rose-200 lg:text-md md:text-md text-[10px]">About Us</li></Link>
+        <ul className="flex lg:space-x-20 md:space-x-10 space-x-4 text-[20px]">
+          <Link href="/"><li className="hover:text-rose-200 ">Home</li></Link>
+          <Link href="/offers"><li className="hover:text-rose-200 ">Offers</li></Link>
+          <Link href="/about"><li className="hover:text-rose-200">About Us</li></Link>
         </ul>
       </div>
       <Link href="/contact" className="hover:opacity-90 bg-rose-900  h-12 w-40 lg:flex md:flex justify-center items-center hidden  rounded-2xl shadow-md" target="_blank">Attach Your Car</Link>
