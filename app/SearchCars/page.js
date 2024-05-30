@@ -77,7 +77,7 @@ const Page = () => {
       if (isSignedIn) {
           router.push('/payment');
       } else {
-          router.push(`/sign-in?forceRedirectUrl=${encodeURIComponent(currentUrl)}`);
+          router.push(`/sign-in`);
       }
   };
 
