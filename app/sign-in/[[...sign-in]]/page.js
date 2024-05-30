@@ -10,6 +10,7 @@ export default function Page() {
   const redirectUrl = router.query?.redirectUrl ? decodeURIComponent(router.query.redirectUrl) : '/';
 
   useEffect(() => {
+    console.log("Redirect URL:", redirectUrl);
     if (isSignedIn) {
       router.push(redirectUrl);
     }
