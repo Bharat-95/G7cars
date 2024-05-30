@@ -162,7 +162,7 @@ const Page = () => {
                                 })}
                             </p>
                             <p>
-                                <strong>Total Price:</strong> ${price}
+                                <strong>Total Price:</strong> ₹ {price}
                             </p>
                         </div>
                         <div className="mt-4 flex justify-center">
