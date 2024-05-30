@@ -7,7 +7,7 @@ import '../../../app/globals.css';
 export default function Page() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
-  const fallbackRedirectUrl = router.query?.redirectUrl ? decodeURIComponent(router.query.redirectUrl) : '/';
+  const forceRedirectUrl = router.query?.redirectUrl ? decodeURIComponent(router.query.redirectUrl) : '/';
   
   useEffect(() => {
     console.log("Fallback Redirect URL:", fallbackRedirectUrl);
@@ -16,11 +16,11 @@ export default function Page() {
       console.log("Redirecting to:", fallbackRedirectUrl);
       router.push(fallbackRedirectUrl);
     }
-  }, [isSignedIn, fallbackRedirectUrl, router]);
+  }, [isSignedIn, forceRedirectUrl, router]);
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <SignIn fallbackRedirectUrl={fallbackRedirectUrl} />
+      <SignIn forceRedirectUrl={forceRedirectUrl} />
     </div>
   );
 }

@@ -77,7 +77,7 @@ const Page = () => {
       if (isSignedIn) {
           router.push('/payment');
       } else {
-          router.push(`/sign-in?redirectUrl=${encodeURIComponent(currentUrl)}`);
+          router.push(`/sign-in?forceRedirectUrl=${encodeURIComponent(currentUrl)}`);
       }
   };
 
@@ -198,6 +198,7 @@ const Page = () => {
                         <div className="mt-4 flex justify-center">
                             <button
                                 onClick={confirmBooking}
+
                                 className="px-4 py-2 bg-rose-900 text-white rounded-md hover:bg-rose-900/95"
                             >
                                 Confirm Booking
