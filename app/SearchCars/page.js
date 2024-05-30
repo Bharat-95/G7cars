@@ -60,10 +60,10 @@ const Page = () => {
         let discountAmount = 0;
 
         if (days >= 10) {
-            discountAmount = totalPrice * 0.1; 
+            discountAmount = totalPrice * 0.1; // 10% discount
             totalPrice *= 0.9;
         } else if (days >= 4) {
-            discountAmount = totalPrice * 0.05; 
+            discountAmount = totalPrice * 0.05; // 5% discount
             totalPrice *= 0.95;
         }
 
@@ -74,10 +74,11 @@ const Page = () => {
     };
 
     const confirmBooking = () => {
+        const currentUrl = window.location.href;
         if (isSignedIn) {
             router.push('/payment');
         } else {
-            router.push('/sign-in');
+            router.push(`/login?redirectUrl=${encodeURIComponent(currentUrl)}`);
         }
     };
 
