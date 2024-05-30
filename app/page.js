@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import '../app/globals.css'
-import Banner from '@/pages/Banner'
+import Banner from '../app/banner/page'
 import Footer from './Footer'
 import Book from '@/pages/Book'
 import Features from '@/pages/Features'

@@ -61,7 +61,7 @@ const Footer = () => {
            <ul className='space-y-5 text-sm cursor-pointer'>
 
             <li className='hover:text-rose-900 flex gap-4'><FaLocationDot size={40}/>	Near Netaji Nagar Cross Road, Opp Bharath petrol bunk, Nagaram, ECIL, Secunderabad, Telangana</li>
-            <li className='hover:text-rose-900 flex gap-4'><MdEmail size={20}/>g7selfdrivecars@gmail.com</li>
+            <li className='hover:text-rose-900 flex gap-4'><MdEmail size={20}/>support@g7cars.com</li>
             <li className='hover:text-rose-900 flex gap-4'><FaPhoneAlt size={20} />	9133300025 <br/>
              9133300026</li>
            

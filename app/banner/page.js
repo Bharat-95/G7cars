@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Bg from '../public/bg_1.jpg';
+import Bg from '../../public/bg_1.jpg';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/navigation';
@@ -13,19 +13,26 @@ const Banner = () => {
     const router = useRouter();
 
 
-
     const handleBooking = () => {
         if (pickupDateTime && dropoffDateTime) {
-            router.push('/SearchCars', { 
+            const pickupISOString = pickupDateTime.toISOString();
+            const dropoffISOString = dropoffDateTime.toISOString();
+        
+            router.push(`/SearchCars?pickupDateTime=${encodeURIComponent(pickupISOString)}&dropoffDateTime=${encodeURIComponent(dropoffISOString)}`);
+
+
+            console.log('Router push object:', {
+                pathname: '/SearchCars',
                 query: {
-                    pickupDateTime: pickupDateTime.toISOString(),
-                    dropoffDateTime: dropoffDateTime.toISOString(),
+                    pickupDateTime: pickupISOString,
+                    dropoffDateTime: dropoffISOString,
                 },
             });
         } else {
-            alert("Please select PickUp and Drop Dates")
+            alert("Please select PickUp and Drop Dates");
         }
     };
+    
 
 
 
@@ -57,7 +64,7 @@ const Banner = () => {
                             selected={pickupDateTime}
                             onChange={date => setPickupDateTime(date)}
                             showTimeSelect
-                            timeFormat="HH:mm"
+                            timeFormat="h:mm aa"
                             timeIntervals={30}
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
@@ -72,12 +79,12 @@ const Banner = () => {
                             selected={dropoffDateTime}
                             onChange={date => setDropoffDateTime(date)}
                             showTimeSelect
-                            timeFormat="HH:mm"
+                            timeFormat="h:mm aa"
                             timeIntervals={30}
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             placeholderText="Drop-off"
-                            className='bg-rose-950 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-1 opacity-80 outline-none flex text-center rounded-r-xl cursor-pointer'
+                            className='bg-rose-950 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 opacity-80 outline-none flex text-center rounded-r-xl cursor-pointer'
                             minDate={pickupDateTime || minPickupDateTime}
                             filterTime={handleMinDropOffTime}
                         />

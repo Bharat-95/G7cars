@@ -1,12 +1,13 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Header from "../Header";
 import Footer from "../Footer";
 import { TbManualGearboxFilled } from "react-icons/tb";
 import { BsFillFuelPumpFill } from "react-icons/bs";
 import { MdOutlineAirlineSeatReclineNormal } from "react-icons/md";
 import Image from "next/image";
+import { IoIosClose } from "react-icons/io";
 
 const Page = () => {
     const [data, setData] = useState([]);
@@ -16,10 +17,9 @@ const Page = () => {
     const [price, setPrice] = useState(0);
     const [showConfirmation, setShowConfirmation] = useState(false);
 
-    const router = useRouter();
     const searchParams = useSearchParams();
-    const pickupDateTime = new Date(searchParams.get("pickupDateTime"));
-    const dropoffDateTime = new Date(searchParams.get("dropoffDateTime"));
+    const pickupDateTime = searchParams.get('pickupDateTime') ? new Date(searchParams.get('pickupDateTime')) : null;
+    const dropoffDateTime = searchParams.get('dropoffDateTime') ? new Date(searchParams.get('dropoffDateTime')) : null;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,30 +48,23 @@ const Page = () => {
             return;
         }
 
-        const pickupDate = new Date(pickupDateTime);
-        const dropoffDate = new Date(dropoffDateTime);
-        const days = Math.ceil((dropoffDate - pickupDate) / (1000 * 60 * 60 * 24));
-        const totalPrice = car.Price * days;
+        const days = Math.ceil((dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24));
+        const carPrice = parseFloat(car.Price.replace(/[^\d.-]/g, ''));
+        const totalPrice = carPrice * days;
         setSelectedCar(car);
         setPrice(totalPrice);
         setShowConfirmation(true);
     };
 
     const confirmBooking = () => {
-        router.push("/payment");
+      
     };
 
-    if (loading) {
-        return (
-            <div className="text-white flex justify-center items-center h-screen">
-                Loading...
-            </div>
-        );
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+    const cancelConfirmation = () => {
+        setShowConfirmation(false);
+        setSelectedCar(null);
+        setPrice(0);
+    };
 
     return (
         <div className="min-h-screen bg-white">
@@ -134,6 +127,11 @@ const Page = () => {
             {showConfirmation && (
                 <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
                     <div className="bg-white p-8 rounded-xl">
+                        <div className="flex justify-end">
+                            <button onClick={cancelConfirmation}>
+                               <IoIosClose size={30}/>
+                            </button>
+                        </div>
                         <h2 className="text-2xl font-semibold text-rose-900">
                             Confirmation
                         </h2>
@@ -143,11 +141,25 @@ const Page = () => {
                             </p>
                             <p>
                                 <strong>Pick-up Date & Time:</strong>{" "}
-                                {pickupDateTime.toString()}
+                                {pickupDateTime.toLocaleString(undefined, {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                    hour12: true,
+                                })}
                             </p>
                             <p>
                                 <strong>Drop-off Date & Time:</strong>{" "}
-                                {dropoffDateTime.toString()}
+                                {dropoffDateTime.toLocaleString(undefined, {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                    hour12: true,
+                                })}
                             </p>
                             <p>
                                 <strong>Total Price:</strong> ${price}

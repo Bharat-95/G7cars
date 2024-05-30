@@ -3,6 +3,7 @@ import { SlCalender } from "react-icons/sl";
 import { FaCar } from "react-icons/fa";
 import { FaWpforms } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
+import Link from 'next/link';
 
 const Book = () => {
   return (
@@ -35,6 +36,7 @@ const Book = () => {
           <div className='flex justify-center font-semibold text-rose-900'>Make Payment</div>
          
           </div>
+         
        </div>
     </div>
   )
