@@ -20,14 +20,6 @@ const Banner = () => {
         
             router.push(`/SearchCars?pickupDateTime=${encodeURIComponent(pickupISOString)}&dropoffDateTime=${encodeURIComponent(dropoffISOString)}`);
 
-
-            console.log('Router push object:', {
-                pathname: '/SearchCars',
-                query: {
-                    pickupDateTime: pickupISOString,
-                    dropoffDateTime: dropoffISOString,
-                },
-            });
         } else {
             alert("Please select PickUp and Drop Dates");
         }
