@@ -1,9 +1,23 @@
-import { SignIn } from "@clerk/nextjs";
-import '../../../app/globals.css'
-
-
+"use client"
+import { SignIn, useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import '../../../app/globals.css';
 
 export default function Page() {
-  return <div className="flex justify-center items-center h-screen"><SignIn /></div>
-}
+  const router = useRouter();
+  const { isSignedIn } = useAuth();
+  const fallbackRedirectUrl = router.query?.redirectUrl ? decodeURIComponent(router.query.redirectUrl) : '/';
 
+  useEffect(() => {
+    if (isSignedIn) {
+      router.push(fallbackRedirectUrl);
+    }
+  }, [isSignedIn, fallbackRedirectUrl, router]);
+
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <SignIn fallbackRedirectUrl={fallbackRedirectUrl} />
+    </div>
+  );
+}
