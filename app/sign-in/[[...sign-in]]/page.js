@@ -1,18 +1,13 @@
+"use client"
 import { SignIn } from "@clerk/nextjs";
-import '../../../app/globals.css';
+import '../../../app/globals.css'
+import { useSearchParams } from "next/navigation";
 
-const Page = () => {
-  
-    const pickupISOString = pickupDateTime.toISOString();
-    const dropoffISOString = dropoffDateTime.toISOString();
+const searchParams = useSearchParams();
+const pickupDateTime = searchParams.get('pickupDateTime') ? new Date(searchParams.get('pickupDateTime')) : null;
+const dropoffDateTime = searchParams.get('dropoffDateTime') ? new Date(searchParams.get('dropoffDateTime')) : null;
 
-    const redirectUrl = `/SearchCars/pickupDateTime=${encodeURIComponent(pickupISOString)}&dropoffDateTime=${encodeURIComponent(dropoffISOString)}`;
-
-    return (
-        <div className="flex justify-center items-center h-screen">
-            <SignIn forceRedirectUrl={redirectUrl} />
-        </div>
-    );
+export default function Page() {
+  return <div className="flex justify-center items-center h-screen"><SignIn forceRedirectUrl="/SearchCars?pickupDateTime=${encodeURIComponent(pickupISOString)}&dropoffDateTime=${encodeURIComponent(dropoffISOString)" /></div>
 }
 
-export default Page;
