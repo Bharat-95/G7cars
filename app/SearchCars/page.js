@@ -77,7 +77,7 @@ const Page = () => {
       if (isSignedIn) {
           router.push('/payment');
       } else {
-          router.push(`/sign-in`);
+          router.push(`/sign-in/pickupDateTime=${encodeURIComponent(pickupISOString)}&dropoffDateTime=${encodeURIComponent(dropoffISOString)}`);
       }
   };
 
