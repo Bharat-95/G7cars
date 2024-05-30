@@ -1,6 +1,6 @@
 "use client"
 import { SignIn } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import '../../../app/globals.css';
 
 export default function Page() {
