@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "../Header";
@@ -8,6 +8,8 @@ import { BsFillFuelPumpFill } from "react-icons/bs";
 import { MdOutlineAirlineSeatReclineNormal } from "react-icons/md";
 import Image from "next/image";
 import { IoIosClose } from "react-icons/io";
+import { useUser } from "@clerk/clerk-react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
     const [data, setData] = useState([]);
@@ -15,7 +17,11 @@ const Page = () => {
     const [error, setError] = useState(null);
     const [selectedCar, setSelectedCar] = useState(null);
     const [price, setPrice] = useState(0);
+    const [discount, setDiscount] = useState(0);
     const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const { isSignedIn } = useUser();
+    const router = useRouter();
 
     const searchParams = useSearchParams();
     const pickupDateTime = searchParams.get('pickupDateTime') ? new Date(searchParams.get('pickupDateTime')) : null;
@@ -50,20 +56,36 @@ const Page = () => {
 
         const days = Math.ceil((dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24));
         const carPrice = parseFloat(car.Price.replace(/[^\d.-]/g, ''));
-        const totalPrice = carPrice * days;
+        let totalPrice = carPrice * days;
+        let discountAmount = 0;
+
+        if (days >= 10) {
+            discountAmount = totalPrice * 0.1; 
+            totalPrice *= 0.9;
+        } else if (days >= 4) {
+            discountAmount = totalPrice * 0.05; 
+            totalPrice *= 0.95;
+        }
+
         setSelectedCar(car);
         setPrice(totalPrice);
+        setDiscount(discountAmount);
         setShowConfirmation(true);
     };
 
     const confirmBooking = () => {
-      
+        if (isSignedIn) {
+            router.push('/payment');
+        } else {
+            router.push('/sign-in');
+        }
     };
 
     const cancelConfirmation = () => {
         setShowConfirmation(false);
         setSelectedCar(null);
         setPrice(0);
+        setDiscount(0);
     };
 
     return (
@@ -162,8 +184,16 @@ const Page = () => {
                                 })}
                             </p>
                             <p>
-                                <strong>Total Price:</strong> ₹ {price}
+                                <strong>Total Days:</strong> {Math.ceil((dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24))}
                             </p>
+                            <p>
+                                <strong>Total Price:</strong> ₹ {price.toFixed(2)}
+                            </p>
+                            {discount > 0 && (
+                                <p>
+                                    <strong>Discount:</strong> ₹ {discount.toFixed(2)}
+                                </p>
+                            )}
                         </div>
                         <div className="mt-4 flex justify-center">
                             <button
