@@ -60,10 +60,10 @@ const Page = () => {
         let discountAmount = 0;
 
         if (days >= 10) {
-            discountAmount = totalPrice * 0.1; // 10% discount
+            discountAmount = totalPrice * 0.1; 
             totalPrice *= 0.9;
         } else if (days >= 4) {
-            discountAmount = totalPrice * 0.05; // 5% discount
+            discountAmount = totalPrice * 0.05; 
             totalPrice *= 0.95;
         }
 
@@ -72,15 +72,14 @@ const Page = () => {
         setDiscount(discountAmount);
         setShowConfirmation(true);
     };
-
     const confirmBooking = () => {
-        const currentUrl = window.location.href;
-        if (isSignedIn) {
-            router.push('/payment');
-        } else {
-            router.push(`/sign-in?redirectUrl=${encodeURIComponent(currentUrl)}`);
-        }
-    };
+      const currentUrl = window.location.href;
+      if (isSignedIn) {
+          router.push('/payment');
+      } else {
+          router.push(`/sign-in?redirectUrl=${encodeURIComponent(currentUrl)}`);
+      }
+  };
 
     const cancelConfirmation = () => {
         setShowConfirmation(false);
