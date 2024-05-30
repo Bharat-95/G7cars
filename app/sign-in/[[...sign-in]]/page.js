@@ -1,9 +1,22 @@
 import { SignIn } from "@clerk/nextjs";
-import '../../../app/globals.css'
-
-
+import { useRouter } from "next/navigation";
+import '../../../app/globals.css';
 
 export default function Page() {
-  return <div className="flex justify-center items-center h-screen"><SignIn /></div>
-}
+  const router = useRouter();
+  const { redirectUrl } = router.query;
 
+  const handleOnSignIn = () => {
+    if (redirectUrl) {
+      router.push(redirectUrl);
+    } else {
+      router.push('/');
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <SignIn afterSignIn={handleOnSignIn} />
+    </div>
+  );
+}
