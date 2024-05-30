@@ -5,8 +5,7 @@ import Bg from '../public/bg_1.jpg';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/navigation';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
-import Link from 'next/link';
+
 
 const Banner = () => {
     const [pickupDateTime, setPickupDateTime] = useState(null);
@@ -19,8 +18,8 @@ const Banner = () => {
         if (pickupDateTime && dropoffDateTime) {
             router.push('/SearchCars', { 
                 query: {
-                    pickupDateTime: pickupDateTime.toString(),
-                    dropoffDateTime: dropoffDateTime.toString(),
+                    pickupDateTime: pickupDateTime.toISOString(),
+                    dropoffDateTime: dropoffDateTime.toISOString(),
                 },
             });
         } else {
@@ -86,7 +85,7 @@ const Banner = () => {
                 </div>
     
                 <div className='flex justify-center'>
-                    <button onClick={handleBooking} className='flex justify-center items-center mx-10 bg-rose-950 opacity-80 w-40 h-10 rounded-xl'>Book Now</button>
+                    <button onClick={handleBooking} className='flex justify-center items-center mx-10 bg-rose-950 opacity-80 w-40 h-10 rounded-xl'>Search Cars</button>
                 </div>
                 
             </div>
