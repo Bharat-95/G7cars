@@ -7,10 +7,10 @@ import { useEffect } from 'react';
 export default function Page() {
   const { isSignedIn } = useUser();
   const router = useRouter();
-  const { pickupDateTime, dropoffDateTime } = router.query || {};
+  const { pickupDateTime, dropoffDateTime } = router.query;
 
-  const redirectUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL || '/';
-  const fallbackRedirectUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/';
+  const redirectUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL || '/search-cars';
+  const fallbackRedirectUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/search-cars';
 
   useEffect(() => {
     if (isSignedIn) {
@@ -27,8 +27,10 @@ export default function Page() {
   return (
     <div className="flex justify-center items-center h-screen">
       <SignIn
-        forceRedirectUrl={`${redirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`}
-        fallbackRedirectUrl={`${fallbackRedirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`}
+        path="/sign-in"
+        routing="path"
+        signUpUrl="/sign-up"
+        redirectUrl={`${redirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`}
       />
     </div>
   );

@@ -87,9 +87,7 @@ const Page = () => {
         if (isSignedIn) {
             router.push('payment');
         } else {
-            const redirectUrl = isSignedIn? 'payment': `/sign-in?redirectUrl=${encodeURIComponent(window.location.pathname)}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`;
-        
-            router.push(redirectUrl);
+            router.push(`/sign-in?redirectUrl=${encodeURIComponent(currentUrl)}`);
         }
     };
 
