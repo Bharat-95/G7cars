@@ -27,8 +27,8 @@ const Footer = () => {
             
 
         </div>
-        <div className='w-[1px] h-64 bg-rose-900 '></div>
-        <div className='space-y-6 w-64 text-white lg:flex lg:flex-col md:flex md:flex-col ml-10  hidden'>
+        <div className='w-[1px] h-64 bg-rose-900 lg:block md:block hidden  '></div>
+        <div className='space-y-6 w-64 text-white lg:flex lg:flex-col md:flex md:flex-col ml-10  '>
             <div className=' font-bold text-sm'>About</div>
            <ul className='space-y-3 text-sm'>
 
