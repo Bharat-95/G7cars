@@ -7,14 +7,17 @@ import { useEffect } from 'react';
 export default function Page() {
   const { isSignedIn } = useUser();
   const router = useRouter();
-  const { forceRedirectUrl, pickupDateTime, dropoffDateTime } = router.query || {};
+  const { pickupDateTime, dropoffDateTime } = router.query || {};
+
+  const redirectUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL || '/';
+  const fallbackRedirectUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || '/';
 
   useEffect(() => {
-    if (isSignedIn && forceRedirectUrl) {
-      const newUrl = `${forceRedirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`;
+    if (isSignedIn) {
+      const newUrl = `${redirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`;
       router.push(newUrl);
     }
-  }, [isSignedIn, forceRedirectUrl, pickupDateTime, dropoffDateTime, router]);
+  }, [isSignedIn, redirectUrl, pickupDateTime, dropoffDateTime, router]);
 
   if (isSignedIn) {
     // Return null to prevent rendering the SignIn component if the user is already signed in
@@ -24,11 +27,8 @@ export default function Page() {
   return (
     <div className="flex justify-center items-center h-screen">
       <SignIn
-        forceRedirectUrl={
-          forceRedirectUrl 
-            ? `${forceRedirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`
-            : '/'
-        }
+        forceRedirectUrl={`${redirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`}
+        fallbackRedirectUrl={`${fallbackRedirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`}
       />
     </div>
   );
