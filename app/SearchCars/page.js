@@ -49,6 +49,11 @@ const Page = () => {
         fetchData();
     }, []);
 
+    const saveBookingDataToLocalstorage = () => {
+        localStorage.setItem('pickupDateTime', pickupDateTime);
+        localStorage.setItem('dropDateTime', dropoffDateTime);
+    };
+
     const handleBookCar = (car) => {
         if (!pickupDateTime || !dropoffDateTime) {
             alert("Please select pickup/drop-off dates");
@@ -72,15 +77,21 @@ const Page = () => {
         setPrice(totalPrice);
         setDiscount(discountAmount);
         setShowConfirmation(true);
+
+        
+        saveBookingDataToLocalstorage();
     };
+
     const confirmBooking = () => {
-      const currentUrl = window.location.href;
-      if (isSignedIn) {
-          router.push('payment');
-      } else {
-         router.push(`/sign-in?redirectUrl=${encodeURIComponent(currentUrl)}`);;
-      }
-  };
+        const currentUrl = window.location.href;
+        if (isSignedIn) {
+            router.push('payment');
+        } else {
+            const redirectUrl = isSignedIn? 'payment': `/sign-in?redirectUrl=${encodeURIComponent(window.location.pathname)}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`;
+        
+            router.push(redirectUrl);
+        }
+    };
 
     const cancelConfirmation = () => {
         setShowConfirmation(false);
@@ -88,7 +99,6 @@ const Page = () => {
         setPrice(0);
         setDiscount(0);
     };
-
     return (
         <div className="min-h-screen bg-white">
             <Header />
