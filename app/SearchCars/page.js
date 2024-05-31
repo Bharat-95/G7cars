@@ -31,36 +31,35 @@ const Page = () => {
     ? new Date(searchParams.get("dropoffDateTime"))
     : null;
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await fetch(
-              "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars"
-            );
-            if (!response.ok) {
-              throw new Error("Failed to fetch data");
-            }
-            const data = await response.json();
-       
-            const sortByPrice = cars =>
-                cars.sort((a, b) => {
-                  const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ''));
-                  const priceB = parseFloat(b.Price.replace(/[^0-9.-]+/g, ''));
-                  return priceA - priceB;
-                });
-            const filteredData = data.filter(car => car.Seating === "5 Seater" || car.Seating === "7 Seater");
-            const sortedData = sortByPrice(filteredData);
-            setData(sortedData);
-            setLoading(false);
-          } catch (error) {
-            setError(error.message);
-            setLoading(false);
-          }
-        };
-      
-        fetchData();
-      }, []);
-      
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const data = await response.json();
+
+        const sortByPrice = cars =>
+          cars.sort((a, b) => {
+            const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ''));
+            const priceB = parseFloat(b.Price.replace(/[^0-9.-]+/g, ''));
+            return priceA - priceB;
+          });
+        const filteredData = data.filter(car => car.Seating === "5 Seater" || car.Seating === "7 Seater");
+        const sortedData = sortByPrice(filteredData);
+        setData(sortedData);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const saveBookingDataToLocalstorage = () => {
     localStorage.setItem("pickupDateTime", pickupDateTime);
@@ -73,11 +72,14 @@ const Page = () => {
       return;
     }
 
-    const days = Math.ceil(
-      (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24)
+    const hours = Math.ceil(
+      (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
     );
-    const carPrice = parseFloat(car.Price.replace(/[^\d.-]/g, ""));
-    let totalPrice = carPrice * days;
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    const carPricePerDay = parseFloat(car.Price.replace(/[^\d.-]/g, ""));
+    const carPricePerHour = carPricePerDay / 24;
+    let totalPrice = carPricePerDay * days + carPricePerHour * remainingHours;
     let discountAmount = 0;
 
     if (days >= 10) {
@@ -234,10 +236,7 @@ const Page = () => {
                 })}
               </p>
               <p>
-                <strong>Total Days:</strong>{" "}
-                {Math.ceil(
-                  (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24)
-                )}
+                <strong>Total Duration:</strong> {Math.floor((dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24))} days and {Math.ceil((dropoffDateTime - pickupDateTime) % (1000 * 60 * 60 * 24) / (1000 * 60 * 60))} hours
               </p>
               <p>
                 <strong>Total Price:</strong> ₹ {price.toFixed(2)}
