@@ -44,16 +44,12 @@ const Page = () => {
        
             const sortByPrice = cars =>
                 cars.sort((a, b) => {
-                  // Remove rupee symbol and commas and convert to number
                   const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ''));
                   const priceB = parseFloat(b.Price.replace(/[^0-9.-]+/g, ''));
                   return priceA - priceB;
                 });
             const filteredData = data.filter(car => car.Seating === "5 Seater" || car.Seating === "7 Seater");
             const sortedData = sortByPrice(filteredData);
-            console.log(filteredData)
-      
-            // Set the filtered and sorted data
             setData(sortedData);
             setLoading(false);
           } catch (error) {
