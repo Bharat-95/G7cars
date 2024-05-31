@@ -10,7 +10,6 @@ import Image from "next/image";
 import { IoIosClose } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
-import Payment from '../../pages/paytm'
 
 const Page = () => {
     const [data, setData] = useState([]);
@@ -76,7 +75,7 @@ const Page = () => {
     const confirmBooking = () => {
       const currentUrl = window.location.href;
       if (isSignedIn) {
-          router.push('/Payment');
+          router.push('/pages/paytm');
       } else {
          router.push(`/sign-in?redirectUrl=${encodeURIComponent(currentUrl)}`);;
       }
