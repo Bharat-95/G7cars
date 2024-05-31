@@ -18,10 +18,9 @@ export default function Page() {
   return (
     <div className="flex justify-center items-center h-screen">
       <SignIn
-        afterSignIn={
+        forceRedirectUrl={
           forceRedirectUrl 
-            ? `${forceRedirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`
-            : '/'
+             
         }
       />
     </div>
