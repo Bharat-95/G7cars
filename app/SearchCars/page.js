@@ -71,7 +71,7 @@ const Page = () => {
       alert("Please select pickup/drop-off dates");
       return;
     }
-
+  
     const hours = Math.ceil(
       (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
     );
@@ -81,7 +81,11 @@ const Page = () => {
     const carPricePerHour = carPricePerDay / 24;
     let totalPrice = carPricePerDay * days + carPricePerHour * remainingHours;
     let discountAmount = 0;
-
+  
+    if (days === 0 && remainingHours < 24) {
+      totalPrice *= 1.4;
+    }
+  
     if (days >= 10) {
       discountAmount = totalPrice * 0.1;
       totalPrice *= 0.9;
@@ -89,12 +93,12 @@ const Page = () => {
       discountAmount = totalPrice * 0.05;
       totalPrice *= 0.95;
     }
-
+  
     setSelectedCar(car);
     setPrice(totalPrice);
     setDiscount(discountAmount);
     setShowConfirmation(true);
-
+  
     saveBookingDataToLocalstorage();
   };
 
@@ -151,7 +155,7 @@ const Page = () => {
       
       <div className="lg:grid lg:grid-cols-4 md:grid md:grid-cols-2">
         {data.map((car) => (
-          <div key={car.G7cars123} className="m-20 cursor-pointer">
+          <div key={car.G7cars123} className="mx-20 my-10 cursor-pointer">
             <div className="h-96 w-64 duration-500 p-4 rounded-xl hover:border-[2px] hover:border-rose-950 space-y-4">
               <div className="font-semibold text-xl text-rose-900">
                 {car.Name}
