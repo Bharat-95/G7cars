@@ -27,7 +27,7 @@ const Footer = () => {
             
 
         </div>
-        <div className='w-[1px] h-64 bg-rose-900 lg:block md:block hidden'></div>
+        <div className='w-[1px] h-64 bg-rose-900 '></div>
         <div className='space-y-6 w-64 text-white lg:flex lg:flex-col md:flex md:flex-col ml-10  hidden'>
             <div className=' font-bold text-sm'>About</div>
            <ul className='space-y-3 text-sm'>
@@ -37,6 +37,7 @@ const Footer = () => {
             <li className='hover:text-rose-900'><Link href='/'>FAQs</Link></li>
             <li className='hover:text-rose-900'><Link href='/terms'>Terms & Conditions</Link></li>
             <li className='hover:text-rose-900'><Link href='/'>Privacy Policy</Link></li>
+            <li className='hover:text-rose-900'><Link href='/'>Refund Policy</Link></li>
             </ul>
         
         </div>
@@ -56,7 +57,7 @@ const Footer = () => {
 
         <div className='w-[1px] h-64 bg-rose-900 lg:block md:block hidden'></div>
 
-        <div className='space-y-6 w-64 text-white flex flex-col lg:ml-10 md:ml-10 ml-20'>
+        <div className='space-y-6 w-64 text-white lg:ml-10 md:ml-10 ml-20 lg:block md:block hidden'>
             <div className=' font-bold text-sm'>Reach Us</div>
            <ul className='space-y-5 text-sm cursor-pointer'>
 
