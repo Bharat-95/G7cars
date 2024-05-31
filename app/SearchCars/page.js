@@ -83,7 +83,6 @@ const Page = () => {
     };
 
     const confirmBooking = () => {
-        const currentUrl = window.location.href;
         if (isSignedIn) {
             router.push('payment');
         } else {
