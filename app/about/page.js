@@ -8,7 +8,7 @@ const AboutPage = () => {
     <div className="min-h-screen">
       <Header />
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-semibold text-white lg:mb-10 md:mb-4 mb-4">
+        <h1 className="text-3xl font-semibold text-white lg:mb-10 md:mb-4 mb-4 underline underline-offset-8">
           About Us
         </h1>
         <p className="text-lg text-white leading-relaxed">
@@ -24,6 +24,17 @@ const AboutPage = () => {
           Thank you for choosing  <Link href='/' className="cursor-pointer">G7cars Private Limited</Link> for your car rental needs. We look forward to serving you and making your journey a memorable one.
         </p>
       </div>
+
+      <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+
+      <h1 className="text-3xl font-semibold text-white lg:mb-10 md:mb-4 mb-4 underline underline-offset-8">
+          Contact Us
+        </h1>
+        <p className="text-lg text-white leading-relaxed">
+        If you have any questions or concerns regarding our refund policy, please contact us at 9133300025/9133300026 or email us on support@g7cars.com
+        </p>
+        </div>
+
       <Footer />
     </div>
   );

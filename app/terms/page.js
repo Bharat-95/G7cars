@@ -101,7 +101,7 @@ const page = () => {
         <div className='space-y-4'>
           <div className='lg:text-2xl md:text-2xl text-md font-bold '>Contact Informationy</div>
           <div className='space-y-2'>
-            <div>If you have any questions or concerns regarding our refund policy, please contact us at 9133300025/9133300026 or email us on support@g7cars.com.</div>
+            <div>If you have any questions or concerns regarding our refund policy, please contact us at 9133300025/9133300026 or email us on support@g7cars.com</div>
             
           </div>
         </div>
