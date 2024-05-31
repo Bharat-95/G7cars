@@ -36,7 +36,7 @@ const Footer = () => {
             <li className='hover:text-rose-900'><Link href='/'>Contact</Link></li>
             <li className='hover:text-rose-900'><Link href='/'>FAQs</Link></li>
             <li className='hover:text-rose-900'><Link href='/terms'>Terms & Conditions</Link></li>
-            <li className='hover:text-rose-900'><Link href='/'>Privacy Policy</Link></li>
+            <li className='hover:text-rose-900'><Link href='/privacy'>Privacy Policy</Link></li>
          
             </ul>
         
