@@ -6,22 +6,21 @@ import { useEffect } from 'react';
 
 export default function Page() {
   const router = useRouter();
-  const { redirectUrl, pickupDateTime, dropoffDateTime } = router.query;
+  const { forceRedirectUrl, pickupDateTime, dropoffDateTime } = router.query || {};
 
   useEffect(() => {
-    // If the user is already signed in, redirect them to the appropriate URL
-    if (router.isReady && redirectUrl) {
-      const newUrl = `${redirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`;
+    if (router.isReady && forceRedirectUrl) {
+      const newUrl = `${forceRedirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`;
       router.push(newUrl);
     }
-  }, [router.isReady, redirectUrl, pickupDateTime, dropoffDateTime]);
+  }, [router.isReady, forceRedirectUrl, pickupDateTime, dropoffDateTime]);
 
   return (
     <div className="flex justify-center items-center h-screen">
       <SignIn
         afterSignInUrl={
-          redirectUrl 
-            ? `${redirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`
+          forceRedirectUrl 
+            ? `${forceRedirectUrl}?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`
             : '/'
         }
       />
