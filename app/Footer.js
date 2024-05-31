@@ -28,7 +28,7 @@ const Footer = () => {
 
         </div>
         <div className='w-[1px] h-64 bg-rose-900 lg:block md:block hidden  '></div>
-        <div className='space-y-6 w-64 text-white lg:flex lg:flex-col md:flex md:flex-col ml-10  '>
+        <div className='space-y-6 w-64 text-white lg:flex lg:flex-col md:flex md:flex-col hidden ml-10  '>
             <div className=' font-bold text-sm'>About</div>
            <ul className='space-y-3 text-sm'>
 
@@ -37,13 +37,13 @@ const Footer = () => {
             <li className='hover:text-rose-900'><Link href='/'>FAQs</Link></li>
             <li className='hover:text-rose-900'><Link href='/terms'>Terms & Conditions</Link></li>
             <li className='hover:text-rose-900'><Link href='/'>Privacy Policy</Link></li>
-            <li className='hover:text-rose-900'><Link href='/'>Refund Policy</Link></li>
+         
             </ul>
         
         </div>
 
         <div className='w-[1px] h-64 bg-rose-900 lg:block md:block hidden'></div>
-        <div className='space-y-6 w-64 text-white lg:flex lg:flex-col md:flex md:flex-col hidden ml-10'>
+        <div className='space-y-6 w-64 text-white lg:flex lg:flex-col ml-10'>
             <div className=' font-bold text-sm'>Helpfull Links</div>
            <ul className='space-y-3 text-sm'>
 
@@ -51,6 +51,7 @@ const Footer = () => {
             <li className='hover:text-rose-900'><Link href='/about'>About</Link></li>
             <li className='hover:text-rose-900'><Link href='/terms'>Terms & Conditions</Link></li>
             <li className='hover:text-rose-900'><Link href='/privacy'>Privacy Policy</Link></li>
+            <li className='hover:text-rose-900'><Link href='/refund'>Refund Policy</Link></li>
             </ul>
         
         </div>
