@@ -106,7 +106,8 @@ const Page = () => {
 
   const confirmBooking = async () => {
     if (!isSignedIn) {
-      router.push(`/sign-in?from=${router.asPath}`);
+      const redirectUrl = `/sign-in?from=${encodeURIComponent(router.asPath)}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
+      router.push(redirectUrl);
       return;
     }
 
