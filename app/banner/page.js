@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Bg from '../../public/bg_1.jpg';
@@ -6,27 +6,27 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/navigation';
 
+
 const Banner = () => {
     const [pickupDateTime, setPickupDateTime] = useState(null);
     const [dropoffDateTime, setDropoffDateTime] = useState(null);
-    const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
     const router = useRouter();
 
-    const handleBooking = () => {
-        if (!isCheckboxChecked) {
-            alert("Please check the box to confirm pickup location.");
-            return;
-        }
 
+    const handleBooking = () => {
         if (pickupDateTime && dropoffDateTime) {
             const pickupISOString = pickupDateTime.toISOString();
             const dropoffISOString = dropoffDateTime.toISOString();
         
             router.push(`/SearchCars?pickupDateTime=${encodeURIComponent(pickupISOString)}&dropoffDateTime=${encodeURIComponent(dropoffISOString)}`);
+
         } else {
             alert("Please select PickUp and Drop Dates");
         }
     };
+    
+
+
 
     const handleMinDropOffTime = (time) => {
         if (!pickupDateTime) return filterTime(time);
@@ -35,7 +35,8 @@ const Banner = () => {
         pickUpTime.setHours(pickUpTime.getHours() + 12);
       
         return time.getTime() >= pickUpTime.getTime();
-    };
+      };
+
 
     const now = new Date();
     const minPickupDateTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
@@ -81,25 +82,11 @@ const Banner = () => {
                         />
                     </div>
                 </div>
-                <div className='flex justify-center'>
-                    <input 
-                        type='checkbox' 
-                        className='mx-2' 
-                        checked={isCheckboxChecked}
-                        onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}
-                    />
-                    Pickup Location Would be Nagaram, Ecil
-                </div>
     
                 <div className='flex justify-center'>
-                    <button 
-                        onClick={handleBooking} 
-                        className={`flex justify-center items-center mx-10 bg-rose-950 opacity-80 w-40 h-10 rounded-xl ${!isCheckboxChecked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                        disabled={!isCheckboxChecked}
-                    >
-                        Search Cars
-                    </button>
+                    <button onClick={handleBooking} className='flex justify-center items-center mx-10 bg-rose-950 opacity-80 w-40 h-10 rounded-xl'>Search Cars</button>
                 </div>
+                
             </div>
         </div>
     );

@@ -24,14 +24,15 @@ const Page = () => {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const pickupDateTime = searchParams.get("pickupDateTime")
+  let pickupDateTime = searchParams.get("pickupDateTime")
     ? new Date(searchParams.get("pickupDateTime"))
     : null;
-  const dropoffDateTime = searchParams.get("dropoffDateTime")
+  let dropoffDateTime = searchParams.get("dropoffDateTime")
     ? new Date(searchParams.get("dropoffDateTime"))
     : null;
 
-  useEffect(() => {
+
+
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -57,6 +58,10 @@ const Page = () => {
         setLoading(false);
       }
     };
+
+    
+  useEffect(() => {
+   
 
     fetchData();
   }, []);
