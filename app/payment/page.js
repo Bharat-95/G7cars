@@ -1,38 +1,58 @@
-"use client"
-import { useState } from 'react';
-
 const PaymentPage = () => {
-  const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const initiatePayment = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order', {
+        amount: 1000, 
+      });
+      const { data } = response;
+      const orderId = data.id; 
+      redirectToRazorpayCheckout(orderId);
+    } catch (error) {
+      console.error('Error initiating payment:', error);
 
-    const response = await fetch('/api/payment', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        amount,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.id) {
+    } finally {
+      setLoading(false);
     }
   };
 
+  const redirectToRazorpayCheckout = (orderId) => {
+    const options = {
+      key: '<YOUR_RAZORPAY_KEY_ID>',
+      amount: 1000, 
+      currency: 'INR',
+      order_id: orderId,
+      name: 'Your Company Name',
+      description: 'Payment for Product/Service',
+      handler: function (response) {
+        
+        console.log('Payment successful:', response);
+      },
+      prefill: {
+        name: 'John Doe',
+        email: 'john@example.com',
+        contact: '9876543210',
+      },
+      notes: {
+      },
+      theme: {
+        color: '#F37254',
+      },
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        placeholder="Amount"
-      />
-      <button type="submit">Pay</button>
-    </form>
+    <div>
+      <h1>Payment Page</h1>
+      <button onClick={initiatePayment} disabled={loading}>
+        {loading ? 'Processing...' : 'Pay Now'}
+      </button>
+    </div>
   );
 };
 
