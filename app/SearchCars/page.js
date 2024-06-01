@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "../Header";
@@ -10,6 +10,8 @@ import Image from "next/image";
 import { IoIosClose } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -19,50 +21,45 @@ const Page = () => {
   const [price, setPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
-
   const { isSignedIn } = useUser();
   const router = useRouter();
-
   const searchParams = useSearchParams();
-  let pickupDateTime = searchParams.get("pickupDateTime")
+  const initialPickupDateTime = searchParams.get("pickupDateTime")
     ? new Date(searchParams.get("pickupDateTime"))
     : null;
-  let dropoffDateTime = searchParams.get("dropoffDateTime")
+  const initialDropoffDateTime = searchParams.get("dropoffDateTime")
     ? new Date(searchParams.get("dropoffDateTime"))
     : null;
+  const [pickupDateTime, setPickupDateTime] = useState(initialPickupDateTime);
+  const [dropoffDateTime, setDropoffDateTime] = useState(initialDropoffDateTime);
 
-
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars"
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        const data = await response.json();
-
-        const sortByPrice = cars =>
-          cars.sort((a, b) => {
-            const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ''));
-            const priceB = parseFloat(b.Price.replace(/[^0-9.-]+/g, ''));
-            return priceA - priceB;
-          });
-        const filteredData = data.filter(car => car.Seating === "5 Seater" || car.Seating === "7 Seater");
-        const sortedData = sortByPrice(filteredData);
-        setData(sortedData);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
       }
-    };
+      const data = await response.json();
 
-    
+      const sortByPrice = cars =>
+        cars.sort((a, b) => {
+          const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ''));
+          const priceB = parseFloat(b.Price.replace(/[^0-9.-]+/g, ''));
+          return priceA - priceB;
+        });
+      const filteredData = data.filter(car => car.Seating === "5 Seater" || car.Seating === "7 Seater");
+      const sortedData = sortByPrice(filteredData);
+      setData(sortedData);
+      setLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-   
-
     fetchData();
   }, []);
 
@@ -157,6 +154,33 @@ const Page = () => {
       <div className="flex justify-center m-10 text-4xl font-bold underline text-rose-900">
         Cars List
       </div>
+
+      <div className="flex justify-center">
+        <div>
+          <DatePicker
+            selected={pickupDateTime}
+            onChange={(date) => setPickupDateTime(date)}
+            showTimeSelect
+            timeFormat="hh:mm aa"
+            timeIntervals={15}
+            dateFormat="dd MMMM yyyy, h:mm aa"
+            className='bg-rose-950/40 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-l-xl flex text-center cursor-pointer'
+          />
+        </div>
+        <div>
+          <DatePicker
+            selected={dropoffDateTime}
+            onChange={(date) => setDropoffDateTime(date)}
+            showTimeSelect
+            timeFormat="hh:mm aa"
+            timeIntervals={15}
+            dateFormat="dd MMMM yyyy, h:mm aa"
+            className='bg-rose-950/40 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-r-xl flex text-center cursor-pointer'
+            placeholderText="Change Drop Date"
+          />
+        </div>
+      </div>
+
       
       <div className="lg:grid lg:grid-cols-4 md:grid md:grid-cols-2">
         {data.map((car) => (
