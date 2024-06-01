@@ -164,7 +164,7 @@ const Page = () => {
             timeFormat="hh:mm aa"
             timeIntervals={15}
             dateFormat="dd MMMM yyyy, h:mm aa"
-            className='bg-rose-950/50 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-l-xl flex text-center cursor-pointer'
+            className='bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-l-xl flex text-center cursor-pointer'
           />
         </div>
         <div>
@@ -175,7 +175,7 @@ const Page = () => {
             timeFormat="hh:mm aa"
             timeIntervals={15}
             dateFormat="dd MMMM yyyy, h:mm aa"
-            className='bg-rose-950/50 lg:w-96 md:w-80 w-24 lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-r-xl flex text-center cursor-pointer'
+            className='bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-r-xl flex text-center cursor-pointer'
             placeholderText="Change Drop Date"
           />
         </div>
