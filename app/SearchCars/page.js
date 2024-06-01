@@ -106,7 +106,7 @@ const Page = () => {
 
   const confirmBooking = async () => {
     if (!isSignedIn) {
-      router.push(`/sign-in`);
+      router.push(`/sign-in?from=${router.asPath}`);
       return;
     }
 
