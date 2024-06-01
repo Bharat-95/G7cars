@@ -11,7 +11,7 @@ const SignInPage = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen"><SignIn forceRedirectUrl={from || '/'} /></div>
+    <div className="flex justify-center items-center h-screen"><SignIn fallbackRedirectUrl={from || '/'} /></div>
   );
 };
 
