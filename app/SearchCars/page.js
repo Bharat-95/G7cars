@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "../Header";
@@ -148,6 +148,7 @@ const Page = () => {
     setPrice(0);
     setDiscount(0);
   };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -180,7 +181,6 @@ const Page = () => {
           />
         </div>
       </div>
-
       
       <div className="lg:grid lg:grid-cols-4 md:grid md:grid-cols-2">
         {data.map((car) => (
