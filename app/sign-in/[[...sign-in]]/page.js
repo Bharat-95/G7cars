@@ -1,15 +1,18 @@
 "use client"
-import { SignIn } from "@clerk/nextjs";
-import '../../../app/globals.css'
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
+import { SignIn } from '@clerk/clerk-react';
 
-
-
-export default function Page() {
-
+const SignInPage = () => {
   const router = useRouter();
-  const { from } = router.query;
+  let from;
 
-  return <div className="flex justify-center items-center h-screen"><SignIn forceRedirectUrl={from || '/'} /></div>
-}
+  if (router.query) {
+    from = router.query.from;
+  }
 
+  return (
+    <div className="flex justify-center items-center h-screen"><SignIn forceRedirectUrl={from || '/'} /></div>
+  );
+};
+
+export default SignInPage;
