@@ -155,7 +155,7 @@ const Page = () => {
         Cars List
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center my-10">
         <div>
           <DatePicker
             selected={pickupDateTime}
