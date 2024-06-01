@@ -1,3 +1,4 @@
+"use client"
 import { SignIn } from "@clerk/nextjs";
 import '../../../app/globals.css'
 import { useRouter } from "next/navigation";
