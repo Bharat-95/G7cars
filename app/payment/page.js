@@ -1,11 +1,39 @@
-import React from 'react'
+"use client"
+import { useState } from 'react';
 
-const page = () => {
+const PaymentPage = () => {
+  const [amount, setAmount] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const response = await fetch('/api/payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.id) {
+    }
+  };
+
   return (
-    <div className='text-3xl font-bold flex justify-center items-center text-white h-screen p-10'>
-       We are working to integrate payment gateway. Thank you for understanding
-    </div>
-  )
-}
+    <form onSubmit={handleSubmit}>
+      <input
+        type="number"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        placeholder="Amount"
+      />
+      <button type="submit">Pay</button>
+    </form>
+  );
+};
 
-export default page
+export default PaymentPage;
