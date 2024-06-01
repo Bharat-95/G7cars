@@ -106,7 +106,7 @@ const Page = () => {
 
   const confirmBooking = async () => {
     if (!isSignedIn) {
-      const redirectUrl = `/sign-in?from=${encodeURIComponent(router.asPath)}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
+      const redirectUrl = `/sign-in?from=${encodeURIComponent('/SearchCars')}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
       router.push(redirectUrl);
       return;
     }
@@ -137,7 +137,7 @@ const Page = () => {
       setPrice(0);
       setDiscount(0);
 
-      router.push("/payment");
+      router.push("payment");
     } catch (error) {
       console.error("Error confirming booking:", error);
     }
@@ -182,6 +182,7 @@ const Page = () => {
           />
         </div>
       </div>
+
       
       <div className="lg:grid lg:grid-cols-4 md:grid md:grid-cols-2">
         {data.map((car) => (
