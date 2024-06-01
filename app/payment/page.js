@@ -20,7 +20,7 @@ const PaymentPage = () => {
 
   const redirectToRazorpayCheckout = (orderId) => {
     const options = {
-      key: '<YOUR_RAZORPAY_KEY_ID>',
+      key: 'rzp_test_URbADkFMr16GIz',
       amount: 1000, 
       currency: 'INR',
       order_id: orderId,
