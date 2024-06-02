@@ -48,7 +48,6 @@ const PaymentPage = () => {
         }
       });
     };
-
     const initializeRazorpay = async () => {
       if (!orderId || !amount || !user) return;
 
@@ -58,7 +57,6 @@ const PaymentPage = () => {
           alert('Failed to load Razorpay SDK. Please try again.');
           return;
         }
-
         const amountInPaise = Math.round(amount * 100);
         console.log(`Amount in paise: ${amountInPaise}`);
 
