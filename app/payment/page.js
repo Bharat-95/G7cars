@@ -11,9 +11,7 @@ const PaymentPage = () => {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded || !user) {
-      return;
-    }
+    if (!isLoaded || !user) return;
 
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
@@ -43,7 +41,7 @@ const PaymentPage = () => {
           script.src = 'https://checkout.razorpay.com/v1/checkout.js';
           script.async = true;
           script.onload = () => resolve(true);
-          script.onerror = () => reject(false);
+          script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
           document.body.appendChild(script);
         } else {
           resolve(true);
@@ -65,13 +63,14 @@ const PaymentPage = () => {
         console.log(`Amount in paise: ${amountInPaise}`);
 
         const options = {
-          key: 'rzp_test_URbADkFMr16GIz',
+          key: 'rzp_test_URbADkFMr16GIz', // Ensure this is your test key
           amount: amountInPaise,
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
           order_id: orderId,
           handler: async function (response) {
+            console.log('Payment handler response:', response);
             try {
               setProcessing(true);
               const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify-payment', {
@@ -106,15 +105,15 @@ const PaymentPage = () => {
             color: '#F37254',
           },
         };
-        
+
         const rzp = new window.Razorpay(options);
-        
+
         rzp.on('payment.failed', function (response) {
-          console.error(response.error);
+          console.error('Payment failed:', response.error);
           alert('Payment failed. Please try again.');
           setProcessing(false);
         });
-        
+
         rzp.open();
       } catch (error) {
         console.error('Failed to initialize Razorpay:', error);
