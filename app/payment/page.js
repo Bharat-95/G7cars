@@ -10,8 +10,7 @@ const PaymentPage = () => {
   const [amount, setAmount] = useState(null);
   const [processing, setProcessing] = useState(false);
 
-
-  const fetchOrderAndAmount = () => {
+  useEffect(() => {
     if (!isLoaded || !user) return;
 
     const params = new URLSearchParams(window.location.search);
@@ -31,41 +30,39 @@ const PaymentPage = () => {
     } else {
       console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
     }
-  };
-
-  useEffect(() => {
-    
-
-    fetchOrderAndAmount();
   }, [isLoaded, user]);
 
   useEffect(() => {
     const loadRazorpayScript = () => {
       return new Promise((resolve, reject) => {
         const existingScript = document.querySelector(`script[src="https://checkout.razorpay.com/v1/checkout.js"]`);
-        if (existingScript) {
-          resolve(true);
-        } else {
+        if (!existingScript) {
           const script = document.createElement('script');
           script.src = 'https://checkout.razorpay.com/v1/checkout.js';
           script.async = true;
           script.onload = () => resolve(true);
           script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
           document.body.appendChild(script);
+        } else {
+          resolve(true);
         }
       });
     };
-
     const initializeRazorpay = async () => {
       if (!orderId || !amount || !user) return;
 
       try {
-        await loadRazorpayScript();
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          alert('Failed to load Razorpay SDK. Please try again.');
+          return;
+        }
+        const amountInPaise = amount;
 
-        const options = {
+        var options = {
           key: process.env.RAZORPAY_API_KEY,
-          amount: amount * 100,
-          currency: 'INR',
+          amount: amountInPaise,
+          "currency": "INR",
           name: 'G7Cars',
           description: 'Car rental payment',
           order_id: orderId,
@@ -122,7 +119,9 @@ const PaymentPage = () => {
       }
     };
 
-    initializeRazorpay();
+    if (orderId && amount && user) {
+      initializeRazorpay();
+    }
   }, [orderId, amount, user, router]);
 
   return (
