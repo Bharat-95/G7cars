@@ -112,7 +112,7 @@ const Page = () => {
     }
   
     try {
-      const response = await fetch(
+      const bookingResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
         {
           method: "POST",
@@ -128,11 +128,12 @@ const Page = () => {
           }),
         }
       );
-      if (!response.ok) {
+  
+      if (!bookingResponse.ok) {
         throw new Error("Failed to confirm booking");
       }
   
-      const bookingData = await response.json();
+      const bookingData = await bookingResponse.json();
   
       const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
         method: "POST",
@@ -146,8 +147,8 @@ const Page = () => {
       });
   
       if (!orderResponse.ok) {
-        const errorDetails = await orderResponse.text();
-        throw new Error(`Failed to create order: ${errorDetails}`);
+        const errorDetails = await orderResponse.json();
+        throw new Error(`Failed to create order: ${errorDetails.message}`);
       }
   
       const orderData = await orderResponse.json();
@@ -158,6 +159,7 @@ const Page = () => {
       alert(`Error confirming booking: ${error.message}`);
     }
   };
+  
   
 
   const cancelConfirmation = () => {
