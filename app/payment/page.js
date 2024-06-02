@@ -11,13 +11,18 @@ const PaymentPage = () => {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
+    console.log("Fetching URL parameters...");
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
 
+    console.log("URL parameters fetched:", { orderIdParam, amountParam });
+
     if (orderIdParam && amountParam) {
       setOrderId(orderIdParam);
-      setAmount(Number(amountParam));  // Ensure amount is parsed as a number
+      setAmount(Number(amountParam));
+    } else {
+      console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
     }
   }, [router.query]);
 
@@ -30,6 +35,8 @@ const PaymentPage = () => {
       });
       return;
     }
+
+    console.log("All required parameters are available, initializing Razorpay...");
 
     const loadRazorpayScript = () => {
       return new Promise((resolve, reject) => {
