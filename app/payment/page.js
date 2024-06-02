@@ -10,28 +10,31 @@ const PaymentPage = () => {
   const [amount, setAmount] = useState(null);
   const [processing, setProcessing] = useState(false);
 
-  useEffect(() => {
-    const fetchOrderAndAmount = () => {
-      if (!isLoaded || !user) return;
 
-      const params = new URLSearchParams(window.location.search);
-      const orderIdParam = params.get('orderId');
-      const amountParam = params.get('amount');
+  const fetchOrderAndAmount = () => {
+    if (!isLoaded || !user) return;
 
-      console.log("URL parameters fetched:", { orderIdParam, amountParam });
+    const params = new URLSearchParams(window.location.search);
+    const orderIdParam = params.get('orderId');
+    const amountParam = params.get('amount');
 
-      if (orderIdParam && amountParam) {
-        setOrderId(orderIdParam);
-        const parsedAmount = Number(amountParam);
-        if (!isNaN(parsedAmount)) {
-          setAmount(parsedAmount);
-        } else {
-          console.error('Invalid amount parameter:', amountParam);
-        }
+    console.log("URL parameters fetched:", { orderIdParam, amountParam });
+
+    if (orderIdParam && amountParam) {
+      setOrderId(orderIdParam);
+      const parsedAmount = Number(amountParam);
+      if (!isNaN(parsedAmount)) {
+        setAmount(parsedAmount);
       } else {
-        console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
+        console.error('Invalid amount parameter:', amountParam);
       }
-    };
+    } else {
+      console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
+    }
+  };
+
+  useEffect(() => {
+    
 
     fetchOrderAndAmount();
   }, [isLoaded, user]);
