@@ -53,12 +53,11 @@ const PaymentPage = () => {
           return;
         }
 
-        const amountInPaise = amount * 100;
-        console.log(`Amount in paise: ${amountInPaise}`);
+        console.log(amount)
 
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
-          amount: amountInPaise,
+          amount: amount,
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
