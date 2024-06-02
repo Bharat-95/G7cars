@@ -107,7 +107,6 @@ const Page = () => {
   
   const confirmBooking = async () => {
     try {
-      // Round the price to the nearest integer
       const roundedPrice = Math.round(price);
 
       const bookingResponse = await fetch(
@@ -121,7 +120,7 @@ const Page = () => {
             carId: selectedCar.G7cars123,
             pickupDateTime: pickupDateTime,
             dropoffDateTime: dropoffDateTime,
-            totalPrice: roundedPrice, // Use the rounded price
+            totalPrice: roundedPrice,
             discount: discount,
           }),
         }
@@ -132,6 +131,7 @@ const Page = () => {
       }
   
       const bookingData = await bookingResponse.json();
+
   
       const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
         method: "POST",
@@ -150,8 +150,9 @@ const Page = () => {
       }
   
       const orderData = await orderResponse.json();
+      const orderId = data.orderId;
   
-      router.push(`/payment?orderId=${orderData.id}&amount=${roundedPrice}`);
+      window.location.href = `https://api.razorpay.com/v1/checkout/embedded?orderId=${orderId}`
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);

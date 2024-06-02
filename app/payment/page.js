@@ -65,12 +65,19 @@ const PaymentPage = () => {
 
   return (
     <div>
+<form method="POST" action="https://api.razorpay.com/v1/checkout/embedded">
+  <input type="hidden" name="key_id" value="rzp_test_URbADkFMr16GIz"/>
+  <input type="hidden" name="amount" value={amount * 100}/> 
+  <input type="hidden" name="order_id" value={orderId}/>
+  <input type="hidden" name="name" value="G7Cars"/>
+  <input type="hidden" name="description" value="Car rental payment"/>
+  <input type="hidden" name="prefill[contact]" value="9123456780"/>
+  <input type="hidden" name="notes[shipping address]" value="L-16, The Business Centre, 61 Wellfield Road, New Delhi - 110001"/>
+  <input type="hidden" name="callback_url" value="https://example.com/payment-callback"/>
+  <input type="hidden" name="cancel_url" value="https://example.com/payment-cancel"/>
+  <button>Submit</button>
+</form>
 
-      <h1>Processing payment...</h1>
-      <Head>
-      <Script src=""/>
-
-      </Head>
       {!processing && (
         <button onClick={() => router.push('/')} disabled={processing}>
           Cancel Payment
