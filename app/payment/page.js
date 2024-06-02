@@ -116,12 +116,8 @@ const PaymentPage = () => {
   }, [orderId, amount, user, router]);
 
   return (
-    <div>
-      {!processing && orderId && amount && user && (
-        <button onClick={() => router.push('/')} disabled={processing}>
-          Cancel Payment
-        </button>
-      )}
+    <div className='flex justify-center items-center text-white'>
+         Please wait......
     </div>
   );
 };
