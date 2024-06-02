@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/clerk-react';
-import Script from 'next/script';
-import Head from 'next/head';
+import Header from '../Header';
+import Footer from '../Footer';
+
 
 const PaymentPage = () => {
   const router = useRouter();
@@ -65,6 +66,7 @@ const PaymentPage = () => {
 
   return (
     <div>
+      <Header />
 <form method="POST" action="https://api.razorpay.com/v1/checkout/embedded">
   <input type="hidden" name="key_id" value="rzp_test_URbADkFMr16GIz"/>
   <input type="hidden" name="amount" value={amount * 100}/> 
@@ -83,6 +85,8 @@ const PaymentPage = () => {
           Cancel Payment
         </button>
       )}
+
+      <Footer />
     </div>
   );
 };
