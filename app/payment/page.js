@@ -63,7 +63,7 @@ const PaymentPage = () => {
         console.log(`Amount in paise: ${amountInPaise}`);
 
         const options = {
-          key: 'rzp_test_URbADkFMr16GIz', // Ensure this is your test key
+          key: process.env.RAZORPAY_API_KEY,
           amount: amountInPaise,
           currency: 'INR',
           name: 'G7Cars',
