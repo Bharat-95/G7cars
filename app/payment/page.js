@@ -57,12 +57,12 @@ const PaymentPage = () => {
           alert('Failed to load Razorpay SDK. Please try again.');
           return;
         }
-        const amountInPaise = Math.round(amount * 100);
+        const amountInPaise = Math.round(amount * 1000);
 
-        const options = {
+        var options = {
           key: process.env.RAZORPAY_API_KEY,
-          amount: amountInPaise * 100,
-          currency: 'INR',
+          amount: amountInPaise,
+          "currency": "INR",
           name: 'G7Cars',
           description: 'Car rental payment',
           order_id: orderId,
