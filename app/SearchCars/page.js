@@ -106,7 +106,6 @@ const Page = () => {
   
   
   const confirmBooking = async () => {
-
     if (!isSignedIn) {
       const redirectUrl = `/sign-in?from=${encodeURIComponent('/SearchCars')}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
       router.push(redirectUrl);
@@ -157,8 +156,9 @@ const Page = () => {
       }
   
       const orderData = await orderResponse.json();
+      const orderId = orderData.orderId;
   
-      router.push(`/payment?orderId=${orderData.id}&amount=${roundedPrice}`);
+      router.push(`/payment?orderId=${orderId}&amount=${roundedPrice}`)
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
