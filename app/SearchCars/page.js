@@ -109,7 +109,7 @@ const Page = () => {
     try {
       // Round the price to the nearest integer
       const roundedPrice = Math.round(price);
-  
+
       const bookingResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
         {
@@ -121,7 +121,7 @@ const Page = () => {
             carId: selectedCar.G7cars123,
             pickupDateTime: pickupDateTime,
             dropoffDateTime: dropoffDateTime,
-            totalPrice: roundedPrice, 
+            totalPrice: roundedPrice, // Use the rounded price
             discount: discount,
           }),
         }
@@ -133,15 +133,31 @@ const Page = () => {
   
       const bookingData = await bookingResponse.json();
   
-      const razorpayCheckoutUrl = `https://checkout.razorpay.com/v1/payment?orderId=${bookingData.id}&amount=${roundedPrice}`;
+      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: roundedPrice,
+          currency: "INR",
+        }),
+      });
   
-      window.location.href = razorpayCheckoutUrl;
+      if (!orderResponse.ok) {
+        const errorDetails = await orderResponse.json();
+        throw new Error(`Failed to create order: ${errorDetails.message}`);
+      }
+  
+      const orderData = await orderResponse.json();
+  
+      router.push(`/payment?orderId=${orderData.id}&amount=${roundedPrice}`);
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
     }
-  };
-  
+};
+
   
 
   const cancelConfirmation = () => {
