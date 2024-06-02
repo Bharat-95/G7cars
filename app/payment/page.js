@@ -9,11 +9,16 @@ const PaymentPage = () => {
   const [orderId, setOrderId] = useState(null);
   const [amount, setAmount] = useState(null);
   const [processing, setProcessing] = useState(false);
+
   useEffect(() => {
     if (!isLoaded || !user) return;
+
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
+
+    console.log("URL parameters fetched:", { orderIdParam, amountParam });
+
     if (orderIdParam && amountParam) {
       setOrderId(orderIdParam);
       const parsedAmount = Number(amountParam);
@@ -83,7 +88,8 @@ const PaymentPage = () => {
                 alert('Payment successful!');
                 router.push('/');
               } else {
-                throw new Error('Payment verification failed.');
+                const errorMessage = await verifyResponse.text();
+                throw new Error(`Payment verification failed: ${errorMessage}`);
               }
             } catch (error) {
               console.error('Error confirming payment:', error);
