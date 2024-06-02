@@ -9,39 +9,27 @@ const PaymentPage = () => {
   const [orderId, setOrderId] = useState(null);
   const [amount, setAmount] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [parametersSet, setParametersSet] = useState(false);
-
-  const params = new URLSearchParams(window.location.search);
-  const orderIdParam = params.get('orderId');
-  const amountParam = params.get('amount');
-
-  console.log("URL parameters fetched:", { orderIdParam, amountParam });
-
-  if (orderIdParam && amountParam) {
-    setOrderId(orderIdParam);
-    setAmount(Number(amountParam));
-    setParametersSet(true);
-  } else {
-    console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
-  }
-  
 
   useEffect(() => {
-   
-  }, [router.query]);
-
-  useEffect(() => {
-    if (!parametersSet || !isLoaded || !user) {
-      console.log("Missing parameters:", {
-        orderId,
-        amount,
-        user: user ? { fullName: user.fullName, email: user.primaryEmailAddress?.emailAddress } : null,
-      });
+    if (!isLoaded || !user) {
       return;
     }
 
-    console.log("All required parameters are available, initializing Razorpay...");
+    const params = new URLSearchParams(window.location.search);
+    const orderIdParam = params.get('orderId');
+    const amountParam = params.get('amount');
 
+    console.log("URL parameters fetched:", { orderIdParam, amountParam });
+
+    if (orderIdParam && amountParam) {
+      setOrderId(orderIdParam);
+      setAmount(Number(amountParam));
+    } else {
+      console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
+    }
+  }, [isLoaded, user]);
+
+  useEffect(() => {
     const loadRazorpayScript = () => {
       return new Promise((resolve, reject) => {
         const existingScript = document.querySelector(`script[src="https://checkout.razorpay.com/v1/checkout.js"]`);
@@ -59,6 +47,8 @@ const PaymentPage = () => {
     };
 
     const initializeRazorpay = async () => {
+      if (!orderId || !amount || !user) return;
+
       try {
         const scriptLoaded = await loadRazorpayScript();
         if (!scriptLoaded) {
@@ -71,7 +61,7 @@ const PaymentPage = () => {
 
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
-          amount: amountInPaise, 
+          amount: amountInPaise,
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
@@ -105,7 +95,7 @@ const PaymentPage = () => {
           },
           prefill: {
             name: user.fullName,
-            email: user.primaryEmailAddress.emailAddress,
+            email: user.primaryEmailAddress?.emailAddress,
           },
           theme: {
             color: '#F37254',
@@ -119,9 +109,10 @@ const PaymentPage = () => {
       }
     };
 
-    initializeRazorpay();
-
-  }, [parametersSet, isLoaded, user, router]);
+    if (orderId && amount && user) {
+      initializeRazorpay();
+    }
+  }, [orderId, amount, user, router]);
 
   return (
     <div>
