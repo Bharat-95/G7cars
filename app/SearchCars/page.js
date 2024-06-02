@@ -134,7 +134,7 @@ const Page = () => {
   
       const bookingData = await response.json();
   
-      const orderResponse = await fetch("/order", {
+      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,6 +158,13 @@ const Page = () => {
     }
   };
   
+
+  const cancelConfirmation = () => {
+    setShowConfirmation(false);
+    setSelectedCar(null);
+    setPrice(0);
+    setDiscount(0);
+  };
 
   return (
     <div className="min-h-screen bg-white">
