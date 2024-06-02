@@ -134,7 +134,7 @@ const Page = () => {
   
       const bookingData = await response.json();
   
-      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
+      const orderResponse = await fetch("/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,12 +142,12 @@ const Page = () => {
         body: JSON.stringify({
           amount: price,
           currency: "INR",
-          receipt: bookingData.receiptId,
         }),
       });
   
       if (!orderResponse.ok) {
-        throw new Error("Failed to create order");
+        const errorDetails = await orderResponse.text();
+        throw new Error(`Failed to create order: ${errorDetails}`);
       }
   
       const orderData = await orderResponse.json();
@@ -155,6 +155,7 @@ const Page = () => {
       router.push(`/payment?orderId=${orderData.id}&amount=${price}`);
     } catch (error) {
       console.error("Error confirming booking:", error);
+      alert(`Error confirming booking: ${error.message}`);
     }
   };
   

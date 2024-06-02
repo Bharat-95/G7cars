@@ -1,62 +1,50 @@
-"use client";
-import React, { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Header from "../Header";
-import Footer from "../Footer";
+"use client"
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/clerk-react';
 
 const PaymentPage = () => {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const orderId = searchParams.get("orderId");
-  const amount = searchParams.get("amount");
+  const { orderId, amount } = router.query;
+  const { user } = useUser();
 
   useEffect(() => {
     if (!orderId || !amount) {
-      router.push("/error");
       return;
     }
 
     const options = {
-      key: "rzp_test_URbADkFMr16GIz", 
-      amount: amount * 100, 
+      key: 'rzp_test_URbADkFMr16GIz',
+      amount: amount * 100, // amount in the smallest currency unit (paise)
       currency: "INR",
-      name: "Your Company Name",
-      description: "Car Rental Payment",
+      name: "G7Cars",
+      description: "Car rental payment",
       order_id: orderId,
-      handler: async function (response) {
-        try {
-          const verifyResponse = await fetch("/verify-payment", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            }),
-          });
+      handler: async (response) => {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
 
-          if (!verifyResponse.ok) {
-            throw new Error("Payment verification failed");
-          }
+        const verifyResponse = await fetch('/verify-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderId: razorpay_order_id,
+            paymentId: razorpay_payment_id,
+            signature: razorpay_signature,
+          }),
+        });
 
-          const verifyData = await verifyResponse.json();
-
-          if (verifyData.success) {
-            router.push("/success");
-          } else {
-            router.push("/failure");
-          }
-        } catch (error) {
-          console.error("Error verifying payment:", error);
-          router.push("/failure");
+        if (verifyResponse.ok) {
+          alert('Payment successful!');
+          router.push('/');
+        } else {
+          alert('Payment verification failed.');
         }
       },
       prefill: {
-        name: "Customer Name",
-        email: "customer@example.com",
-        contact: "9999999999",
+        name: user.fullName,
+        email: user.primaryEmailAddress.emailAddress,
       },
       theme: {
         color: "#F37254",
@@ -66,19 +54,14 @@ const PaymentPage = () => {
     const rzp = new window.Razorpay(options);
     rzp.open();
 
-    rzp.on("payment.failed", function (response) {
-      console.error("Payment failed:", response);
-      router.push("/failure");
+    rzp.on('payment.failed', (response) => {
+      alert('Payment failed');
     });
-  }, [orderId, amount, router]);
+  }, [orderId, amount, user, router]);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <div className="flex justify-center items-center m-10 text-4xl font-bold underline text-rose-900">
-        Processing Payment...
-      </div>
-      <Footer />
+    <div>
+      <h1>Processing payment...</h1>
     </div>
   );
 };
