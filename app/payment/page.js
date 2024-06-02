@@ -11,20 +11,23 @@ const PaymentPage = () => {
   const [processing, setProcessing] = useState(false);
   const [parametersSet, setParametersSet] = useState(false);
 
+  const params = new URLSearchParams(window.location.search);
+  const orderIdParam = params.get('orderId');
+  const amountParam = params.get('amount');
+
+  console.log("URL parameters fetched:", { orderIdParam, amountParam });
+
+  if (orderIdParam && amountParam) {
+    setOrderId(orderIdParam);
+    setAmount(Number(amountParam));
+    setParametersSet(true);
+  } else {
+    console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
+  }
+  
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const orderIdParam = params.get('orderId');
-    const amountParam = params.get('amount');
-
-    console.log("URL parameters fetched:", { orderIdParam, amountParam });
-
-    if (orderIdParam && amountParam) {
-      setOrderId(orderIdParam);
-      setAmount(Number(amountParam));
-      setParametersSet(true);
-    } else {
-      console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
-    }
+   
   }, [router.query]);
 
   useEffect(() => {
@@ -68,7 +71,7 @@ const PaymentPage = () => {
 
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
-          amount: amountInPaise, // Ensure amount is multiplied by 100
+          amount: amountInPaise, 
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
