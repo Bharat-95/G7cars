@@ -16,9 +16,6 @@ const PaymentPage = () => {
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
-
-    console.log("URL parameters fetched:", { orderIdParam, amountParam });
-
     if (orderIdParam && amountParam) {
       setOrderId(orderIdParam);
       const parsedAmount = Number(amountParam);
@@ -27,9 +24,7 @@ const PaymentPage = () => {
       } else {
         console.error('Invalid amount parameter:', amountParam);
       }
-    } else {
-      console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
-    }
+    } 
   }, [isLoaded, user]);
 
   useEffect(() => {
@@ -58,7 +53,6 @@ const PaymentPage = () => {
           return;
         }
         const amountInPaise = amount;
-
         var options = {
           key: process.env.RAZORPAY_API_KEY,
           amount: amountInPaise,
@@ -67,7 +61,6 @@ const PaymentPage = () => {
           description: 'Car rental payment',
           order_id: orderId,
           handler: async function (response) {
-            console.log('Payment handler response:', response);
             try {
               setProcessing(true);
               const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify-payment', {
@@ -83,13 +76,13 @@ const PaymentPage = () => {
               });
               if (verifyResponse.ok) {
                 alert('Payment successful!');
-                router.push('/');
+                router.push('/success');
               } else {
                 const errorMessage = await verifyResponse.text();
                 throw new Error(`Payment verification failed: ${errorMessage}`);
               }
             } catch (error) {
-              console.error('Error confirming payment:', error);
+              console.error('Unable to process the payment:', error);
               alert('Payment failed.');
             } finally {
               setProcessing(false);
@@ -100,12 +93,10 @@ const PaymentPage = () => {
             email: user.primaryEmailAddress?.emailAddress,
           },
           theme: {
-            color: '#F37254',
+            color: '##881337',
           },
         };
-
         const rzp = new window.Razorpay(options);
-
         rzp.on('payment.failed', function (response) {
           console.error('Payment failed:', response.error);
           alert('Payment failed. Please try again.');

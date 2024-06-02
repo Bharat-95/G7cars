@@ -106,7 +106,7 @@ const Page = () => {
   
   
   const confirmBooking = async () => {
-    if (!isSignedIn) {
+     if (!isSignedIn) {
       const redirectUrl = `/sign-in?from=${encodeURIComponent('/SearchCars')}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
       router.push(redirectUrl);
       return;
