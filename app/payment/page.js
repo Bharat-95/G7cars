@@ -11,7 +11,6 @@ const PaymentPage = () => {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    console.log("Fetching URL parameters...");
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
@@ -27,12 +26,7 @@ const PaymentPage = () => {
   }, [router.query]);
 
   useEffect(() => {
-    if (!isLoaded) {
-      console.log("User data is not loaded yet");
-      return;
-    }
-
-    if (!orderId || !amount || !user) {
+    if (!orderId || !amount || !isLoaded || !user) {
       console.log("Missing parameters:", {
         orderId,
         amount,
