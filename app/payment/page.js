@@ -9,6 +9,7 @@ const PaymentPage = () => {
   const [orderId, setOrderId] = useState(null);
   const [amount, setAmount] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [parametersSet, setParametersSet] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -20,13 +21,14 @@ const PaymentPage = () => {
     if (orderIdParam && amountParam) {
       setOrderId(orderIdParam);
       setAmount(Number(amountParam));
+      setParametersSet(true);
     } else {
       console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
     }
   }, [router.query]);
 
   useEffect(() => {
-    if (!orderId || !amount || !isLoaded || !user) {
+    if (!parametersSet || !isLoaded || !user) {
       console.log("Missing parameters:", {
         orderId,
         amount,
@@ -116,7 +118,7 @@ const PaymentPage = () => {
 
     initializeRazorpay();
 
-  }, [orderId, amount, user, isLoaded, router]);
+  }, [parametersSet, isLoaded, user, router]);
 
   return (
     <div>
