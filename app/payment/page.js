@@ -58,7 +58,6 @@ const PaymentPage = () => {
           return;
         }
         const amountInPaise = Math.round(amount * 100);
-        console.log(`Amount in paise: ${amountInPaise}`);
 
         const options = {
           key: process.env.RAZORPAY_API_KEY,
