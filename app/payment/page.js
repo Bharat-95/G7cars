@@ -61,7 +61,7 @@ const PaymentPage = () => {
 
         const options = {
           key: process.env.RAZORPAY_API_KEY,
-          amount: amountInPaise,
+          amount: amountInPaise * 100,
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
