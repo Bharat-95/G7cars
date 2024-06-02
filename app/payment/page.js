@@ -14,13 +14,21 @@ const PaymentPage = () => {
     if (!isLoaded || !user) {
       return;
     }
+
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
 
+    console.log("URL parameters fetched:", { orderIdParam, amountParam });
+
     if (orderIdParam && amountParam) {
       setOrderId(orderIdParam);
-      setAmount(Number(amountParam));
+      const parsedAmount = Number(amountParam);
+      if (!isNaN(parsedAmount)) {
+        setAmount(parsedAmount);
+      } else {
+        console.error('Invalid amount parameter:', amountParam);
+      }
     } else {
       console.log("URL parameters missing or invalid:", { orderIdParam, amountParam });
     }
@@ -53,11 +61,12 @@ const PaymentPage = () => {
           return;
         }
 
-     
+        const amountInPaise = Math.round(amount * 100);
+        console.log(`Amount in paise: ${amountInPaise}`); // Logging to ensure amount is correct
 
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
-          amount:12628 * 100,
+          amount: amountInPaise,
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
@@ -78,7 +87,7 @@ const PaymentPage = () => {
               });
               if (verifyResponse.ok) {
                 alert('Payment successful!');
-                router.push('/sucess');
+                router.push('/');
               } else {
                 throw new Error('Payment verification failed.');
               }
