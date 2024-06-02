@@ -108,7 +108,7 @@ const Page = () => {
   const confirmBooking = async () => {
     try {
       const roundedPrice = Math.round(price);
-  
+
       const bookingResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
         {
@@ -120,7 +120,7 @@ const Page = () => {
             carId: selectedCar.G7cars123,
             pickupDateTime: pickupDateTime,
             dropoffDateTime: dropoffDateTime,
-            totalPrice: roundedPrice,
+            totalPrice: roundedPrice, 
             discount: discount,
           }),
         }
@@ -131,20 +131,18 @@ const Page = () => {
       }
   
       const bookingData = await bookingResponse.json();
+
   
-      const orderResponse = await fetch(
-        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: roundedPrice,
-            currency: "INR",
-          }),
-        }
-      );
+      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: roundedPrice,
+          currency: "INR",
+        }),
+      });
   
       if (!orderResponse.ok) {
         const errorDetails = await orderResponse.json();
@@ -152,15 +150,14 @@ const Page = () => {
       }
   
       const orderData = await orderResponse.json();
-      const orderId = orderData.orderId;
   
-      window.location.href = `https://api.razorpay.com/v1/checkout/embedded?orderId=${orderId}`;
+      router.push(`/payment?orderId=${orderData.id}&amount=${roundedPrice}`);
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
     }
-  };
-  
+};
+
   
 
   const cancelConfirmation = () => {
