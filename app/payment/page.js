@@ -67,6 +67,7 @@ const PaymentPage = () => {
   return (
     <div>
       <Header />
+      <div className='h-screen flex justify-center'>
 <form method="POST" action="https://api.razorpay.com/v1/checkout/embedded">
   <input type="hidden" name="key_id" value="rzp_test_URbADkFMr16GIz"/>
   <input type="hidden" name="amount" value={amount * 100}/> 
@@ -80,12 +81,13 @@ const PaymentPage = () => {
   <button>Submit</button>
 </form>
 
+
       {!processing && (
         <button onClick={() => router.push('/')} disabled={processing}>
           Cancel Payment
         </button>
       )}
-
+</div>
       <Footer />
     </div>
   );
