@@ -57,13 +57,12 @@ const PaymentPage = () => {
 
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
-          amount: amount*100,
+          amount: amount*1000,
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
           order_id: orderId,
           handler: async function (response) {
-            console.log(amount)
             try {
               setProcessing(true);
               const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify-payment', {
