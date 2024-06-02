@@ -76,7 +76,7 @@ const PaymentPage = () => {
               });
               if (verifyResponse.ok) {
                 alert('Payment successful!');
-                router.push('/success');
+                router.push('/sucess');
               } else {
                 const errorMessage = await verifyResponse.text();
                 throw new Error(`Payment verification failed: ${errorMessage}`);
