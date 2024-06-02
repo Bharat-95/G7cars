@@ -110,7 +110,7 @@ const Page = () => {
       router.push(redirectUrl);
       return;
     }
-
+  
     try {
       const response = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
@@ -131,24 +131,33 @@ const Page = () => {
       if (!response.ok) {
         throw new Error("Failed to confirm booking");
       }
-
-      setShowConfirmation(false);
-      setSelectedCar(null);
-      setPrice(0);
-      setDiscount(0);
-
-      router.push("/payment");
+  
+      const bookingData = await response.json();
+  
+      const orderResponse = await fetch("/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: price,
+          currency: "INR",
+          receipt: bookingData.receiptId,
+        }),
+      });
+  
+      if (!orderResponse.ok) {
+        throw new Error("Failed to create order");
+      }
+  
+      const orderData = await orderResponse.json();
+  
+      router.push(`/payment?orderId=${orderData.id}&amount=${price}`);
     } catch (error) {
       console.error("Error confirming booking:", error);
     }
   };
-
-  const cancelConfirmation = () => {
-    setShowConfirmation(false);
-    setSelectedCar(null);
-    setPrice(0);
-    setDiscount(0);
-  };
+  
 
   return (
     <div className="min-h-screen bg-white">
