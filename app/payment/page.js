@@ -5,9 +5,9 @@ import { useUser } from '@clerk/clerk-react';
 
 const PaymentPage = () => {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
   const [orderId, setOrderId] = useState(null);
   const [amount, setAmount] = useState(null);
-  const { user } = useUser();
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
@@ -27,6 +27,11 @@ const PaymentPage = () => {
   }, [router.query]);
 
   useEffect(() => {
+    if (!isLoaded) {
+      console.log("User data is not loaded yet");
+      return;
+    }
+
     if (!orderId || !amount || !user) {
       console.log("Missing parameters:", {
         orderId,
@@ -117,7 +122,7 @@ const PaymentPage = () => {
 
     initializeRazorpay();
 
-  }, [orderId, amount, user, router]);
+  }, [orderId, amount, user, isLoaded, router]);
 
   return (
     <div>
