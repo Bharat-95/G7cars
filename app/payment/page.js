@@ -17,7 +17,7 @@ const PaymentPage = () => {
 
     if (orderIdParam && amountParam) {
       setOrderId(orderIdParam);
-      setAmount(amountParam);
+      setAmount(Number(amountParam));  // Ensure amount is parsed as a number
     }
   }, [router.query]);
 
