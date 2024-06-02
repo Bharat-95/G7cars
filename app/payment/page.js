@@ -23,6 +23,11 @@ const PaymentPage = () => {
 
   useEffect(() => {
     if (!orderId || !amount || !user) {
+      console.log("Missing parameters:", {
+        orderId,
+        amount,
+        user: user ? { fullName: user.fullName, email: user.primaryEmailAddress?.emailAddress } : null,
+      });
       return;
     }
 
@@ -50,9 +55,12 @@ const PaymentPage = () => {
           return;
         }
 
+        const amountInPaise = amount * 100;
+        console.log(`Amount in paise: ${amountInPaise}`);
+
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
-          amount: amount * 100 ,
+          amount: amountInPaise, // Ensure amount is multiplied by 100
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
