@@ -81,7 +81,7 @@ const Page = () => {
     const remainingHours = hours % 24;
     const carPricePerDay = parseFloat(car.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
-    let totalPrice = carPricePerDay * days + carPricePerHour * remainingHours;
+    let totalPrice = Math.round(carPricePerDay * days + carPricePerHour * remainingHours);
     let discountAmount = 0;
   
     if (days === 0 && remainingHours < 24) {
@@ -89,10 +89,10 @@ const Page = () => {
     }
   
     if (days >= 10) {
-      discountAmount = totalPrice * 0.1;
+      discountAmount = Math.round(totalPrice * 0.1);
       totalPrice *= 0.9;
     } else if (days >= 4) {
-      discountAmount = totalPrice * 0.05;
+      discountAmount = Math.round(totalPrice * 0.05);
       totalPrice *= 0.95;
     }
   
@@ -103,15 +103,13 @@ const Page = () => {
   
     saveBookingDataToLocalstorage();
   };
-
-  const confirmBooking = async () => {
-    if (!isSignedIn) {
-      const redirectUrl = `/sign-in?from=${encodeURIComponent('/SearchCars')}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
-      router.push(redirectUrl);
-      return;
-    }
   
+  
+  const confirmBooking = async () => {
     try {
+      // Round the price to the nearest integer
+      const roundedPrice = Math.round(price);
+  
       const bookingResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
         {
@@ -123,7 +121,7 @@ const Page = () => {
             carId: selectedCar.G7cars123,
             pickupDateTime: pickupDateTime,
             dropoffDateTime: dropoffDateTime,
-            totalPrice: price,
+            totalPrice: roundedPrice, 
             discount: discount,
           }),
         }
@@ -135,25 +133,9 @@ const Page = () => {
   
       const bookingData = await bookingResponse.json();
   
-      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: price,
-          currency: "INR",
-        }),
-      });
+      const razorpayCheckoutUrl = `https://checkout.razorpay.com/v1/payment?orderId=${bookingData.id}&amount=${roundedPrice}`;
   
-      if (!orderResponse.ok) {
-        const errorDetails = await orderResponse.json();
-        throw new Error(`Failed to create order: ${errorDetails.message}`);
-      }
-  
-      const orderData = await orderResponse.json();
-  
-      router.push(`/payment?orderId=${orderData.id}&amount=${price}`);
+      window.location.href = razorpayCheckoutUrl;
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
