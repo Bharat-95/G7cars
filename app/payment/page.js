@@ -23,7 +23,7 @@ const PaymentPage = () => {
       handler: async (response) => {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
 
-        const verifyResponse = await fetch('/verify-payment', {
+        const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify-payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
