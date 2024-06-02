@@ -62,7 +62,7 @@ const PaymentPage = () => {
         }
 
         const amountInPaise = Math.round(amount * 100);
-        console.log(`Amount in paise: ${amountInPaise}`); // Logging to ensure amount is correct
+        console.log(`Amount in paise: ${amountInPaise}`);
 
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
@@ -106,7 +106,15 @@ const PaymentPage = () => {
             color: '#F37254',
           },
         };
+        
         const rzp = new window.Razorpay(options);
+        
+        rzp.on('payment.failed', function (response) {
+          console.error(response.error);
+          alert('Payment failed. Please try again.');
+          setProcessing(false);
+        });
+        
         rzp.open();
       } catch (error) {
         console.error('Failed to initialize Razorpay:', error);
