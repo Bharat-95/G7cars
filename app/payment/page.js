@@ -52,7 +52,7 @@ const PaymentPage = () => {
 
         const options = {
           key: 'rzp_test_URbADkFMr16GIz',
-          amount: amount * 100,
+          amount: amount,
           currency: 'INR',
           name: 'G7Cars',
           description: 'Car rental payment',
