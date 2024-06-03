@@ -76,12 +76,15 @@ const PaymentPage = () => {
                   signature: response.razorpay_signature,
                 }),
               });
+
+              const responseBody = await verifyResponse.text();
+
               if (verifyResponse.ok) {
                 alert('Payment successful!');
                 router.push('/success');
               } else {
-                const errorMessage = await verifyResponse.text();
-                throw new Error(`Payment verification failed: ${errorMessage}`);
+                console.error(`Payment verification failed: ${responseBody}`);
+                throw new Error(`Payment verification failed: ${responseBody}`);
               }
             } catch (error) {
               console.error('Unable to process the payment:', error);
