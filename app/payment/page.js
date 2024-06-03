@@ -28,13 +28,12 @@ const PaymentPage = () => {
     } 
 
     return () => {
-      // Cleanup code if needed
     };
   }, [isLoaded, user]);
 
   useEffect(() => {
     if (orderId && amount) {
-      displayRazorpay(); // Call displayRazorpay when orderId and amount are available
+      displayRazorpay();
     }
   }, [orderId, amount]);
 
@@ -61,8 +60,7 @@ const PaymentPage = () => {
           key: "rzp_test_r6FiJfddJh76SI",
           amount: amount.toString(),
           currency: currency,
-          name: "Soumya Corp.",
-          description: "Test Transaction",
+          name: "G7 Cars",
           order_id: order_id,
           handler: async function (response) {
             const data = {
