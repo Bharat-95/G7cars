@@ -24,7 +24,7 @@ const PaymentPage = () => {
       } else {
         console.error('Invalid amount parameter:', amountParam);
       }
-    } 
+    }
   }, [isLoaded, user]);
 
   useEffect(() => {
@@ -43,6 +43,7 @@ const PaymentPage = () => {
         }
       });
     };
+
     const initializeRazorpay = async () => {
       if (!orderId || !amount || !user) return;
 
@@ -52,18 +53,19 @@ const PaymentPage = () => {
           alert('Failed to load Razorpay SDK. Please try again.');
           return;
         }
-        const amountInPaise = amount;
+
+        const amountInPaise = amount * 100;
         var options = {
-          key: process.env.RAZORPAY_API_KEY,
+          key: process.env.NEXT_PUBLIC_RAZORPAY_API_KEY,
           amount: amountInPaise,
-          "currency": "INR",
+          currency: "INR",
           name: 'G7Cars',
           description: 'Car rental payment',
           order_id: orderId,
           handler: async function (response) {
             try {
               setProcessing(true);
-              const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/api/payment/verify', {
+              const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -75,14 +77,11 @@ const PaymentPage = () => {
                 }),
               });
               if (verifyResponse.ok) {
-
-
+                alert('Payment successful!');
+                router.push('/success');
+              } else {
                 const errorMessage = await verifyResponse.text();
                 throw new Error(`Payment verification failed: ${errorMessage}`);
-                
-              } else {
-               alert('Payment successful!');
-                router.push('/sucess');
               }
             } catch (error) {
               console.error('Unable to process the payment:', error);
@@ -93,10 +92,10 @@ const PaymentPage = () => {
           },
           prefill: {
             name: user.fullName,
-            email: user.primaryEmailAddress?.emailAddress,
+            email: user.primaryEmailAddress?.emailAddress || '',
           },
           theme: {
-            color: '##881337',
+            color: '#881337',
           },
         };
         const rzp = new window.Razorpay(options);
@@ -120,7 +119,7 @@ const PaymentPage = () => {
 
   return (
     <div className='flex justify-center items-center text-white'>
-         Please wait......
+      {processing ? 'Processing your payment, please wait...' : 'Please wait...'}
     </div>
   );
 };

@@ -139,7 +139,7 @@ const Page = () => {
       const bookingData = await bookingResponse.json();
 
   
-      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/create/orderId", {
+      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/create/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
