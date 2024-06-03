@@ -56,7 +56,7 @@ const PaymentPage = () => {
 
         const amountInPaise = amount * 100;
         var options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_API_KEY,
+          key: process.env.RAZORPAY_API_KEY,
           amount: amountInPaise,
           currency: "INR",
           name: 'G7Cars',
