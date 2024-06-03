@@ -64,10 +64,9 @@ const PaymentPage = () => {
           description: 'Car rental payment',
           order_id: orderId,
           handler: async function (response) {
-            console.log('Payment handler response:', response);
             try {
               setProcessing(true);
-              const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify-payment', {
+              const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/payment', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
