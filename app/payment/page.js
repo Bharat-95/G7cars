@@ -75,11 +75,14 @@ const PaymentPage = () => {
                 }),
               });
               if (verifyResponse.ok) {
-                alert('Payment successful!');
-                router.push('/sucess');
-              } else {
+
+
                 const errorMessage = await verifyResponse.text();
                 throw new Error(`Payment verification failed: ${errorMessage}`);
+                
+              } else {
+                alert('Payment successful!');
+                router.push('/sucess');
               }
             } catch (error) {
               console.error('Unable to process the payment:', error);
