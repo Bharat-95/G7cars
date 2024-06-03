@@ -99,14 +99,18 @@ const PaymentPage = () => {
             color: '##881337',
           },
         };
-        const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (response) {
-          console.error('Payment failed:', response.error);
-          alert('Payment failed. Please try again.');
-          setProcessing(false);
-        });
-
-        rzp.open();
+        var rzp1 = new window.Razorpay(options);
+    rzp1.on("payment.failed", function (response) {
+      alert(response.error.code);
+      alert(response.error.description);
+      alert(response.error.source);
+      alert(response.error.step);
+      alert(response.error.reason);
+      alert(response.error.metadata.order_id);
+      alert(response.error.metadata.payment_id);
+    });
+    rzp1.open();
+    e.preventDefault();
       } catch (error) {
         console.error('Failed to initialize Razorpay:', error);
         alert('Failed to load Razorpay SDK. Please try again.');
