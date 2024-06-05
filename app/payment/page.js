@@ -80,6 +80,7 @@ const PaymentPage = () => {
               });
 
               const responseBody = await verifyResponse.text();
+              console.log(responseBody)
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
