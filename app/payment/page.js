@@ -77,8 +77,8 @@ const PaymentPage = () => {
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  orderId: response.orderId,
                   signature: response.razorpay_signature,
+                  secret: 'EaXIwNI6oDhQX6ul7UjWrv25',
                 }),
               });
 
