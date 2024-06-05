@@ -1,11 +1,11 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
 
-const PaymentPage = ({ bookingId }) => {
+const PaymentPage = () => {
   const router = useRouter();
   const { user, isLoaded } = useUser();
   const [orderId, setOrderId] = useState(null);
@@ -47,7 +47,7 @@ const PaymentPage = ({ bookingId }) => {
     };
 
     const initializeRazorpay = async () => {
-      if (!orderId || !amount || !user || !bookingId ) return;
+      if (!orderId || !amount || !user) return;
 
       try {
         const scriptLoaded = await loadRazorpayScript();
@@ -76,13 +76,10 @@ const PaymentPage = ({ bookingId }) => {
                   orderId: response.order_id,
                   paymentId: response.payment_id,
                   signature: response.razorpay_signature,
-                  bookingId: bookingId,
-                  carId: carId     
                 }),
               });
 
-              const responseBody = await verifyResponse.json();
-              console.log('Verification result:', responseBody);
+              const responseBody = await verifyResponse.text();
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
@@ -126,15 +123,15 @@ const PaymentPage = ({ bookingId }) => {
     if (orderId && amount && user) {
       initializeRazorpay();
     }
-  }, [orderId, amount, user, router, bookingId]);
+  }, [orderId, amount, user, router]);
 
   return (
     <div className='min-h-screen'>
       <Header />
       <div className='flex justify-center items-center text-white h-screen'>
-        {processing ? 'Processing your payment, please wait...' : 'Please wait...'}
-      </div>
-      <Footer />
+      {processing ? 'Processing your payment, please wait...' : 'Please wait...'}
+    </div>
+    <Footer />
     </div>
   );
 };
