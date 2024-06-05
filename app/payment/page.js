@@ -48,14 +48,14 @@ const PaymentPage = () => {
 
     const initializeRazorpay = async () => {
       if (!orderId || !amount || !user || !bookingId || !carId) return;
-    
+
       try {
         const scriptLoaded = await loadRazorpayScript();
         if (!scriptLoaded) {
           alert('Failed to load Razorpay SDK. Please try again.');
           return;
         }
-    
+
         const amountInPaise = amount * 100;
         var options = {
           key: process.env.RAZORPAY_API_KEY,
@@ -77,13 +77,13 @@ const PaymentPage = () => {
                   paymentId: response.payment_id,
                   signature: response.razorpay_signature,
                   bookingId: bookingId,
-                  carId: carId
+                  carId: carId     
                 }),
               });
-    
+
               const responseBody = await verifyResponse.json();
-              console.log('Verification result:', responseBody);
-    
+              console.log('Verification result:', verifyResult);
+
               if (verifyResponse.ok) {
                 alert('Payment successful!');
                 router.push('/success');
@@ -115,7 +115,7 @@ const PaymentPage = () => {
           alert('Payment failed. Please try again.');
           setProcessing(false);
         });
-    
+
         rzp.open();
       } catch (error) {
         console.error('Failed to initialize Razorpay:', error);
