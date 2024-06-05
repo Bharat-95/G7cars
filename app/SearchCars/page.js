@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "../Header";
@@ -63,17 +63,18 @@ const Page = () => {
     fetchData();
   }, []);
 
-  const saveBookingDataToLocalstorage = () => {
-    localStorage.setItem("pickupDateTime", pickupDateTime);
-    localStorage.setItem("dropDateTime", dropoffDateTime);
+  const isCarAvailable = (car) => {
+    // You can implement your logic here to check the availability status
+    // For example, you can check if the car's status is "available"
+    return car.status === "available";
   };
 
   const handleBookCar = (car) => {
-    if (!pickupDateTime || !dropoffDateTime) {
-      alert("Please select pickup/drop-off dates");
+    if (!isCarAvailable(car)) {
+      alert("This car is not available for booking");
       return;
     }
-  
+
     const hours = Math.ceil(
       (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
     );
@@ -103,8 +104,12 @@ const Page = () => {
   
     saveBookingDataToLocalstorage();
   };
-  
-  
+
+  const saveBookingDataToLocalstorage = () => {
+    localStorage.setItem("pickupDateTime", pickupDateTime);
+    localStorage.setItem("dropDateTime", dropoffDateTime);
+  };
+
   const confirmBooking = async () => {
      if (!isSignedIn) {
       const redirectUrl = `/sign-in?from=${encodeURIComponent('/SearchCars')}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
@@ -163,9 +168,7 @@ const Page = () => {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
     }
-};
-
-  
+  };
 
   const cancelConfirmation = () => {
     setShowConfirmation(false);
@@ -248,9 +251,11 @@ const Page = () => {
               </div>
               <button
                 onClick={() => handleBookCar(car)}
-                className="flex justify-center py-4 px-2 bg-rose-900 text-white rounded-md hover:bg-rose-900/95 w-52"
+                className={`flex justify-center py-4 px-2 rounded-md w-52 ${
+                  isCarAvailable(car) ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                }`}
               >
-                Rent car
+                {isCarAvailable(car) ? "Rent car" : "Not available"}
               </button>
             </div>
           </div>
