@@ -63,18 +63,10 @@ const Page = () => {
     fetchData();
   }, []);
 
-  const isCarAvailable = (car) => {
-    return car.status === "Available" && car.Availability === "Available";
-  };
 
   const handleBookCar = (car) => {
     if (!pickupDateTime || !dropoffDateTime) {
       alert("Please select both pickup and drop-off dates");
-      return;
-    }
-
-    if (!isCarAvailable(car)) {
-      alert("This car is not available for booking");
       return;
     }
 
@@ -269,13 +261,13 @@ const Page = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleBookCar(car)}
-                  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
-                    isCarAvailable(car) ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  }`}
-                >
-                  {isCarAvailable(car) ? "Rent car" : "Not available"}
-                </button>
+  onClick={() => handleBookCar(car)}
+  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
+    car.Availability === "Available" ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
+  }`}
+>
+  {car.Availability === "Available" ? "Rent car" : "Not available"}
+</button>
               </div>
             </div>
           ))
