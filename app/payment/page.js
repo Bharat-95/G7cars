@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/clerk-react';
@@ -123,7 +123,7 @@ const PaymentPage = ({ bookingId, carId }) => {
       }
     };
 
-    if (orderId && amount && user && bookingId && carId) {
+    if (orderId && amount && user) {
       initializeRazorpay();
     }
   }, [orderId, amount, user, router, bookingId, carId]);
