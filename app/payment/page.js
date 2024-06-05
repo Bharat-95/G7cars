@@ -78,7 +78,8 @@ const PaymentPage = () => {
                 },
                 body: JSON.stringify({
                   signature: response.razorpay_signature,
-                  paymentId: response.razorpay_payment_id
+                  paymentId: response.razorpay_payment_id,
+                  orderId: response.razorpay_order_id
                 }),
               });
 
