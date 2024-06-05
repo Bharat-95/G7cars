@@ -21,6 +21,7 @@ const PaymentPage = () => {
     
     if (orderIdParam) {
       setOrderId(orderIdParam);
+      console.log('orderId:', orderIdParam)
       const parsedAmount = Number(amountParam);
       if (!isNaN(parsedAmount)) {
         setAmount(parsedAmount);
