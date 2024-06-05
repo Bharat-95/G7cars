@@ -312,12 +312,14 @@ const Page = () => {
               )}
             </div>
             <div className="mt-4 flex justify-center">
-              <button
-                onClick={confirmBooking}
-                className="px-4 py-2 bg-rose-900 text-white rounded-md hover:bg-rose-900/95"
-              >
-                Confirm Booking
-              </button>
+            <button
+  onClick={() => handleBookCar(car)}
+  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
+    isCarAvailable(car) ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
+  }`}
+>
+  {isCarAvailable(car) ? "Rent car" : "Not available"}
+</button>
             </div>
           </div>
         </div>
