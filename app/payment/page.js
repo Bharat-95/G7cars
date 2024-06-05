@@ -76,10 +76,13 @@ const PaymentPage = () => {
                   orderId: response.order_id,
                   paymentId: response.payment_id,
                   signature: response.razorpay_signature,
+                  bookingId: bookingId,
+                  carId: carId     
                 }),
               });
 
-              const responseBody = await verifyResponse.text();
+              const responseBody = await verifyResponse.json();
+              console.log('Verification result:', verifyResult);
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
