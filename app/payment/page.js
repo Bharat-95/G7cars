@@ -14,11 +14,12 @@ const PaymentPage = () => {
 
   useEffect(() => {
     if (!isLoaded || !user) return;
-
+  
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
-    if (orderIdParam && amountParam) {
+    
+    if (orderIdParam) {
       setOrderId(orderIdParam);
       const parsedAmount = Number(amountParam);
       if (!isNaN(parsedAmount)) {
@@ -26,6 +27,8 @@ const PaymentPage = () => {
       } else {
         console.error('Invalid amount parameter:', amountParam);
       }
+    } else {
+      console.error('orderId parameter is missing');
     }
   }, [isLoaded, user]);
 
@@ -74,13 +77,11 @@ const PaymentPage = () => {
                 },
                 body: JSON.stringify({
                   orderId: response.order_id,
-                  paymentId: response.payment_id,
                   signature: response.razorpay_signature,
                 }),
               });
 
               const responseBody = await verifyResponse.text();
-              console.alert(responseBody)
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
