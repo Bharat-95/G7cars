@@ -5,7 +5,7 @@ import { useUser } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
 
-const PaymentPage = () => {
+const PaymentPage = ({ bookingId, carId }) => {
   const router = useRouter();
   const { user, isLoaded } = useUser();
   const [orderId, setOrderId] = useState(null);
@@ -46,7 +46,7 @@ const PaymentPage = () => {
       });
     };
 
-    const initializeRazorpay = async (bookingId, carId) => {
+    const initializeRazorpay = async () => {
       if (!orderId || !amount || !user || !bookingId || !carId) return;
 
       try {
@@ -124,9 +124,9 @@ const PaymentPage = () => {
     };
 
     if (orderId && amount && user) {
-      initializeRazorpay(bookingId, carId);
+      initializeRazorpay();
     }
-  }, [orderId, amount, user, router]);
+  }, [orderId, amount, user, router, bookingId, carId]);
 
   return (
     <div className='min-h-screen'>
