@@ -64,12 +64,15 @@ const Page = () => {
   }, []);
 
   const isCarAvailable = (car) => {
-    // You can implement your logic here to check the availability status
-    // For example, you can check if the car's status is "available"
     return car.status === "available";
   };
 
   const handleBookCar = (car) => {
+    if (!pickupDateTime || !dropoffDateTime) {
+      alert("Please select both pickup and drop-off dates");
+      return;
+    }
+
     if (!isCarAvailable(car)) {
       alert("This car is not available for booking");
       return;
@@ -102,16 +105,16 @@ const Page = () => {
     setDiscount(discountAmount);
     setShowConfirmation(true);
   
-    saveBookingDataToLocalstorage();
+    saveBookingDataToLocalstorage(pickupDateTime, dropoffDateTime);
   };
 
-  const saveBookingDataToLocalstorage = () => {
-    localStorage.setItem("pickupDateTime", pickupDateTime);
-    localStorage.setItem("dropDateTime", dropoffDateTime);
+  const saveBookingDataToLocalstorage = (pickupDateTime, dropoffDateTime) => {
+    localStorage.setItem("pickupDateTime", pickupDateTime.toISOString());
+    localStorage.setItem("dropoffDateTime", dropoffDateTime.toISOString());
   };
 
   const confirmBooking = async () => {
-     if (!isSignedIn) {
+    if (!isSignedIn) {
       const redirectUrl = `/sign-in?from=${encodeURIComponent('/SearchCars')}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
       router.push(redirectUrl);
       return;
@@ -129,8 +132,8 @@ const Page = () => {
           },
           body: JSON.stringify({
             carId: selectedCar.G7cars123,
-            pickupDateTime: pickupDateTime,
-            dropoffDateTime: dropoffDateTime,
+            pickupDateTime: pickupDateTime.toISOString(),
+            dropoffDateTime: dropoffDateTime.toISOString(),
             totalPrice: roundedPrice, 
             discount: discount,
           }),
@@ -143,6 +146,19 @@ const Page = () => {
   
       const bookingData = await bookingResponse.json();
 
+      // Update car availability to "not available"
+      await fetch(
+        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars/${selectedCar.G7cars123}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: "booked",
+          }),
+        }
+      );
   
       const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
         method: "POST",
@@ -163,7 +179,7 @@ const Page = () => {
       const orderData = await orderResponse.json();
       const orderId = orderData.orderId;
   
-      router.push(`/payment?orderId=${orderId}&amount=${roundedPrice}`)
+      router.push(`/payment?orderId=${orderId}&amount=${roundedPrice}`);
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
@@ -210,56 +226,61 @@ const Page = () => {
         </div>
       </div>
 
-      
       <div className="lg:grid lg:grid-cols-4 md:grid md:grid-cols-2">
-        {data.map((car) => (
-          <div key={car.G7cars123} className="mx-20 my-10 cursor-pointer">
-            <div className="h-96 w-64 duration-500 p-4 rounded-xl hover:border-[2px] hover:border-rose-950 space-y-4">
-              <div className="font-semibold text-xl text-rose-900">
-                {car.Name}
-              </div>
-              <div>{car.Price}/day</div>
-              <div>
-                <Image
-                  src={car.Coverimage[0]}
-                  width={0}
-                  height={0}
-                  alt="No Image Found"
-                  className="w-48 h-36"
-                  unoptimized
-                />
-              </div>
-              <div className="gap-4 flex justify-evenly">
-                <div className="flex flex-col items-center">
-                  <TbManualGearboxFilled size={24} className="text-gray-400" />
-                  <div className="text-[10px]">{car.Gear}</div>
+        {loading ? (
+          <div className="col-span-4 text-center">Loading...</div>
+        ) : error ? (
+          <div className="col-span-4 text-center text-red-600">{error}</div>
+        ) : (
+          data.map((car) => (
+            <div key={car.G7cars123} className="mx-20 my-10 cursor-pointer">
+              <div className="h-96 w-64 duration-500 p-4 rounded-xl hover:border-[2px] hover:border-rose-950 space-y-4">
+                <div className="font-semibold text-xl text-rose-900">
+                  {car.Name}
                 </div>
-                <div className="flex flex-col items-center">
-                  <MdOutlineAirlineSeatReclineNormal
-                    size={24}
-                    className="text-gray-400 space-y-4"
+                <div>{car.Price}/day</div>
+                <div>
+                  <Image
+                    src={car.Coverimage[0]}
+                    width={0}
+                    height={0}
+                    alt="No Image Found"
+                    className="w-48 h-36"
+                    unoptimized
                   />
-                  <div className="text-[10px]">{car.Seating}</div>
                 </div>
-                <div className="flex flex-col items-center">
-                  <BsFillFuelPumpFill
-                    size={24}
-                    className="text-gray-400 space-y-4"
-                  />
-                  <div className="text-[10px]">{car.Fuel}</div>
+                <div className="gap-4 flex justify-evenly">
+                  <div className="flex flex-col items-center">
+                    <TbManualGearboxFilled size={24} className="text-gray-400" />
+                    <div className="text-[10px]">{car.Gear}</div>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <MdOutlineAirlineSeatReclineNormal
+                      size={24}
+                      className="text-gray-400 space-y-4"
+                    />
+                    <div className="text-[10px]">{car.Seating}</div>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <BsFillFuelPumpFill
+                      size={24}
+                      className="text-gray-400 space-y-4"
+                    />
+                    <div className="text-[10px]">{car.Fuel}</div>
+                  </div>
                 </div>
+                <button
+                  onClick={() => handleBookCar(car)}
+                  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
+                    isCarAvailable(car) ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  }`}
+                >
+                  {isCarAvailable(car) ? "Rent car" : "Not available"}
+                </button>
               </div>
-              <button
-                onClick={() => handleBookCar(car)}
-                className={`flex justify-center py-4 px-2 rounded-md w-52 ${
-                  isCarAvailable(car) ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                }`}
-              >
-                {isCarAvailable(car) ? "Rent car" : "Not available"}
-              </button>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {showConfirmation && (
@@ -312,14 +333,12 @@ const Page = () => {
               )}
             </div>
             <div className="mt-4 flex justify-center">
-            <button
-  onClick={() => handleBookCar(car)}
-  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
-    isCarAvailable(car) ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
-  }`}
->
-  {isCarAvailable(car) ? "Rent car" : "Not available"}
-</button>
+              <button
+                onClick={confirmBooking}
+                className="bg-rose-900 text-white hover:bg-rose-900/95 py-2 px-4 rounded-md"
+              >
+                Confirm Booking
+              </button>
             </div>
           </div>
         </div>
