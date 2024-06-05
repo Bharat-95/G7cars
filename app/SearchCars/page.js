@@ -64,7 +64,7 @@ const Page = () => {
   }, []);
 
   const isCarAvailable = (car) => {
-    return car.status === "available";
+    return car.status === "Available" && car.Availability === "Available";
   };
 
   const handleBookCar = (car) => {
