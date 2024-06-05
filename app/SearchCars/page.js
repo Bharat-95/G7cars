@@ -146,7 +146,6 @@ const Page = () => {
   
       const bookingData = await bookingResponse.json();
 
-      // Update car availability to "not available"
       await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars/${selectedCar.G7cars123}`,
         {
