@@ -128,7 +128,7 @@ const PaymentPage = () => {
   return (
     <div className='min-h-screen'>
       <Header />
-      <div className='flex justify-center items-center text-white'>
+      <div className='flex justify-center items-center text-white h-screen'>
       {processing ? 'Processing your payment, please wait...' : 'Please wait...'}
     </div>
     <Footer />
