@@ -82,7 +82,7 @@ const PaymentPage = ({ bookingId, carId }) => {
               });
 
               const responseBody = await verifyResponse.json();
-              console.log('Verification result:', verifyResult);
+              console.log('Verification result:', responseBody);
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
@@ -123,7 +123,7 @@ const PaymentPage = ({ bookingId, carId }) => {
       }
     };
 
-    if (orderId && amount && user) {
+    if (orderId && amount && user && bookingId && carId) {
       initializeRazorpay();
     }
   }, [orderId, amount, user, router, bookingId, carId]);
@@ -132,9 +132,9 @@ const PaymentPage = ({ bookingId, carId }) => {
     <div className='min-h-screen'>
       <Header />
       <div className='flex justify-center items-center text-white h-screen'>
-      {processing ? 'Processing your payment, please wait...' : 'Please wait...'}
-    </div>
-    <Footer />
+        {processing ? 'Processing your payment, please wait...' : 'Please wait...'}
+      </div>
+      <Footer />
     </div>
   );
 };
