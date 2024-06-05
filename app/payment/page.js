@@ -89,7 +89,7 @@ const PaymentPage = () => {
             } catch (error) {
               console.error('Unable to process the payment:', error);
               alert('Payment failed.');
-              router.push('/')
+              router.push('/failed')
             } finally {
               setProcessing(false);
             }
