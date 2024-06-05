@@ -46,7 +46,7 @@ const PaymentPage = () => {
       });
     };
 
-    const initializeRazorpay = async () => {
+    const initializeRazorpay = async (bookingId, carId) => {
       if (!orderId || !amount || !user || !bookingId || !carId) return;
 
       try {
@@ -124,7 +124,7 @@ const PaymentPage = () => {
     };
 
     if (orderId && amount && user) {
-      initializeRazorpay();
+      initializeRazorpay(bookingId, carId);
     }
   }, [orderId, amount, user, router]);
 
