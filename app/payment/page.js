@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/clerk-react';
+import Header from '../Header';
+import Footer from '../Footer';
 
 const PaymentPage = () => {
   const router = useRouter();
@@ -89,7 +91,9 @@ const PaymentPage = () => {
             } catch (error) {
               console.error('Unable to process the payment:', error);
               alert('Payment failed.');
-              router.push('/failed')
+              const timer = setTimeout(() => {
+                router.push('/');
+              }, 6000);
             } finally {
               setProcessing(false);
             }
@@ -122,8 +126,12 @@ const PaymentPage = () => {
   }, [orderId, amount, user, router]);
 
   return (
-    <div className='flex justify-center items-center text-white'>
+    <div className='min-h-screen'>
+      <Header />
+      <div className='flex justify-center items-center text-white'>
       {processing ? 'Processing your payment, please wait...' : 'Please wait...'}
+    </div>
+    <Footer />
     </div>
   );
 };
