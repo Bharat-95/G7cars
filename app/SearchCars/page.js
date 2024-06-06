@@ -309,9 +309,6 @@ const Page = () => {
 >
   {confirmingBooking ? (
     <div className="flex items-center justify-center">
-      <div className="animate-spin mr-2 h-5 w-5">
-        Loading...
-      </div>
       Confirming...
     </div>
   ) : (
