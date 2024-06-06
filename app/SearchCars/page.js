@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "../Header";
@@ -63,27 +63,29 @@ const Page = () => {
     fetchData();
   }, []);
 
-
   const handleBookCar = (car) => {
     if (!pickupDateTime || !dropoffDateTime) {
       alert("Please select both pickup and drop-off dates");
       return;
     }
 
-    const hours = Math.ceil(
-      (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
-    );
+    if (car.Availability !== "Available") {
+      alert("This car is not available for booking");
+      return;
+    }
+
+    const hours = Math.ceil((dropoffDateTime - pickupDateTime) / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
     const carPricePerDay = parseFloat(car.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
     let totalPrice = Math.round(carPricePerDay * days + carPricePerHour * remainingHours);
     let discountAmount = 0;
-  
+
     if (days === 0 && remainingHours < 24) {
       totalPrice *= 1.4;
     }
-  
+
     if (days >= 10) {
       discountAmount = Math.round(totalPrice * 0.1);
       totalPrice *= 0.9;
@@ -91,18 +93,11 @@ const Page = () => {
       discountAmount = Math.round(totalPrice * 0.05);
       totalPrice *= 0.95;
     }
-  
+
     setSelectedCar(car);
     setPrice(totalPrice);
     setDiscount(discountAmount);
     setShowConfirmation(true);
-  
-    saveBookingDataToLocalstorage(pickupDateTime, dropoffDateTime);
-  };
-
-  const saveBookingDataToLocalstorage = (pickupDateTime, dropoffDateTime) => {
-    localStorage.setItem("pickupDateTime", pickupDateTime.toISOString());
-    localStorage.setItem("dropoffDateTime", dropoffDateTime.toISOString());
   };
 
   const confirmBooking = async () => {
@@ -115,28 +110,24 @@ const Page = () => {
     try {
       const roundedPrice = Math.round(price);
 
-      const bookingResponse = await fetch(
-        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            carId: selectedCar.G7cars123,
-            pickupDateTime: pickupDateTime.toISOString(),
-            dropoffDateTime: dropoffDateTime.toISOString(),
-            totalPrice: roundedPrice, 
-            discount: discount,
-          }),
-        }
-      );
-  
-      if (!bookingResponse.ok) {
-        throw new Error("Failed to confirm booking");
+      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: roundedPrice,
+          currency: "INR",
+        }),
+      });
+
+      if (!orderResponse.ok) {
+        const errorDetails = await orderResponse.json();
+        throw new Error(`Failed to create order: ${errorDetails.message}`);
       }
-  
-      const bookingData = await bookingResponse.json();
+
+      const orderData = await orderResponse.json();
+      const orderId = orderData.orderId;
 
       await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars/${selectedCar.G7cars123}`,
@@ -150,27 +141,8 @@ const Page = () => {
           }),
         }
       );
-  
-      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: roundedPrice,
-          currency: "INR",
-        }),
-      });
-  
-      if (!orderResponse.ok) {
-        const errorDetails = await orderResponse.json();
-        throw new Error(`Failed to create order: ${errorDetails.message}`);
-      }
-  
-      const orderData = await orderResponse.json();
-      const orderId = orderData.orderId;
-  
-      router.push(`/payment?orderId=${orderId}&amount=${roundedPrice}`);
+
+      router.push(`/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`);
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
@@ -261,13 +233,13 @@ const Page = () => {
                   </div>
                 </div>
                 <button
-  onClick={() => handleBookCar(car)}
-  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
-    car.Availability === "Available" ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
-  }`}
->
-  {car.Availability === "Available" ? "Rent car" : "Not available"}
-</button>
+                  onClick={() => handleBookCar(car)}
+                  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
+                    car.Availability === "Available" ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  }`}
+                >
+                  {car.Availability === "Available" ? "Rent car" : "Not available"}
+                </button>
               </div>
             </div>
           ))
