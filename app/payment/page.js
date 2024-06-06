@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/clerk-react';
@@ -9,6 +10,8 @@ const PaymentPage = () => {
   const { user, isLoaded } = useUser();
   const [orderId, setOrderId] = useState(null);
   const [amount, setAmount] = useState(null);
+  const [pickupDate, setPickupDate] = useState(null);
+  const [dropDate, setDropDate] = useState(null);
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
@@ -22,6 +25,8 @@ const PaymentPage = () => {
   
     if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
+      setPickupDate(new Date(pickupDateParam));
+      setDropDate(new Date(dropDateParam));
       console.log('orderId:', orderIdParam);
   
       const parsedAmount = Number(amountParam);
@@ -30,111 +35,110 @@ const PaymentPage = () => {
       } else {
         console.error('Invalid amount parameter:', amountParam);
       }
-      const pickupDate = new Date(pickupDateParam);
-      const dropDate = new Date(dropDateParam);
-  
-      console.log('pickupDate:', pickupDate);
-      console.log('dropDate:', dropDate);
-
-      initializeRazorpay(pickupDate, dropDate);
     } else {
       console.error('Required parameters are missing');
     }
-  }, [isLoaded, user, router]);
+  }, [isLoaded, user]);
 
-  const initializeRazorpay = async (pickupDate, dropDate) => {
-    if (!orderId || !amount || !user) return;
-
-    try {
-      const loadRazorpayScript = () => {
-        return new Promise((resolve, reject) => {
-          const existingScript = document.querySelector(`script[src="https://checkout.razorpay.com/v1/checkout.js"]`);
-          if (!existingScript) {
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.async = true;
-            script.onload = () => resolve(true);
-            script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
-            document.body.appendChild(script);
-          } else {
-            resolve(true);
-          }
-        });
-      };
-
-      const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded) {
-        alert('Failed to load Razorpay SDK. Please try again.');
-        return;
-      }
-
-      const amountInPaise = amount * 100;
-      const options = {
-        key: process.env.RAZORPAY_API_KEY,
-        amount: amountInPaise,
-        currency: "INR",
-        name: 'G7Cars',
-        description: 'Car rental payment',
-        order_id: orderId,
-        handler: async function (response) {
-          try {
-            setProcessing(true);
-            const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                signature: response.razorpay_signature,
-                paymentId: response.razorpay_payment_id,
-                orderId: response.razorpay_order_id,
-                carId: response.carId,
-                bookingId: response.razorpay_booking_id,
-                pickupDateTime: pickupDate,
-                dropoffDateTime: dropDate 
-              }),
-            });
-
-            const responseBody = await verifyResponse.text();
-
-            if (verifyResponse.ok) {
-              alert('Payment successful!');
-              router.push('/success');
-            } else {
-              console.error(`Payment verification failed: ${responseBody}`);
-              throw new Error(`Payment verification failed: ${responseBody}`);
-            }
-          } catch (error) {
-            console.error('Unable to process the payment:', error);
-            alert('Payment failed.');
-            const timer = setTimeout(() => {
-              router.push('/');
-            }, 6000);
-          } finally {
-            setProcessing(false);
-          }
-        },
-        prefill: {
-          name: user.fullName,
-          email: user.primaryEmailAddress?.emailAddress || '',
-        },
-        theme: {
-          color: '#881337',
-        },
-      };
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response) {
-        console.error('Payment failed:', response.error);
-        alert('Payment failed. Please try again.');
-        setProcessing(false);
+  useEffect(() => {
+    const loadRazorpayScript = () => {
+      return new Promise((resolve, reject) => {
+        const existingScript = document.querySelector(`script[src="https://checkout.razorpay.com/v1/checkout.js"]`);
+        if (!existingScript) {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.async = true;
+          script.onload = () => resolve(true);
+          script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
+          document.body.appendChild(script);
+        } else {
+          resolve(true);
+        }
       });
+    };
 
-      rzp.open();
-    } catch (error) {
-      console.error('Failed to initialize Razorpay:', error);
-      alert('Failed to load Razorpay SDK. Please try again.');
+    const initializeRazorpay = async () => {
+      if (!orderId || !amount || !user || !pickupDate || !dropDate) return;
+
+      try {
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          alert('Failed to load Razorpay SDK. Please try again.');
+          return;
+        }
+
+        const amountInPaise = amount * 100;
+        var options = {
+          key: process.env.RAZORPAY_API_KEY,
+          amount: amountInPaise,
+          currency: "INR",
+          name: 'G7Cars',
+          description: 'Car rental payment',
+          order_id: orderId,
+          handler: async function (response) {
+            try {
+              setProcessing(true);
+              const verifyResponse = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/verify', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  signature: response.razorpay_signature,
+                  paymentId: response.razorpay_payment_id,
+                  orderId: response.razorpay_order_id,
+                  carId: response.carId,
+                  bookingId: response.razorpay_booking_id,
+                  pickupDateTime: pickupDate,
+                  dropoffDateTime: dropDate 
+                }),
+              });
+
+              const responseBody = await verifyResponse.text();
+
+              if (verifyResponse.ok) {
+                alert('Payment successful!');
+                router.push('/success');
+              } else {
+                console.error(`Payment verification failed: ${responseBody}`);
+                throw new Error(`Payment verification failed: ${responseBody}`);
+              }
+            } catch (error) {
+              console.error('Unable to process the payment:', error);
+              alert('Payment failed.');
+              const timer = setTimeout(() => {
+                router.push('/');
+              }, 6000);
+            } finally {
+              setProcessing(false);
+            }
+          },
+          prefill: {
+            name: user.fullName,
+            email: user.primaryEmailAddress?.emailAddress || '',
+          },
+          theme: {
+            color: '#881337',
+          },
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          console.error('Payment failed:', response.error);
+          alert('Payment failed. Please try again.');
+          setProcessing(false);
+        });
+
+        rzp.open();
+      } catch (error) {
+        console.error('Failed to initialize Razorpay:', error);
+        alert('Failed to load Razorpay SDK. Please try again.');
+      }
+    };
+
+    if (orderId && amount && user && pickupDate && dropDate) {
+      initializeRazorpay();
     }
-  };
+  }, [orderId, amount, user, pickupDate, dropDate, router]);
 
   return (
     <div className='min-h-screen'>
