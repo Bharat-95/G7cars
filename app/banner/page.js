@@ -32,7 +32,7 @@ const Banner = () => {
         if (!pickupDateTime) return filterTime(time);
       
         const pickUpTime = new Date(pickupDateTime);
-        pickUpTime.setHours(pickUpTime.getHours() + 12);
+        pickUpTime.setHours(pickUpTime.getHours() );
       
         return time.getTime() >= pickUpTime.getTime();
       };
