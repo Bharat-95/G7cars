@@ -18,20 +18,29 @@ const PaymentPage = () => {
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
-    
-    if (orderIdParam) {
+    const pickupDateParam = params.get('pickupDateTime');
+    const dropDateParam = params.get('dropoffDateTime');
+  
+    if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
-      console.log('orderId:', orderIdParam)
+      console.log('orderId:', orderIdParam);
+  
       const parsedAmount = Number(amountParam);
       if (!isNaN(parsedAmount)) {
         setAmount(parsedAmount);
       } else {
         console.error('Invalid amount parameter:', amountParam);
       }
+      const pickupDate = new Date(pickupDateParam);
+      const dropDate = new Date(dropDateParam);
+  
+      console.log('pickupDate:', pickupDate);
+      console.log('dropDate:', dropDate);
     } else {
-      console.error('orderId parameter is missing');
+      console.error('Required parameters are missing');
     }
   }, [isLoaded, user]);
+  
 
   useEffect(() => {
     const loadRazorpayScript = () => {
