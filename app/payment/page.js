@@ -15,6 +15,7 @@ const PaymentPage = () => {
   const [processing, setProcessing] = useState(false);
   const [carId, setCarId] = useState(null);
   
+  
 
   useEffect(() => {
     if (!isLoaded || !user) return;

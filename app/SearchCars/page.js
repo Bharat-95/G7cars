@@ -21,6 +21,9 @@ const Page = () => {
   const [price, setPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmingBooking, setConfirmingBooking] = useState(false);
+
+
   const { isSignedIn } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -106,7 +109,8 @@ const Page = () => {
       router.push(redirectUrl);
       return;
     }
-
+    if (confirmingBooking) return;
+    setConfirmingBooking(true);
     try {
       const roundedPrice = Math.round(price);
 
@@ -146,6 +150,8 @@ const Page = () => {
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
+    }finally {
+      setConfirmingBooking(false);
     }
   };
 
@@ -296,12 +302,22 @@ const Page = () => {
               )}
             </div>
             <div className="mt-4 flex justify-center">
-              <button
-                onClick={confirmBooking}
-                className="bg-rose-900 text-white hover:bg-rose-900/95 py-2 px-4 rounded-md"
-              >
-                Confirm Booking
-              </button>
+            <button
+  onClick={confirmBooking}
+  disabled={confirmingBooking}
+  className={`bg-rose-900 text-white py-2 px-4 rounded-md ${confirmingBooking ? 'opacity-50 cursor-not-allowed' : 'hover:bg-rose-900/95'}`}
+>
+  {confirmingBooking ? (
+    <div className="flex items-center justify-center">
+      <div className="animate-spin mr-2 h-5 w-5">
+        Loading...
+      </div>
+      Confirming...
+    </div>
+  ) : (
+    'Confirm Booking'
+  )}
+</button>
             </div>
           </div>
         </div>
