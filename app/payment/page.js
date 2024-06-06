@@ -89,9 +89,9 @@ const PaymentPage = () => {
                   orderId: response.razorpay_order_id,
                   carId: response.carId,
                   bookingId: response.razorpay_booking_id,
-                  pickupDateTime: pickupDate,
-                  dropoffDateTime: dropDate 
-                }),
+                  pickupDateTime: pickupDate.toISOString(),
+                  dropoffDateTime: dropDate.toISOString()
+                }),    
               });
 
               const responseBody = await verifyResponse.text();
