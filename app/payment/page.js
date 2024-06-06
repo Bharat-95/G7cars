@@ -59,16 +59,16 @@ const PaymentPage = () => {
       });
     };
 
-    const initializeRazorpay = async () => {
+    const initializeRazorpay = async (pickupDate, dropDate) => {
       if (!orderId || !amount || !user) return;
-
+    
       try {
         const scriptLoaded = await loadRazorpayScript();
         if (!scriptLoaded) {
           alert('Failed to load Razorpay SDK. Please try again.');
           return;
         }
-
+    
         const amountInPaise = amount * 100;
         var options = {
           key: process.env.RAZORPAY_API_KEY,
@@ -90,12 +90,14 @@ const PaymentPage = () => {
                   paymentId: response.razorpay_payment_id,
                   orderId: response.razorpay_order_id,
                   carId: response.carId,
-                  bookingId: response.razorpay_booking_id
+                  bookingId: response.razorpay_booking_id,
+                  pickupDateTime: pickupDate,
+                  dropoffDateTime: dropDate 
                 }),
               });
-
+    
               const responseBody = await verifyResponse.text();
-
+    
               if (verifyResponse.ok) {
                 alert('Payment successful!');
                 router.push('/sucess');
@@ -127,17 +129,18 @@ const PaymentPage = () => {
           alert('Payment failed. Please try again.');
           setProcessing(false);
         });
-
+    
         rzp.open();
       } catch (error) {
         console.error('Failed to initialize Razorpay:', error);
         alert('Failed to load Razorpay SDK. Please try again.');
       }
     };
-
+    
     if (orderId && amount && user) {
-      initializeRazorpay();
+      initializeRazorpay(pickupDate, dropDate);
     }
+    
   }, [orderId, amount, user, router]);
 
   return (
