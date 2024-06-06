@@ -89,8 +89,8 @@ const PaymentPage = () => {
                   orderId: response.razorpay_order_id,
                   carId: response.carId,
                   bookingId: response.razorpay_booking_id,
-                  pickupDate,
-                  dropDate,
+                  pickupDateTime:pickupDate,
+                  dropoffDateTime:dropDate,
                 }),    
               });
 
