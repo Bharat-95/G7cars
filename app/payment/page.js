@@ -13,6 +13,7 @@ const PaymentPage = () => {
   const [pickupDate, setPickupDate] = useState(null);
   const [dropDate, setDropDate] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [carId, setCarId] = useState(null);
   
 
   useEffect(() => {
@@ -25,13 +26,12 @@ const PaymentPage = () => {
     const dropDateParam = params.get('dropoffDateTime');
     const carIdParam = params.get('carId');
 
-    console.log(carIdParam);
   
     if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
       setPickupDate(new Date(pickupDateParam));
       setDropDate(new Date(dropDateParam));
-      console.log('orderId:', orderIdParam);
+      setCarId(carIdParam);
   
       const parsedAmount = Number(amountParam);
       if (!isNaN(parsedAmount)) {
@@ -91,7 +91,7 @@ const PaymentPage = () => {
                   signature: response.razorpay_signature,
                   paymentId: response.razorpay_payment_id,
                   orderId: response.razorpay_order_id,
-                  carId:G7cars123,
+                  carId: carId,
                   bookingId: response.razorpay_booking_id,
                   pickupDateTime:pickupDate,
                   dropoffDateTime:dropDate,
