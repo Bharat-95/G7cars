@@ -6,7 +6,7 @@ import Header from '../Header';
 import Footer from '../Footer';
 import twilio from 'twilio';
 
-// Initialize the Twilio client
+
 const client = twilio('AC1f39abf23cbe3d99676f15fadc70c59f', '6e2377cc97d6b3236a46f68c124fbf11');
 
 const PaymentPage = () => {
@@ -159,7 +159,7 @@ const PaymentPage = () => {
   
         Have a Great day!`,
         from: 'whatsapp:+14155238886', 
-        to: `whatsapp:${user.primaryPhoneNumber}`,
+        to: `whatsapp:${user.primaryPhoneNumber?.primaryPhoneNumber}`,
       });
     } catch (error) {
       console.error('Error sending WhatsApp message:', error);
