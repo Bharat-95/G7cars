@@ -10,8 +10,8 @@ import Image from "next/image";
 import { IoIosClose } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -23,7 +23,6 @@ const Page = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmingBooking, setConfirmingBooking] = useState(false);
 
-
   const { isSignedIn } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,7 +33,9 @@ const Page = () => {
     ? new Date(searchParams.get("dropoffDateTime"))
     : null;
   const [pickupDateTime, setPickupDateTime] = useState(initialPickupDateTime);
-  const [dropoffDateTime, setDropoffDateTime] = useState(initialDropoffDateTime);
+  const [dropoffDateTime, setDropoffDateTime] = useState(
+    initialDropoffDateTime
+  );
 
   const fetchData = async () => {
     try {
@@ -46,13 +47,15 @@ const Page = () => {
       }
       const data = await response.json();
 
-      const sortByPrice = cars =>
+      const sortByPrice = (cars) =>
         cars.sort((a, b) => {
-          const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ''));
-          const priceB = parseFloat(b.Price.replace(/[^0-9.-]+/g, ''));
+          const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ""));
+          const priceB = parseFloat(b.Price.replace(/[^0-9.-]+/g, ""));
           return priceA - priceB;
         });
-      const filteredData = data.filter(car => car.Seating === "5 Seater" || car.Seating === "7 Seater");
+      const filteredData = data.filter(
+        (car) => car.Seating === "5 Seater" || car.Seating === "7 Seater"
+      );
       const sortedData = sortByPrice(filteredData);
       setData(sortedData);
       setLoading(false);
@@ -77,12 +80,16 @@ const Page = () => {
       return;
     }
 
-    const hours = Math.ceil((dropoffDateTime - pickupDateTime) / (1000 * 60 * 60));
+    const hours = Math.ceil(
+      (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
+    );
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
     const carPricePerDay = parseFloat(car.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
-    let totalPrice = Math.round(carPricePerDay * days + carPricePerHour * remainingHours);
+    let totalPrice = Math.round(
+      carPricePerDay * days + carPricePerHour * remainingHours
+    );
     let discountAmount = 0;
 
     if (days === 0 && remainingHours < 24) {
@@ -105,7 +112,9 @@ const Page = () => {
 
   const confirmBooking = async () => {
     if (!isSignedIn) {
-      const redirectUrl = `/sign-in?from=${encodeURIComponent('/SearchCars')}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
+      const redirectUrl = `/sign-in?from=${encodeURIComponent(
+        "/SearchCars"
+      )}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
       router.push(redirectUrl);
       return;
     }
@@ -114,16 +123,19 @@ const Page = () => {
     try {
       const roundedPrice = Math.round(price);
 
-      const orderResponse = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: roundedPrice,
-          currency: "INR",
-        }),
-      });
+      const orderResponse = await fetch(
+        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: roundedPrice,
+            currency: "INR",
+          }),
+        }
+      );
 
       if (!orderResponse.ok) {
         const errorDetails = await orderResponse.json();
@@ -146,11 +158,15 @@ const Page = () => {
         }
       );
 
-      router.push(`/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`);
+      router.push(
+        `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
+          selectedCar.G7cars123
+        }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
+      );
     } catch (error) {
       console.error("Error confirming booking:", error);
       alert(`Error confirming booking: ${error.message}`);
-    }finally {
+    } finally {
       setConfirmingBooking(false);
     }
   };
@@ -178,7 +194,7 @@ const Page = () => {
             timeFormat="hh:mm aa"
             timeIntervals={15}
             dateFormat="dd MMMM yyyy, h:mm aa"
-            className='bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-l-xl flex text-center cursor-pointer'
+            className="bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-l-xl flex text-center cursor-pointer"
           />
         </div>
         <div>
@@ -189,7 +205,7 @@ const Page = () => {
             timeFormat="hh:mm aa"
             timeIntervals={15}
             dateFormat="dd MMMM yyyy, h:mm aa"
-            className='bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-r-xl flex text-center cursor-pointer'
+            className="bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-r-xl flex text-center cursor-pointer"
             placeholderText="Change Drop Date"
           />
         </div>
@@ -220,7 +236,10 @@ const Page = () => {
                 </div>
                 <div className="gap-4 flex justify-evenly">
                   <div className="flex flex-col items-center">
-                    <TbManualGearboxFilled size={24} className="text-gray-400" />
+                    <TbManualGearboxFilled
+                      size={24}
+                      className="text-gray-400"
+                    />
                     <div className="text-[10px]">{car.Gear}</div>
                   </div>
                   <div className="flex flex-col items-center">
@@ -241,10 +260,14 @@ const Page = () => {
                 <button
                   onClick={() => handleBookCar(car)}
                   className={`flex justify-center py-4 px-2 rounded-md w-52 ${
-                    car.Availability === "Available" ? "bg-rose-900 text-white hover:bg-rose-900/95" : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    car.Availability === "Available"
+                      ? "bg-rose-900 text-white hover:bg-rose-900/95"
+                      : "bg-gray-300 text-gray-600 cursor-not-allowed"
                   }`}
                 >
-                  {car.Availability === "Available" ? "Rent car" : "Not available"}
+                  {car.Availability === "Available"
+                    ? "Rent car"
+                    : "Not available"}
                 </button>
               </div>
             </div>
@@ -290,7 +313,16 @@ const Page = () => {
                 })}
               </p>
               <p>
-                <strong>Total Duration:</strong> {Math.floor((dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24))} days and {Math.ceil((dropoffDateTime - pickupDateTime) % (1000 * 60 * 60 * 24) / (1000 * 60 * 60))} hours
+                <strong>Total Duration:</strong>{" "}
+                {Math.floor(
+                  (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24)
+                )}{" "}
+                days and{" "}
+                {Math.ceil(
+                  ((dropoffDateTime - pickupDateTime) % (1000 * 60 * 60 * 24)) /
+                    (1000 * 60 * 60)
+                )}{" "}
+                hours
               </p>
               <p>
                 <strong>Total Price:</strong> ₹ {price.toFixed(2)}
@@ -302,19 +334,23 @@ const Page = () => {
               )}
             </div>
             <div className="mt-4 flex justify-center">
-            <button
-  onClick={confirmBooking}
-  disabled={confirmingBooking}
-  className={`bg-rose-900 text-white py-2 px-4 rounded-md ${confirmingBooking ? 'opacity-50 cursor-not-allowed' : 'hover:bg-rose-900/95'}`}
->
-  {confirmingBooking ? (
-    <div className="flex items-center justify-center">
-      Confirming...
-    </div>
-  ) : (
-    'Confirm Booking'
-  )}
-</button>
+              <button
+                onClick={confirmBooking}
+                disabled={confirmingBooking}
+                className={`bg-rose-900 text-white py-2 px-4 rounded-md ${
+                  confirmingBooking
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-rose-900/95"
+                }`}
+              >
+                {confirmingBooking ? (
+                  <div className="flex items-center justify-center">
+                    Confirming...
+                  </div>
+                ) : (
+                  "Confirm Booking"
+                )}
+              </button>
             </div>
           </div>
         </div>
