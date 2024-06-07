@@ -39,14 +39,18 @@ const Page = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars"
-      );
+      const url = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars?pickupDateTime=${encodeURIComponent(
+        pickupDateTime.toISOString()
+      )}&dropoffDateTime=${encodeURIComponent(
+        dropoffDateTime.toISOString()
+      )}`;
+  
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
-
+  
       const sortByPrice = (cars) =>
         cars.sort((a, b) => {
           const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ""));
@@ -64,6 +68,7 @@ const Page = () => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchData();
