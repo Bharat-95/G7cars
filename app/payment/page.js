@@ -97,6 +97,7 @@ const PaymentPage = () => {
                   bookingId: response.razorpay_booking_id,
                   pickupDateTime:pickupDate,
                   dropoffDateTime:dropDate,
+                  phoneNumber: user.primaryPhoneNumber,
                 }),    
               });
 
