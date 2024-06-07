@@ -160,6 +160,7 @@ const PaymentPage = () => {
         Have a Great day!`,
         from: 'whatsapp:+14155238886', 
         to: `whatsapp:${user.primaryPhoneNumber?.primaryPhoneNumber}`,
+        to:'whatsapp:+9640019664'
       });
     } catch (error) {
       console.error('Error sending WhatsApp message:', error);
