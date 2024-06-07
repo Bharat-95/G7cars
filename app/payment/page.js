@@ -5,6 +5,7 @@ import { useUser } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
 
+
 const PaymentPage = () => {
   const router = useRouter();
   const { user, isLoaded } = useUser();
@@ -14,11 +15,12 @@ const PaymentPage = () => {
   const [dropDate, setDropDate] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [carId, setCarId] = useState(null);
-  const [twilioClient, setTwilioClient] = useState(null);
+  
+  
 
   useEffect(() => {
     if (!isLoaded || !user) return;
-
+  
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
@@ -26,12 +28,13 @@ const PaymentPage = () => {
     const dropDateParam = params.get('dropoffDateTime');
     const carIdParam = params.get('carId');
 
+  
     if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
       setPickupDate(new Date(pickupDateParam));
       setDropDate(new Date(dropDateParam));
       setCarId(carIdParam);
-
+  
       const parsedAmount = Number(amountParam);
       if (!isNaN(parsedAmount)) {
         setAmount(parsedAmount);
@@ -101,8 +104,7 @@ const PaymentPage = () => {
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
-                sendTwilioWhatsAppMessage(response.razorpay_booking_id, response.razorpay_payment_id);
-                router.push('/success');
+                router.push('/sucess');
               } else {
                 console.error(`Payment verification failed: ${responseBody}`);
                 throw new Error(`Payment verification failed: ${responseBody}`);
@@ -143,40 +145,6 @@ const PaymentPage = () => {
       initializeRazorpay();
     }
   }, [orderId, amount, user, pickupDate, dropDate, router]);
-
-  useEffect(() => {
-    const fetchTwilioClient = async () => {
-      const twilio = await import('twilio');
-      setTwilioClient(twilio);
-    };
-
-    if (typeof window !== 'undefined') {
-      fetchTwilioClient();
-    }
-  }, []);
-
-  const sendTwilioWhatsAppMessage = async (bookingId, paymentId) => {
-    if (!twilioClient) return;
-
-    const client = twilioClient('AC1f39abf23cbe3d99676f15fadc70c59f', '6e2377cc97d6b3236a46f68c124fbf11');
-
-    try {
-      await client.messages.create({
-        body: `G7cars thanks you for the Booking. We Love to have a valuable customer as you.
-        Your BookingId is : ${bookingId}
-        Your PaymentId is: ${paymentId}
-        From: ${pickupDate}
-        To: ${dropDate}
-
-        Have a Great day!`,
-        from: 'whatsapp:+14155238886',
-        to: `whatsapp:${user.primaryPhoneNumber}`,
-        to:'whatsapp:+919640019664'
-      });
-    } catch (error) {
-      console.error('Error sending WhatsApp message:', error);
-    }
-  };
 
   return (
     <div className='min-h-screen'>
