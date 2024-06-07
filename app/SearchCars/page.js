@@ -37,6 +37,22 @@ const Page = () => {
     initialDropoffDateTime
   );
 
+  const handleMinDropOffTime = (time) => {
+    if (!pickupDateTime) return filterTime(time);
+  
+    const pickUpTime = new Date(pickupDateTime);
+    pickUpTime.setHours(pickUpTime.getHours() + 12);
+  
+    return time.getTime() >= pickUpTime.getTime();
+  };
+
+  const now = new Date();
+  const minPickupDateTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+
+  const filterTime = (time) => {
+      return time.getTime() >= minPickupDateTime.getTime();
+  };
+
   const fetchData = async () => {
     try {
       const url = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars?pickupDateTime=${encodeURIComponent(
@@ -69,10 +85,9 @@ const Page = () => {
     }
   };
   
-
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pickupDateTime, dropoffDateTime]); // Depend on pickupDateTime and dropoffDateTime
 
   const handleBookCar = (car) => {
     if (!pickupDateTime || !dropoffDateTime) {
@@ -194,24 +209,32 @@ const Page = () => {
         <div>
           <DatePicker
             selected={pickupDateTime}
-            onChange={(date) => setPickupDateTime(date)}
+            onChange={(date) => {
+              setPickupDateTime(date);
+              setLoading(true); // Set loading to true to show loading state
+            }}
             showTimeSelect
             timeFormat="hh:mm aa"
             timeIntervals={15}
             dateFormat="dd MMMM yyyy, h:mm aa"
             className="bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-l-xl flex text-center cursor-pointer"
+            filterTime={filterTime}
           />
         </div>
         <div>
           <DatePicker
             selected={dropoffDateTime}
-            onChange={(date) => setDropoffDateTime(date)}
+            onChange={(date) => {
+              setDropoffDateTime(date);
+              setLoading(true); // Set loading to true to show loading state
+            }}
             showTimeSelect
             timeFormat="hh:mm aa"
             timeIntervals={15}
             dateFormat="dd MMMM yyyy, h:mm aa"
             className="bg-rose-950/50 lg:w-96 md:w-80 w-24 text-white lg:text-lg md:text-md text-sm lg:h-24 lg:p-4 md:p-4 p-2 outline-none rounded-r-xl flex text-center cursor-pointer"
             placeholderText="Change Drop Date"
+            filterTime={handleMinDropOffTime}
           />
         </div>
       </div>
