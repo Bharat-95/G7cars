@@ -158,8 +158,8 @@ const PaymentPage = () => {
         To: ${dropDate}
   
         Have a Great day!`,
-        from: 'whatsapp:+14155238886', // Twilio WhatsApp sandbox number
-        to: `whatsapp:${user.phoneNumber}`, // User's WhatsApp number
+        from: 'whatsapp:+14155238886', 
+        to: `whatsapp:${user.primaryPhoneNumber}`,
       });
     } catch (error) {
       console.error('Error sending WhatsApp message:', error);
