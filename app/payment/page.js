@@ -4,6 +4,10 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
+import twilio from 'twilio';
+
+// Initialize the Twilio client
+const client = twilio('AC1f39abf23cbe3d99676f15fadc70c59f', '6e2377cc97d6b3236a46f68c124fbf11');
 
 const PaymentPage = () => {
   const router = useRouter();
@@ -15,8 +19,6 @@ const PaymentPage = () => {
   const [processing, setProcessing] = useState(false);
   const [carId, setCarId] = useState(null);
   
-  
-
   useEffect(() => {
     if (!isLoaded || !user) return;
   
@@ -103,7 +105,8 @@ const PaymentPage = () => {
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
-                router.push('/sucess');
+                sendTwilioWhatsAppMessage(response.razorpay_booking_id, response.razorpay_payment_id);
+                router.push('/success');
               } else {
                 console.error(`Payment verification failed: ${responseBody}`);
                 throw new Error(`Payment verification failed: ${responseBody}`);
@@ -144,6 +147,24 @@ const PaymentPage = () => {
       initializeRazorpay();
     }
   }, [orderId, amount, user, pickupDate, dropDate, router]);
+
+  const sendTwilioWhatsAppMessage = async (bookingId, paymentId) => {
+    try {
+      await client.messages.create({
+        body: `G7cars thanks you for the Booking. We Love to have a valuable customer as you.
+        Your BookingId is : ${bookingId}
+        Your PaymentId is: ${paymentId}
+        From: ${pickupDate}
+        To: ${dropDate}
+  
+        Have a Great day!`,
+        from: 'whatsapp:+14155238886', // Twilio WhatsApp sandbox number
+        to: `whatsapp:${user.phoneNumber}`, // User's WhatsApp number
+      });
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error);
+    }
+  };
 
   return (
     <div className='min-h-screen'>

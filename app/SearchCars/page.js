@@ -22,6 +22,7 @@ const Page = () => {
   const [discount, setDiscount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmingBooking, setConfirmingBooking] = useState(false);
+  
 
   const { isSignedIn } = useUser();
   const router = useRouter();
@@ -87,7 +88,7 @@ const Page = () => {
   
   useEffect(() => {
     fetchData();
-  }, [pickupDateTime, dropoffDateTime]); // Depend on pickupDateTime and dropoffDateTime
+  }, [pickupDateTime, dropoffDateTime]); 
 
   const handleBookCar = (car) => {
     if (!pickupDateTime || !dropoffDateTime) {
@@ -211,7 +212,7 @@ const Page = () => {
             selected={pickupDateTime}
             onChange={(date) => {
               setPickupDateTime(date);
-              setLoading(true); // Set loading to true to show loading state
+              setLoading(true); 
             }}
             showTimeSelect
             timeFormat="hh:mm aa"
@@ -226,7 +227,7 @@ const Page = () => {
             selected={dropoffDateTime}
             onChange={(date) => {
               setDropoffDateTime(date);
-              setLoading(true); // Set loading to true to show loading state
+              setLoading(true); 
             }}
             showTimeSelect
             timeFormat="hh:mm aa"
