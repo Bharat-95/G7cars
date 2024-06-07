@@ -1,13 +1,8 @@
-"use client"
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useUser } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
-import twilio from 'twilio-client';
-
-
-const client = twilio('AC1f39abf23cbe3d99676f15fadc70c59f', '6e2377cc97d6b3236a46f68c124fbf11');
 
 const PaymentPage = () => {
   const router = useRouter();
@@ -18,10 +13,11 @@ const PaymentPage = () => {
   const [dropDate, setDropDate] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [carId, setCarId] = useState(null);
-  
+  const [twilioClient, setTwilioClient] = useState(null);
+
   useEffect(() => {
     if (!isLoaded || !user) return;
-  
+
     const params = new URLSearchParams(window.location.search);
     const orderIdParam = params.get('orderId');
     const amountParam = params.get('amount');
@@ -29,13 +25,12 @@ const PaymentPage = () => {
     const dropDateParam = params.get('dropoffDateTime');
     const carIdParam = params.get('carId');
 
-  
     if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
       setPickupDate(new Date(pickupDateParam));
       setDropDate(new Date(dropDateParam));
       setCarId(carIdParam);
-  
+
       const parsedAmount = Number(amountParam);
       if (!isNaN(parsedAmount)) {
         setAmount(parsedAmount);
@@ -148,7 +143,22 @@ const PaymentPage = () => {
     }
   }, [orderId, amount, user, pickupDate, dropDate, router]);
 
+  useEffect(() => {
+    const fetchTwilioClient = async () => {
+      const twilio = await import('twilio');
+      setTwilioClient(twilio);
+    };
+
+    if (typeof window !== 'undefined') {
+      fetchTwilioClient();
+    }
+  }, []);
+
   const sendTwilioWhatsAppMessage = async (bookingId, paymentId) => {
+    if (!twilioClient) return;
+
+    const client = twilioClient('AC1f39abf23cbe3d99676f15fadc70c59f', '6e2377cc97d6b3236a46f68c124fbf11');
+
     try {
       await client.messages.create({
         body: `G7cars thanks you for the Booking. We Love to have a valuable customer as you.
@@ -156,11 +166,11 @@ const PaymentPage = () => {
         Your PaymentId is: ${paymentId}
         From: ${pickupDate}
         To: ${dropDate}
-  
+
         Have a Great day!`,
-        from: 'whatsapp:+14155238886', 
-        to: `whatsapp:${user.primaryPhoneNumber?.primaryPhoneNumber}`,
-        to:'whatsapp:+9640019664'
+        from: 'whatsapp:+14155238886',
+        to: `whatsapp:${user.primaryPhoneNumber}`,
+        to:'whatsapp:+919640019664'
       });
     } catch (error) {
       console.error('Error sending WhatsApp message:', error);
