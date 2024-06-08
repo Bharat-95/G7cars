@@ -32,9 +32,9 @@ const Footer = () => {
             <div className=' font-bold text-sm'>About</div>
            <ul className='space-y-3 text-sm'>
 
-            <li className='hover:text-rose-900'><Link href='/'>Deals</Link></li>
-            <li className='hover:text-rose-900'><Link href='/'>Contact</Link></li>
-            <li className='hover:text-rose-900'><Link href='/'>FAQs</Link></li>
+            <li className='hover:text-rose-900'><Link href='/Deals'>Deals</Link></li>
+            <li className='hover:text-rose-900'><Link href='/Contact'>Contact</Link></li>
+            <li className='hover:text-rose-900'><Link href='/Faq'>FAQs</Link></li>
          
             </ul>
         
