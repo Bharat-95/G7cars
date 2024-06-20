@@ -8,7 +8,7 @@ export const config = {
 };
 
 const proxy = createProxyMiddleware({
-  target: 'https://clerk.g7cars.com',
+  target: 'https://accounts.g7cars.com/sign-in',
   changeOrigin: true,
   pathRewrite: {
     '^/api/proxy': '',
