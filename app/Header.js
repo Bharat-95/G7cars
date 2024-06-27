@@ -27,6 +27,7 @@ const Header = () => {
       <Link href='sign-in' className="hover:opacity-90 bg-rose-900 lg:h-12 lg:w-40 h-8 w-20 md:h-12 md:w-32 flex justify-center items-center lg:rounded-2xl md:rounded-xl rounded-lg shadow-md">Sign In </Link>
       </SignedOut>
       <SignedIn>
+        <Link href='/bookings'>My Bookings</Link>
         <UserButton />
       </SignedIn>
       </div>
