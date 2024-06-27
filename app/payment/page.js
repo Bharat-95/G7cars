@@ -98,7 +98,9 @@ const PaymentPage = () => {
                   pickupDateTime:pickupDate,
                   dropoffDateTime:dropDate,
                   phoneNumber: user.phoneNumbers,
-                  ownerNumber:'+918341226196'
+                  ownerNumber:'+918341226196',
+                  userId: user.id
+                
                 }),    
               });
 
