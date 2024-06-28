@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Logo from "../public/1.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +7,6 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 
 const Header = () => {
-
 
   return (
     <div className="lg:py-6 py-2 md:py-4 lg:px-20 md:px-10 px-6 flex items-center justify-between text-white bg-black w-screen">
