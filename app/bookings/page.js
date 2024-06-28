@@ -22,6 +22,10 @@ const Page = () => {
     }
   }, [user]);
 
+  if (!user) {
+    return <div>Loading user information...</div>;
+  }
+
   return (
     <div>
       {data.length > 0 ? (
