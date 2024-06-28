@@ -19,6 +19,9 @@ const Header = () => {
           <Link href="/"><li className="hover:text-rose-200 ">Home</li></Link>
           <Link href="/offers"><li className="hover:text-rose-200 ">Offers</li></Link>
           <Link href="/about"><li className="hover:text-rose-200">About Us</li></Link>
+          <SignedIn>
+          <Link href='/bookings' className=" hover:text-rose-200">My Bookings</Link>
+          </SignedIn>
         </ul>
       </div>
       <Link href="/contact" className="hover:opacity-90 bg-rose-900  h-12 w-40 lg:flex md:flex justify-center items-center hidden  rounded-2xl shadow-md" target="_blank">Attach Your Car</Link>
@@ -27,7 +30,6 @@ const Header = () => {
       <Link href='sign-in' className="hover:opacity-90 bg-rose-900 lg:h-12 lg:w-40 h-8 w-20 md:h-12 md:w-32 flex justify-center items-center lg:rounded-2xl md:rounded-xl rounded-lg shadow-md">Sign In </Link>
       </SignedOut>
       <SignedIn>
-        <Link href='/bookings' className="text-white hover:text-rose-200">My Bookings</Link>
         <UserButton />
       </SignedIn>
       </div>
