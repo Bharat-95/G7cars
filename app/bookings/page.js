@@ -36,7 +36,7 @@ const Page = () => {
         <Header />
       {data.length > 0 ? (
         data.map((booking) => (
-          <div key={booking.bookingId}>
+          <div key={booking.bookingId} className='text-white justify-center items-center'> 
             <div>Booking ID: {booking.bookingId}</div>
             <div>Car ID: {booking.carId}</div>
             <div>Pickup DateTime: {booking.pickupDateTime}</div>
