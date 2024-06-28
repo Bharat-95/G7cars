@@ -1,19 +1,19 @@
-"use client"
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 
 const Page = () => {
   const [data, setData] = useState([]);
   const { user } = useUser();
-
   console.log(user.id)
 
   const fetchData = async () => {
     try {
-      const url = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/${user.id}`;
+      const url = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings`;
       const response = await fetch(url);
-      const data = await response.json();
-      setData(data);
+      const allData = await response.json();
+    
+      const userData = allData.filter(booking => booking.userId === user.id);
+      setData(userData);
     } catch (error) {
       console.error('Error fetching bookings:', error);
     }
