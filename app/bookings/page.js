@@ -1,6 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
+import Header from '../Header';
+import Footer from '../Footer';
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -31,9 +33,10 @@ const Page = () => {
 
   return (
     <div>
+        <Header />
       {data.length > 0 ? (
         data.map((booking) => (
-          <div key={booking.bookingId}>
+          <div key={booking.bookingId} className='text-white justify-center items-center'>
             <div>Booking ID: {booking.bookingId}</div>
             <div>Car ID: {booking.carId}</div>
             <div>Pickup DateTime: {booking.pickupDateTime}</div>
@@ -44,6 +47,7 @@ const Page = () => {
       ) : (
         <div>No bookings found</div>
       )}
+      <Footer />
     </div>
   );
 };
