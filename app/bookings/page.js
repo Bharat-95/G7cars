@@ -6,6 +6,8 @@ const Page = () => {
   const [data, setData] = useState([]);
   const { user } = useUser();
 
+  console.log(user.id)
+
   const fetchData = async () => {
     try {
       const url = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/${user.id}`;
