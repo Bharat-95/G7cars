@@ -57,7 +57,7 @@ const Page = () => {
       <Header />
       {data.length > 0 ? (
         data.map((booking) => (
-          <div key={booking.bookingId} className='text-white flex items-center justify-between border-[1px] border-white rounded-xl m-4 p-4 w-full max-w-screen-lg'>
+          <div key={booking.bookingId} className='text-white flex items-center justify-between shadow-lg rounded-xl m-4 p-4 w-full max-w-screen-lg bg-white'>
             {carDetails[booking.carId] && (
               <div className='flex-shrink-0'>
                 <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} className='w-40 h-32 object-cover' />
