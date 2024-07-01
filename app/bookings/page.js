@@ -57,10 +57,10 @@ const Page = () => {
       <Header />
       {data.length > 0 ? (
         data.map((booking) => (
-          <div key={booking.bookingId} className='text-white flex items-center border-[1px] border-white rounded-xl m-4 p-4 w-full max-w-screen-lg'>
+          <div key={booking.bookingId} className='text-white flex items-center justify-between border-[1px] border-white rounded-xl m-4 p-4 w-full max-w-screen-lg'>
             {carDetails[booking.carId] && (
               <div className='flex-shrink-0'>
-                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} className='w-32 h-32 object-cover' />
+                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} className='w-40 h-32 object-cover' />
               </div>
             )}
             <div className='ml-4 flex-grow'>
@@ -71,8 +71,6 @@ const Page = () => {
               )}
               <div>Pickup DateTime: {formatDate(booking.pickupDateTime)}</div>
               <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
-              <div>Booking ID: {booking.bookingId}</div>
-              <div>Car ID: {booking.carId}</div>
               <div>Payment ID: {booking.paymentId}</div>
             </div>
           </div>
