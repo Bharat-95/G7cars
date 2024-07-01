@@ -43,6 +43,11 @@ const Page = () => {
     }
   }, [isLoaded, user]);
 
+  const formatDate = (dateString) => {
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
+  };
+
   if (!isLoaded) {
     return <div>Loading user information...</div>;
   }
@@ -52,18 +57,24 @@ const Page = () => {
       <Header />
       {data.length > 0 ? (
         data.map((booking) => (
-          <div key={booking.bookingId} className='text-white justify-center items-center flex flex-col w-full h-64 border-[1px] border-white rounded-xl m-20 p-20'>
+          <div key={booking.bookingId} className='text-white flex items-center border-[1px] border-white rounded-xl m-4 p-4 w-full max-w-screen-lg'>
             {carDetails[booking.carId] && (
-              <div>  
-                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} />
-                <div>Car Name: {carDetails[booking.carId].Name}</div>
+              <div className='flex-shrink-0'>
+                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} className='w-32 h-32 object-cover' />
               </div>
             )}
-            <div>Booking ID: {booking.bookingId}</div>
-            <div>Car ID: {booking.carId}</div>
-            <div>Pickup DateTime: {booking.pickupDateTime}</div>
-            <div>Dropoff DateTime: {booking.dropoffDateTime}</div>
-            <div>Payment ID: {booking.paymentId}</div>
+            <div className='ml-4 flex-grow'>
+              {carDetails[booking.carId] && (
+                <div>
+                  <div className='text-lg font-semibold'>Car Name: {carDetails[booking.carId].Name}</div>
+                </div>
+              )}
+              <div>Pickup DateTime: {formatDate(booking.pickupDateTime)}</div>
+              <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
+              <div>Booking ID: {booking.bookingId}</div>
+              <div>Car ID: {booking.carId}</div>
+              <div>Payment ID: {booking.paymentId}</div>
+            </div>
           </div>
         ))
       ) : (
