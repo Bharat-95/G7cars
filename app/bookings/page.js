@@ -7,11 +7,11 @@ import Footer from '../Footer';
 const Page = () => {
   const [data, setData] = useState([]);
   const [carDetails, setCarDetails] = useState({});
-  const { user } = useUser();
-
-  console.log(user.id)
+  const { user, isLoaded } = useUser();
 
   const fetchData = async () => {
+    if (!user) return;
+
     try {
       const bookingsUrl = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/${user.id}`;
       const bookingsResponse = await fetch(bookingsUrl);
@@ -38,24 +38,18 @@ const Page = () => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (isLoaded) {
       fetchData();
     }
-  }, [user]);
+  }, [isLoaded]);
 
-  if (!user) {
+  if (!isLoaded) {
     return <div>Loading user information...</div>;
   }
 
   return (
     <div>
       <Header />
-      {carDetails[booking.carId] && (
-              <div>
-                <div>Car Name: {carDetails[booking.carId].name}</div>
-                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} />
-              </div>
-            )}
       {data.length > 0 ? (
         data.map((booking) => (
           <div key={booking.bookingId} className='text-white justify-center items-center'>
@@ -64,7 +58,12 @@ const Page = () => {
             <div>Pickup DateTime: {booking.pickupDateTime}</div>
             <div>Dropoff DateTime: {booking.dropoffDateTime}</div>
             <div>Payment ID: {booking.paymentId}</div>
-           
+            {carDetails[booking.carId] && (
+              <div>
+                <div>Car Name: {carDetails[booking.carId].name}</div>
+                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} />
+              </div>
+            )}
           </div>
         ))
       ) : (
