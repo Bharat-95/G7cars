@@ -61,7 +61,7 @@ const Page = () => {
             {carDetails[booking.carId] && (
               <div>
                 <div>Car Name: {carDetails[booking.carId].name}</div>
-                <img src={carDetails[booking.carId].imageUrl} alt={carDetails[booking.carId].name} />
+                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} />
               </div>
             )}
           </div>
