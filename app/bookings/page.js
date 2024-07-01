@@ -38,10 +38,10 @@ const Page = () => {
   };
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && user) {
       fetchData();
     }
-  }, [isLoaded]);
+  }, [isLoaded, user]);
 
   if (!isLoaded) {
     return <div>Loading user information...</div>;
@@ -50,21 +50,20 @@ const Page = () => {
   return (
     <div>
       <Header />
-      {carDetails[booking.carId] && (
+      {data.length > 0 ? (
+        data.map((booking) => (
+          <div key={booking.bookingId} className='text-white justify-center items-center'>
+            {carDetails[booking.carId] && (
               <div>
                 <div>Car Name: {carDetails[booking.carId].name}</div>
                 <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} />
               </div>
             )}
-      {data.length > 0 ? (
-        data.map((booking) => (
-          <div key={booking.bookingId} className='text-white justify-center items-center'>
             <div>Booking ID: {booking.bookingId}</div>
             <div>Car ID: {booking.carId}</div>
             <div>Pickup DateTime: {booking.pickupDateTime}</div>
             <div>Dropoff DateTime: {booking.dropoffDateTime}</div>
             <div>Payment ID: {booking.paymentId}</div>
-          
           </div>
         ))
       ) : (
