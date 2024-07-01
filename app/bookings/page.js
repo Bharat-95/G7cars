@@ -53,31 +53,42 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      {data.length > 0 ? (
-        data.map((booking) => (
-          <div key={booking.bookingId} className='text-[#881337] flex items-center justify-between shadow-lg rounded-xl m-4 p-4 w-full max-w-screen-lg bg-white'>
-            {carDetails[booking.carId] && (
-              <div className='flex-shrink-0'>
-                <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} className='w-56 h-32 object-cover' />
-              </div>
-            )}
-            <div className='ml-4 flex-grow'>
-              {carDetails[booking.carId] && (
-                <div>
-                  <div className='text-lg font-semibold'>Car Name: {carDetails[booking.carId].Name}</div>
+      <div className="flex-grow flex items-center justify-center">
+        <div className="w-full max-w-screen-lg">
+          {data.length > 0 ? (
+            data.map((booking) => (
+              <div
+                key={booking.bookingId}
+                className="text-[#881337] flex items-center justify-between shadow-lg rounded-xl m-4 p-4 bg-white"
+              >
+                {carDetails[booking.carId] && (
+                  <div className="flex-shrink-0 w-1/3">
+                    <img
+                      src={carDetails[booking.carId].Coverimage[0]}
+                      alt={carDetails[booking.carId].name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="ml-4 flex-grow">
+                  {carDetails[booking.carId] && (
+                    <div>
+                      <div className="text-lg font-semibold">Car Name: {carDetails[booking.carId].Name}</div>
+                    </div>
+                  )}
+                  <div>Pickup DateTime: {formatDate(booking.pickupDateTime)}</div>
+                  <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
+                  <div>Payment ID: {booking.paymentId}</div>
                 </div>
-              )}
-              <div>Pickup DateTime: {formatDate(booking.pickupDateTime)}</div>
-              <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
-              <div>Payment ID: {booking.paymentId}</div>
-            </div>
-          </div>
-        ))
-      ) : (
-        <div>No bookings found</div>
-      )}
+              </div>
+            ))
+          ) : (
+            <div>No bookings found</div>
+          )}
+        </div>
+      </div>
       <Footer />
     </div>
   );
