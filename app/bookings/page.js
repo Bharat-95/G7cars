@@ -52,11 +52,11 @@ const Page = () => {
       <Header />
       {data.length > 0 ? (
         data.map((booking) => (
-          <div key={booking.bookingId} className='text-white justify-center items-center'>
+          <div key={booking.bookingId} className='text-white justify-center items-center flex flex-col w-full h-64 border-[1px] border-white rounded-xl m-20 p-20'>
             {carDetails[booking.carId] && (
-              <div>
-                <div>Car Name: {carDetails[booking.carId].name}</div>
+              <div>  
                 <img src={carDetails[booking.carId].Coverimage[0]} alt={carDetails[booking.carId].name} />
+                <div>Car Name: {carDetails[booking.carId].Name}</div>
               </div>
             )}
             <div>Booking ID: {booking.bookingId}</div>
