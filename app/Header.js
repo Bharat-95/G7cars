@@ -16,7 +16,6 @@ const Header = () => {
       <div>
         <ul className="flex lg:space-x-20 md:space-x-10 space-x-4 lg:text-lg text-[10px]">
           <Link href="/"><li className="hover:text-rose-200 ">Home</li></Link>
-          <Link href="/offers"><li className="hover:text-rose-200 ">Offers</li></Link>
           <Link href="/about"><li className="hover:text-rose-200">About Us</li></Link>
           <SignedIn>
           <Link href='/bookings' className=" hover:text-rose-200">My Bookings</Link>
