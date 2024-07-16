@@ -5,7 +5,6 @@ import { useUser } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
 
-
 const PaymentPage = () => {
   const router = useRouter();
   const { user, isLoaded } = useUser();
@@ -16,8 +15,6 @@ const PaymentPage = () => {
   const [processing, setProcessing] = useState(false);
   const [carId, setCarId] = useState(null);
   
-  
-
   useEffect(() => {
     if (!isLoaded || !user) return;
   
@@ -28,7 +25,6 @@ const PaymentPage = () => {
     const dropDateParam = params.get('dropoffDateTime');
     const carIdParam = params.get('carId');
 
-  
     if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
       setPickupDate(new Date(pickupDateParam));
@@ -100,7 +96,6 @@ const PaymentPage = () => {
                   phoneNumber: user.phoneNumbers,
                   ownerNumber:'+918341226196',
                   userId: user.id
-                
                 }),    
               });
 
@@ -108,7 +103,7 @@ const PaymentPage = () => {
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
-                router.push('/sucess');
+                router.push(`/success?orderId=${orderId}&pickupDate=${pickupDate.toISOString()}&dropDate=${dropDate.toISOString()}&amount=${amount}`);
               } else {
                 console.error(`Payment verification failed: ${responseBody}`);
                 throw new Error(`Payment verification failed: ${responseBody}`);
@@ -116,7 +111,7 @@ const PaymentPage = () => {
             } catch (error) {
               console.error('Unable to process the payment:', error);
               alert('Payment failed.');
-              const timer = setTimeout(() => {
+              setTimeout(() => {
                 router.push('/');
               }, 6000);
             } finally {
