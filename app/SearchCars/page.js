@@ -22,6 +22,7 @@ const Page = () => {
   const [discount, setDiscount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmingBooking, setConfirmingBooking] = useState(false);
+  const { user, isLoaded } = useUser();
   
 
   const { isSignedIn } = useUser();
