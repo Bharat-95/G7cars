@@ -143,17 +143,21 @@ const Page = () => {
     setConfirmingBooking(true);
     try {
       const roundedPrice = Math.round(price);
+      const { user } = useUser(); // Assuming you have the user context
+  
+      // Fetch document verification status
       const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
-
+  
       if (!docStatusResponse.ok) {
         throw new Error("Failed to fetch document status");
       }
-
+  
       const docStatusData = await docStatusResponse.json();
-
+  
       if (docStatusData.status === 'verified') {
+        // Documents verified, proceed with booking
         const orderResponse = await fetch(
           "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
           {
@@ -167,17 +171,15 @@ const Page = () => {
             }),
           }
         );
-
+  
         if (!orderResponse.ok) {
           const errorDetails = await orderResponse.json();
           throw new Error(`Failed to create order: ${errorDetails.message}`);
         }
-
+  
         const orderData = await orderResponse.json();
         const orderId = orderData.orderId;
-
-        // Update car status to "booked" (not shown in this code snippet)
-
+  
         router.push(
           `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
             selectedCar.G7cars123
@@ -186,15 +188,16 @@ const Page = () => {
       } else if (docStatusData.status === 'pending') {
         alert('Your documents are under verification. We will notify you once verified.');
       } else {
+        // No documents uploaded or status unknown
         alert('Please upload and verify your documents before confirming your booking.');
-        
+        router.push('/upload-documents');
       }
-
+  
     } catch (error) {
       console.error("Error confirming booking:", error);
-      alert(`An error occurred while processing your booking. Please try again.`); // More user-friendly error message
+      alert(`An error occurred while processing your booking. Please try again.`);
     } finally {
-      setConfirmingBooking(false); 
+      setConfirmingBooking(false);
     }
   };
 
