@@ -22,8 +22,9 @@ const Page = () => {
   const [discount, setDiscount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmingBooking, setConfirmingBooking] = useState(false);
+  
 
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialPickupDateTime = searchParams.get("pickupDateTime")
@@ -33,23 +34,24 @@ const Page = () => {
     ? new Date(searchParams.get("dropoffDateTime"))
     : null;
   const [pickupDateTime, setPickupDateTime] = useState(initialPickupDateTime);
-  const [dropoffDateTime, setDropoffDateTime] = useState(initialDropoffDateTime);
+  const [dropoffDateTime, setDropoffDateTime] = useState(
+    initialDropoffDateTime
+  );
 
-  useEffect(() => {
-    if (pickupDateTime && dropoffDateTime) {
-      fetchData();
-    }
-  }, [pickupDateTime, dropoffDateTime]);
+  const handleMinDropOffTime = (time) => {
+    if (!pickupDateTime) return filterTime(time);
+  
+    const pickUpTime = new Date(pickupDateTime);
+    pickUpTime.setHours(pickUpTime.getHours() + 12);
+  
+    return time.getTime() >= pickUpTime.getTime();
+  };
 
   const now = new Date();
   const minPickupDateTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
-  const handleMinDropOffTime = (time) => {
-    if (!pickupDateTime) return time >= minPickupDateTime;
-
-    const pickUpTime = new Date(pickupDateTime);
-    pickUpTime.setHours(pickUpTime.getHours() + 12);
-    return time >= pickUpTime;
+  const filterTime = (time) => {
+      return time.getTime() >= minPickupDateTime.getTime();
   };
 
   const fetchData = async () => {
@@ -59,13 +61,13 @@ const Page = () => {
       )}&dropoffDateTime=${encodeURIComponent(
         dropoffDateTime.toISOString()
       )}`;
-
+  
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
-
+  
       const sortByPrice = (cars) =>
         cars.sort((a, b) => {
           const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ""));
@@ -83,6 +85,10 @@ const Page = () => {
       setLoading(false);
     }
   };
+  
+  useEffect(() => {
+    fetchData();
+  }, [pickupDateTime, dropoffDateTime]); 
 
   const handleBookCar = (car) => {
     if (!pickupDateTime || !dropoffDateTime) {
@@ -137,63 +143,57 @@ const Page = () => {
     setConfirmingBooking(true);
     try {
       const roundedPrice = Math.round(price);
-
-      // Fetch document verification status
+  
       const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
-
+  
       if (!docStatusResponse.ok) {
         throw new Error("Failed to fetch document status");
       }
-
+  
       const docStatusData = await docStatusResponse.json();
-
-      if (docStatusData.status === 'verified' || !docStatusData.exists) {
-        const createBookingResponse = await fetch(
-          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
+  
+      if (docStatusData.status === 'verified') {
+        // Documents verified, proceed with booking
+        const orderResponse = await fetch(
+          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              userId: user.id,
-              carId: selectedCar.G7cars123,
-              pickupDateTime: pickupDateTime.toISOString(),
-              dropoffDateTime: dropoffDateTime.toISOString(),
-              price: roundedPrice,
-              discount,
+              amount: roundedPrice,
+              currency: "INR",
             }),
           }
         );
-
-        if (!createBookingResponse.ok) {
-          throw new Error("Failed to create booking");
+  
+        if (!orderResponse.ok) {
+          const errorDetails = await orderResponse.json();
+          throw new Error(`Failed to create order: ${errorDetails.message}`);
         }
-
-        const bookingData = await createBookingResponse.json();
-
-        // Proceed to payment
+  
+        const orderData = await orderResponse.json();
+        const orderId = orderData.orderId;
+  
         router.push(
-          `/payment?orderId=${bookingData.bookingId}&amount=${roundedPrice}&carId=${
+          `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
             selectedCar.G7cars123
           }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
         );
-      } else if (docStatusData.status === "pending") {
-        alert("Your documents are under verification. Please wait for approval.");
-      } else if (docStatusData.status === "rejected") {
-        alert("Your documents were rejected. Please re-upload and try again.");
-        router.push("/documents");
+      } else if (docStatusData.status === 'pending') {
+        alert('Your documents are under verification. We will notify you once verified.');
       } else {
-        alert("Please upload your documents to complete booking.");
-        router.push("/documents");
+        alert('Please upload and verify your documents before confirming your booking.');
       }
+  
     } catch (error) {
       console.error("Error confirming booking:", error);
-      alert("An error occurred while processing your booking. Please try again.");
+      alert(`An error occurred while processing your booking. Please try again.`);
     } finally {
-      setConfirmingBooking(false);
+      setConfirmingBooking(false); 
     }
   };
 
@@ -203,6 +203,7 @@ const Page = () => {
     setPrice(0);
     setDiscount(0);
   };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
