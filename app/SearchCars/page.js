@@ -190,7 +190,7 @@ const Page = () => {
       } else {
         // No documents uploaded or status unknown
         alert('Please upload and verify your documents before confirming your booking.');
-        router.push('/upload-documents');
+        router.push('/documents');
       }
   
     } catch (error) {
