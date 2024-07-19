@@ -22,9 +22,8 @@ const Page = () => {
   const [discount, setDiscount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmingBooking, setConfirmingBooking] = useState(false);
-  
 
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialPickupDateTime = searchParams.get("pickupDateTime")
@@ -34,24 +33,23 @@ const Page = () => {
     ? new Date(searchParams.get("dropoffDateTime"))
     : null;
   const [pickupDateTime, setPickupDateTime] = useState(initialPickupDateTime);
-  const [dropoffDateTime, setDropoffDateTime] = useState(
-    initialDropoffDateTime
-  );
+  const [dropoffDateTime, setDropoffDateTime] = useState(initialDropoffDateTime);
 
-  const handleMinDropOffTime = (time) => {
-    if (!pickupDateTime) return filterTime(time);
-  
-    const pickUpTime = new Date(pickupDateTime);
-    pickUpTime.setHours(pickUpTime.getHours() + 12);
-  
-    return time.getTime() >= pickUpTime.getTime();
-  };
+  useEffect(() => {
+    if (pickupDateTime && dropoffDateTime) {
+      fetchData();
+    }
+  }, [pickupDateTime, dropoffDateTime]);
 
   const now = new Date();
   const minPickupDateTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
-  const filterTime = (time) => {
-      return time.getTime() >= minPickupDateTime.getTime();
+  const handleMinDropOffTime = (time) => {
+    if (!pickupDateTime) return time >= minPickupDateTime;
+
+    const pickUpTime = new Date(pickupDateTime);
+    pickUpTime.setHours(pickUpTime.getHours() + 12);
+    return time >= pickUpTime;
   };
 
   const fetchData = async () => {
@@ -61,13 +59,13 @@ const Page = () => {
       )}&dropoffDateTime=${encodeURIComponent(
         dropoffDateTime.toISOString()
       )}`;
-  
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
-  
+
       const sortByPrice = (cars) =>
         cars.sort((a, b) => {
           const priceA = parseFloat(a.Price.replace(/[^0-9.-]+/g, ""));
@@ -85,10 +83,6 @@ const Page = () => {
       setLoading(false);
     }
   };
-  
-  useEffect(() => {
-    fetchData();
-  }, [pickupDateTime, dropoffDateTime]); 
 
   const handleBookCar = (car) => {
     if (!pickupDateTime || !dropoffDateTime) {
@@ -143,59 +137,61 @@ const Page = () => {
     setConfirmingBooking(true);
     try {
       const roundedPrice = Math.round(price);
-      const { user } = useUser(); // Assuming you have the user context
-  
+
       // Fetch document verification status
       const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
-  
+
       if (!docStatusResponse.ok) {
         throw new Error("Failed to fetch document status");
       }
-  
+
       const docStatusData = await docStatusResponse.json();
-  
-      if (docStatusData.status === 'verified') {
-        // Documents verified, proceed with booking
-        const orderResponse = await fetch(
-          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
+
+      if (docStatusData.status === 'verified' || !docStatusData.exists) {
+        const createBookingResponse = await fetch(
+          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              amount: roundedPrice,
-              currency: "INR",
+              userId: user.id,
+              carId: selectedCar.G7cars123,
+              pickupDateTime: pickupDateTime.toISOString(),
+              dropoffDateTime: dropoffDateTime.toISOString(),
+              price: roundedPrice,
+              discount,
             }),
           }
         );
-  
-        if (!orderResponse.ok) {
-          const errorDetails = await orderResponse.json();
-          throw new Error(`Failed to create order: ${errorDetails.message}`);
+
+        if (!createBookingResponse.ok) {
+          throw new Error("Failed to create booking");
         }
-  
-        const orderData = await orderResponse.json();
-        const orderId = orderData.orderId;
-  
+
+        const bookingData = await createBookingResponse.json();
+
+        // Proceed to payment
         router.push(
-          `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
+          `/payment?orderId=${bookingData.bookingId}&amount=${roundedPrice}&carId=${
             selectedCar.G7cars123
           }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
         );
-      } else if (docStatusData.status === 'pending') {
-        alert('Your documents are under verification. We will notify you once verified.');
+      } else if (docStatusData.status === "pending") {
+        alert("Your documents are under verification. Please wait for approval.");
+      } else if (docStatusData.status === "rejected") {
+        alert("Your documents were rejected. Please re-upload and try again.");
+        router.push("/documents");
       } else {
-        // No documents uploaded or status unknown
-        alert('Please upload and verify your documents before confirming your booking.');
-        router.push('/documents');
+        alert("Please upload your documents to complete booking.");
+        router.push("/documents");
       }
-  
     } catch (error) {
       console.error("Error confirming booking:", error);
-      alert(`An error occurred while processing your booking. Please try again.`);
+      alert("An error occurred while processing your booking. Please try again.");
     } finally {
       setConfirmingBooking(false);
     }
@@ -207,7 +203,6 @@ const Page = () => {
     setPrice(0);
     setDiscount(0);
   };
-
   return (
     <div className="min-h-screen bg-white">
       <Header />
