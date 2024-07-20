@@ -150,7 +150,7 @@ const Page = () => {
       );
   
       if (!docStatusResponse.ok) {
-        router.push('/documnets')
+        throw new Error("Failed to fetch document status");
       }
   
       const docStatusData = await docStatusResponse.json();
@@ -188,15 +188,17 @@ const Page = () => {
         alert('Your documents are under verification. We will notify you once verified.');
       } else {
         alert('Please upload and verify your documents before confirming your booking.');
+        router.push('/documents');
       }
   
     } catch (error) {
       console.error("Error confirming booking:", error);
-      alert(`An error occurred while processing your booking. Please try again.`);
+      alert('An error occurred while processing your booking. Please try again.');
     } finally {
       setConfirmingBooking(false); 
     }
   };
+  
 
   const cancelConfirmation = () => {
     setShowConfirmation(false);
