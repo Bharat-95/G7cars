@@ -150,7 +150,7 @@ const Page = () => {
       );
   
       if (!docStatusResponse.ok) {
-        throw new Error("Failed to fetch document status");
+        router.push('/documnets')
       }
   
       const docStatusData = await docStatusResponse.json();
