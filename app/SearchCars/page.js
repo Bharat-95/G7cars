@@ -150,7 +150,13 @@ const Page = () => {
       );
   
       if (!docStatusResponse.ok) {
-        throw new Error("Failed to fetch document status");
+        if (docStatusResponse.status === 404) {
+          // Redirect to documents page if documents not found
+          router.push('/documents');
+        } else {
+          throw new Error("Failed to fetch document status");
+        }
+        return;
       }
   
       const docStatusData = await docStatusResponse.json();
