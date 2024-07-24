@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import Header from "../Header";
 import Footer from "../Footer";
+import axios from "axios";
 
 const Documents = () => {
   const { user } = useUser();
@@ -35,21 +36,21 @@ const Documents = () => {
     formData.append("phoneNumber", user.primaryPhoneNumber.phoneNumber);
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/documents/upload",
+        formData,
         {
-          method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
-      console.log(response)
-
-      if (!response.ok) {
+      if (response.status === 200) {
+        alert("Documents uploaded successfully");
+      } else {
         throw new Error("Failed to upload documents");
       }
-
-      alert("Documents uploaded successfully");
     } catch (error) {
       console.error("Error uploading documents:", error);
       alert("Failed to upload documents");
@@ -65,49 +66,62 @@ const Documents = () => {
         </div>
         <div className=" bg-white m-20 rounded-md p-10">
           <div className="flex justify-center gap-20">
-           
             <label className="border py-10 px-10">
-                <div className="flex flex-col space-y-4">
-                 <div className=""> Driving License:</div>
-                 <div className="flex justify-center">
-              <input
-                type="file"
-                name="DrivingLicense"
-                onChange={handleFileChange}
-              />
+              <div className="flex flex-col space-y-4">
+                <div>Driving License:</div>
+                <div className="flex justify-center">
+                  <input
+                    type="file"
+                    name="DrivingLicense"
+                    onChange={handleFileChange}
+                  />
+                </div>
               </div>
-              </div>
-               {drivingLicensePreview && (
-              <div className="m-10 ">
-                <div className="">Driving License Preview:</div>
-                <img src={drivingLicensePreview} alt="Driving License Preview" className="w-48 h-auto" />
-              </div>
-            )}
+              {drivingLicensePreview && (
+                <div className="m-10">
+                  <div>Driving License Preview:</div>
+                  <img
+                    src={drivingLicensePreview}
+                    alt="Driving License Preview"
+                    className="w-48 h-auto"
+                  />
+                </div>
+              )}
             </label>
 
-
-
             <label className="border py-10 px-10">
-            <div className="flex flex-col space-y-4">
-              <div>Aadhaar:</div>
-              <div className="flex justify-center">
-              <input type="file" name="Aadhaar" onChange={handleFileChange} />
-              </div>
+              <div className="flex flex-col space-y-4">
+                <div>Aadhaar:</div>
+                <div className="flex justify-center">
+                  <input
+                    type="file"
+                    name="Aadhaar"
+                    onChange={handleFileChange}
+                  />
+                </div>
               </div>
               {aadhaarPreview && (
-              <div className="m-10">
-                <div className="">Aadhaar Preview:</div>
-                <img src={aadhaarPreview} alt="Aadhaar Preview" className="w-48 h-auto border" />
-              </div>
-            )}
+                <div className="m-10">
+                  <div>Aadhaar Preview:</div>
+                  <img
+                    src={aadhaarPreview}
+                    alt="Aadhaar Preview"
+                    className="w-48 h-auto border"
+                  />
+                </div>
+              )}
             </label>
           </div>
           <div className="flex justify-center mt-20 ">
-            <button type="submit" className="bg-rose-950 text-white p-2 rounded-md hover:bg-rose-950/90">Upload</button>
+            <button
+              type="submit"
+              className="bg-rose-950 text-white p-2 rounded-md hover:bg-rose-950/90"
+            >
+              Upload
+            </button>
           </div>
         </div>
       </form>
-
       <Footer />
     </div>
   );
