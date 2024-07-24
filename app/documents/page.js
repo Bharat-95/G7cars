@@ -32,7 +32,6 @@ const Documents = () => {
     formData.append("Aadhaar", aadhaar);
     formData.append("userId", user.id);
     formData.append("name", user.fullName);
-    formData.append("email", user.primaryEmailAddress.emailAddress);
     formData.append("phoneNumber", user.primaryPhoneNumber.phoneNumber);
 
     try {
@@ -43,6 +42,8 @@ const Documents = () => {
           body: formData,
         }
       );
+
+      console.log(response)
 
       if (!response.ok) {
         throw new Error("Failed to upload documents");
