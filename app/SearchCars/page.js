@@ -145,6 +145,7 @@ const Page = () => {
     try {
       const roundedPrice = Math.round(price);
   
+      // Fetch document status
       const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
@@ -154,7 +155,8 @@ const Page = () => {
           // Redirect to documents page if documents not found
           router.push('/documents');
         } else {
-          throw new Error("Failed to fetch document status");
+          const errorDetails = await docStatusResponse.text();
+          throw new Error(`Failed to fetch document status: ${errorDetails}`);
         }
         return;
       }
@@ -162,7 +164,6 @@ const Page = () => {
       const docStatusData = await docStatusResponse.json();
   
       if (docStatusData.status === 'verified') {
-        // Documents verified, proceed with booking
         const orderResponse = await fetch(
           "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
           {
@@ -178,8 +179,8 @@ const Page = () => {
         );
   
         if (!orderResponse.ok) {
-          const errorDetails = await orderResponse.json();
-          throw new Error(`Failed to create order: ${errorDetails.message}`);
+          const errorDetails = await orderResponse.text();
+          throw new Error(`Failed to create order: ${errorDetails}`);
         }
   
         const orderData = await orderResponse.json();
@@ -199,9 +200,9 @@ const Page = () => {
   
     } catch (error) {
       console.error("Error confirming booking:", error);
-      alert('An error occurred while processing your booking. Please try again.');
+      alert(`An error occurred while processing your booking. Please try again.\nError details: ${error.message}`);
     } finally {
-      setConfirmingBooking(false); 
+      setConfirmingBooking(false);
     }
   };
   
