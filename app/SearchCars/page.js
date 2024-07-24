@@ -145,54 +145,69 @@ const Page = () => {
     try {
       const roundedPrice = Math.round(price);
 
-      const orderResponse = await fetch(
-        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: roundedPrice,
-            currency: "INR",
-          }),
-        }
-      );
+      console.log("Rounded Price:", roundedPrice);
 
-      if (!orderResponse.ok) {
-        const errorDetails = await orderResponse.json();
-        throw new Error(`Failed to create order: ${errorDetails.message}`);
+
+      const docStatusResponse = await fetch(
+        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
+      );
+  
+      if (!docStatusResponse.ok) {
+        if (docStatusResponse.status === 404) {
+
+          router.push('/documents');
+        } else {
+          const errorDetails = await docStatusResponse.text();
+          throw new Error(`Failed to fetch document status: ${errorDetails}`);
+        }
+        return;
       }
-
-      const orderData = await orderResponse.json();
-      const orderId = orderData.orderId;
-
-      await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars/${selectedCar.G7cars123}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status: "booked",
-          }),
+  
+      const docStatusData = await docStatusResponse.json();
+  
+      if (docStatusData.status === 'verified') {
+        const orderResponse = await fetch(
+          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: roundedPrice,
+              currency: "INR",
+            }),
+          }
+        );
+  
+        if (!orderResponse.ok) {
+          const errorDetails = await orderResponse.text();
+          throw new Error(`Failed to create order: ${errorDetails}`);
         }
-      );
-
-      router.push(
-        `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
-          selectedCar.G7cars123
-        }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
-      );
+  
+        const orderData = await orderResponse.json();
+        const orderId = orderData.orderId;
+  
+        router.push(
+          `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
+            selectedCar.G7cars123
+          }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
+        );
+      } else if (docStatusData.status === 'pending') {
+        alert('Your documents are under verification. We will notify you once verified.');
+      } else {
+        alert('Please upload and verify your documents before confirming your booking.');
+        router.push('/documents');
+      }
+  
     } catch (error) {
       console.error("Error confirming booking:", error);
-      alert(`Error confirming booking: ${error.message}`);
+      alert(`An error occurred while processing your booking. Please try again.\nError details: ${error.message}`);
     } finally {
       setConfirmingBooking(false);
     }
   };
-
+  
 
   const cancelConfirmation = () => {
     setShowConfirmation(false);
