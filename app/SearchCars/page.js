@@ -182,6 +182,12 @@ const Page = () => {
   
         if (!orderResponse.ok) {
           const errorDetails = await orderResponse.json();
+          console.error(
+            "Error creating order:",
+            orderResponse.status,
+            orderResponse.statusText,
+            errorDetails
+          );
           throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
         }
   
