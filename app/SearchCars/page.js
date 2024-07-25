@@ -145,30 +145,51 @@ const Page = () => {
     setConfirmingBooking(true);
     try {
       const roundedPrice = Math.round(price);
-  
-      // Fetch document status
-      const docStatusResponse = await axios.get(
+
+
+      const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
   
-      if (docStatusResponse.status === 404) {
-        router.push('/documents');
+      if (!docStatusResponse.ok) {
+        if (docStatusResponse.status === 404) {
+
+          router.push('/documents');
+        } else {
+          const errorDetails = await docStatusResponse.text();
+          throw new Error(`Failed to fetch document status: ${errorDetails}`);
+        }
         return;
       }
   
-      const docStatusData = docStatusResponse.data;
+      const docStatusData = await docStatusResponse.json();
+
+      console.log(JSON.stringify({
+        amount: roundedPrice,
+        currency: "INR",
+      }));
   
       if (docStatusData.status === 'verified') {
-        // Create order
-        const orderResponse = await axios.post(
+        const orderResponse = await fetch(
           "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
           {
-            amount: roundedPrice,
-            currency: "INR",
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: roundedPrice,
+              currency: "INR",
+            }),
           }
         );
   
-        const orderData = orderResponse.data;
+        if (!orderResponse.ok) {
+          const errorDetails = await orderResponse.text();
+          throw new Error(`Failed to create order: ${errorDetails}`);
+        }
+  
+        const orderData = await orderResponse.json();
         const orderId = orderData.orderId;
   
         router.push(
@@ -190,6 +211,7 @@ const Page = () => {
       setConfirmingBooking(false);
     }
   };
+  
 
   const cancelConfirmation = () => {
     setShowConfirmation(false);
