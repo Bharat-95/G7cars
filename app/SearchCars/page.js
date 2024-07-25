@@ -172,6 +172,7 @@ const Page = () => {
             headers: {
               "Content-Type": "application/json",
             },
+            mode:'no-cors',
             body: JSON.stringify({
               amount: roundedPrice,
               currency: "INR",
@@ -180,8 +181,8 @@ const Page = () => {
         );
   
         if (!orderResponse.ok) {
-          const errorDetails = await orderResponse.json(); // Get error as JSON
-          throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`); // Include error details in message
+          const errorDetails = await orderResponse.json();
+          throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
         }
   
         const orderData = await orderResponse.json();
