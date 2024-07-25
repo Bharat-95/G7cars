@@ -165,9 +165,9 @@ const Page = () => {
       const docStatusData = await docStatusResponse.json();
 
       console.log(JSON.stringify({
-        amount: roundedPrice,
-        currency: "INR",
-      }));
+            amount: roundedPrice,
+            currency: "INR",
+          }));
   
       if (docStatusData.status === 'verified') {
         const orderResponse = await fetch(
