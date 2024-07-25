@@ -163,11 +163,6 @@ const Page = () => {
       }
   
       const docStatusData = await docStatusResponse.json();
-
-      console.log(JSON.stringify({
-            amount: roundedPrice,
-            currency: "INR",
-          }));
   
       if (docStatusData.status === 'verified') {
         const orderResponse = await fetch(
@@ -185,8 +180,8 @@ const Page = () => {
         );
   
         if (!orderResponse.ok) {
-          const errorDetails = await orderResponse.text();
-          throw new Error(`Failed to create order: ${errorDetails}`);
+          const errorDetails = await orderResponse.json(); // Get error as JSON
+          throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`); // Include error details in message
         }
   
         const orderData = await orderResponse.json();
