@@ -171,6 +171,7 @@ const Page = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              'Authorization': 'Bearer your-token',
             },
             body: JSON.stringify({
               amount: roundedPrice,
