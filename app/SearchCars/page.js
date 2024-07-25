@@ -12,6 +12,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axios from 'axios';
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -144,50 +145,47 @@ const Page = () => {
     setConfirmingBooking(true);
     try {
       const roundedPrice = Math.round(price);
-
-      const orderResponse = await fetch(
-        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+  
+      // Fetch document status
+      const docStatusResponse = await axios.get(
+        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
+      );
+  
+      if (docStatusResponse.status === 404) {
+        router.push('/documents');
+        return;
+      }
+  
+      const docStatusData = docStatusResponse.data;
+  
+      if (docStatusData.status === 'verified') {
+        // Create order
+        const orderResponse = await axios.post(
+          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
+          {
             amount: roundedPrice,
             currency: "INR",
-          }),
-        }
-      );
-
-      if (!orderResponse.ok) {
-        const errorDetails = await orderResponse.json();
-        throw new Error(`Failed to create order: ${errorDetails.message}`);
+          }
+        );
+  
+        const orderData = orderResponse.data;
+        const orderId = orderData.orderId;
+  
+        router.push(
+          `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
+            selectedCar.G7cars123
+          }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
+        );
+      } else if (docStatusData.status === 'pending') {
+        alert('Your documents are under verification. We will notify you once verified.');
+      } else {
+        alert('Please upload and verify your documents before confirming your booking.');
+        router.push('/documents');
       }
-
-      const orderData = await orderResponse.json();
-      const orderId = orderData.orderId;
-
-      await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars/${selectedCar.G7cars123}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status: "booked",
-          }),
-        }
-      );
-
-      router.push(
-        `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
-          selectedCar.G7cars123
-        }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
-      );
+  
     } catch (error) {
       console.error("Error confirming booking:", error);
-      alert(`Error confirming booking: ${error.message}`);
+      alert(`An error occurred while processing your booking. Please try again.\nError details: ${error.message}`);
     } finally {
       setConfirmingBooking(false);
     }
