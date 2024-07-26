@@ -23,6 +23,7 @@ const Page = () => {
   const [discount, setDiscount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmingBooking, setConfirmingBooking] = useState(false);
+  const [docStatusPending, setDocStatusPending] = useState(false);
   const { user, isLoaded } = useUser();
   
 
@@ -193,7 +194,9 @@ const Page = () => {
           }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
         );
       } else if (docStatusData.status === 'pending') {
-        alert('Your documents are under verification. We will notify you once verified.');
+        setDocStatusPending(true);
+        setConfirmingBooking(false);
+        return;
       } else {
         alert('Please upload and verify your documents before confirming your booking.');
         router.push('/documents');
@@ -218,6 +221,14 @@ const Page = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      
+      {docStatusPending && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+          <p className="font-bold">Documents Under Verification</p>
+          <p>Your documents are under verification. The status should update within an hour.</p>
+        </div>
+      )}
+      
       <div className="flex justify-center m-10 text-4xl font-bold underline text-rose-900">
         Cars List
       </div>
