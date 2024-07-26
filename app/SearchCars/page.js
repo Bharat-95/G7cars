@@ -171,7 +171,6 @@ const Page = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              'Authorization': 'Bearer your-token',
             },
             body: JSON.stringify({
               amount: roundedPrice,
@@ -182,12 +181,6 @@ const Page = () => {
   
         if (!orderResponse.ok) {
           const errorDetails = await orderResponse.json();
-          console.error(
-            "Error creating order:",
-            orderResponse.status,
-            orderResponse.statusText,
-            errorDetails
-          );
           throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
         }
   
