@@ -225,7 +225,7 @@ const Page = () => {
       {docStatusPending && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
           <p className="font-bold">Documents Under Verification</p>
-          <p>Your documents are under verification. The status should update within an hour.</p>
+          <p>Your documents are under verification. The status will get updated within an hour.</p>
         </div>
       )}
       
