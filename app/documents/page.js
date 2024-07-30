@@ -7,21 +7,32 @@ import axios from "axios";
 
 const Documents = () => {
   const { user } = useUser();
-  const [drivingLicense, setDrivingLicense] = useState(null);
-  const [aadhaar, setAadhaar] = useState(null);
-  const [drivingLicensePreview, setDrivingLicensePreview] = useState(null);
-  const [aadhaarPreview, setAadhaarPreview] = useState(null);
+  const [drivingLicenseFront, setDrivingLicenseFront] = useState(null);
+  const [drivingLicenseBack, setDrivingLicenseBack] = useState(null);
+  const [aadhaarFront, setAadhaarFront] = useState(null);
+  const [aadhaarBack, setAadhaarBack] = useState(null);
+
+  const [drivingLicenseFrontPreview, setDrivingLicenseFrontPreview] = useState(null);
+  const [drivingLicenseBackPreview, setDrivingLicenseBackPreview] = useState(null);
+  const [aadhaarFrontPreview, setAadhaarFrontPreview] = useState(null);
+  const [aadhaarBackPreview, setAadhaarBackPreview] = useState(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const { name } = e.target;
 
-    if (name === "DrivingLicense") {
-      setDrivingLicense(file);
-      setDrivingLicensePreview(URL.createObjectURL(file));
-    } else if (name === "Aadhaar") {
-      setAadhaar(file);
-      setAadhaarPreview(URL.createObjectURL(file));
+    if (name === "DrivingLicenseFront") {
+      setDrivingLicenseFront(file);
+      setDrivingLicenseFrontPreview(URL.createObjectURL(file));
+    } else if (name === "DrivingLicenseBack") {
+      setDrivingLicenseBack(file);
+      setDrivingLicenseBackPreview(URL.createObjectURL(file));
+    } else if (name === "AadhaarFront") {
+      setAadhaarFront(file);
+      setAadhaarFrontPreview(URL.createObjectURL(file));
+    } else if (name === "AadhaarBack") {
+      setAadhaarBack(file);
+      setAadhaarBackPreview(URL.createObjectURL(file));
     }
   };
 
@@ -29,8 +40,10 @@ const Documents = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("DrivingLicense", drivingLicense);
-    formData.append("Aadhaar", aadhaar);
+    formData.append("DrivingLicenseFront", drivingLicenseFront);
+    formData.append("DrivingLicenseBack", drivingLicenseBack);
+    formData.append("AadhaarFront", aadhaarFront);
+    formData.append("AadhaarBack", aadhaarBack);
     formData.append("userId", user.id);
     formData.append("name", user.fullName);
     formData.append("phoneNumber", user.primaryPhoneNumber.phoneNumber);
@@ -64,25 +77,25 @@ const Documents = () => {
         <div className="flex justify-center m-10 text-2xl font-semibold text-white">
           Please provide your documents
         </div>
-        <div className=" bg-white m-20 rounded-md p-10">
+        <div className="bg-white m-20 rounded-md p-10">
           <div className="flex justify-center gap-20">
             <label className="border py-10 px-10">
               <div className="flex flex-col space-y-4">
-                <div>Driving License:</div>
+                <div>Driving License (Front):</div>
                 <div className="flex justify-center">
                   <input
                     type="file"
-                    name="DrivingLicense"
+                    name="DrivingLicenseFront"
                     onChange={handleFileChange}
                   />
                 </div>
               </div>
-              {drivingLicensePreview && (
+              {drivingLicenseFrontPreview && (
                 <div className="m-10">
-                  <div>Driving License Preview:</div>
+                  <div>Driving License Front Preview:</div>
                   <img
-                    src={drivingLicensePreview}
-                    alt="Driving License Preview"
+                    src={drivingLicenseFrontPreview}
+                    alt="Driving License Front Preview"
                     className="w-48 h-auto"
                   />
                 </div>
@@ -91,22 +104,67 @@ const Documents = () => {
 
             <label className="border py-10 px-10">
               <div className="flex flex-col space-y-4">
-                <div>Aadhaar:</div>
+                <div>Driving License (Back):</div>
                 <div className="flex justify-center">
                   <input
                     type="file"
-                    name="Aadhaar"
-                    multiple
+                    name="DrivingLicenseBack"
                     onChange={handleFileChange}
                   />
                 </div>
               </div>
-              {aadhaarPreview && (
+              {drivingLicenseBackPreview && (
                 <div className="m-10">
-                  <div>Aadhaar Preview:</div>
+                  <div>Driving License Back Preview:</div>
                   <img
-                    src={aadhaarPreview}
-                    alt="Aadhaar Preview"
+                    src={drivingLicenseBackPreview}
+                    alt="Driving License Back Preview"
+                    className="w-48 h-auto"
+                  />
+                </div>
+              )}
+            </label>
+
+            <label className="border py-10 px-10">
+              <div className="flex flex-col space-y-4">
+                <div>Aadhaar (Front):</div>
+                <div className="flex justify-center">
+                  <input
+                    type="file"
+                    name="AadhaarFront"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              </div>
+              {aadhaarFrontPreview && (
+                <div className="m-10">
+                  <div>Aadhaar Front Preview:</div>
+                  <img
+                    src={aadhaarFrontPreview}
+                    alt="Aadhaar Front Preview"
+                    className="w-48 h-auto border"
+                  />
+                </div>
+              )}
+            </label>
+
+            <label className="border py-10 px-10">
+              <div className="flex flex-col space-y-4">
+                <div>Aadhaar (Back):</div>
+                <div className="flex justify-center">
+                  <input
+                    type="file"
+                    name="AadhaarBack"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              </div>
+              {aadhaarBackPreview && (
+                <div className="m-10">
+                  <div>Aadhaar Back Preview:</div>
+                  <img
+                    src={aadhaarBackPreview}
+                    alt="Aadhaar Back Preview"
                     className="w-48 h-auto border"
                   />
                 </div>
