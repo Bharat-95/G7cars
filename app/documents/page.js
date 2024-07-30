@@ -124,6 +124,8 @@ const Documents = () => {
                 </div>
               )}
             </label>
+            </div>
+            <div className="flex justify-center gap-20">
 
             <label className="border py-10 px-10">
               <div className="flex flex-col space-y-4">
