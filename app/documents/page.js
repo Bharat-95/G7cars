@@ -7,29 +7,21 @@ import axios from "axios";
 
 const Documents = () => {
   const { user } = useUser();
-  const [drivingLicenseFiles, setDrivingLicenseFiles] = useState([]);
-  const [aadhaarFiles, setAadhaarFiles] = useState([]);
-  const [drivingLicensePreviews, setDrivingLicensePreviews] = useState([]);
-  const [aadhaarPreviews, setAadhaarPreviews] = useState([]);
+  const [drivingLicense, setDrivingLicense] = useState(null);
+  const [aadhaar, setAadhaar] = useState(null);
+  const [drivingLicensePreview, setDrivingLicensePreview] = useState(null);
+  const [aadhaarPreview, setAadhaarPreview] = useState(null);
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
+    const file = e.target.files[0];
     const { name } = e.target;
 
     if (name === "DrivingLicense") {
-      if (files.length > 2) {
-        alert('You can only upload up to 2 images for Driving License.');
-        return;
-      }
-      setDrivingLicenseFiles(files);
-      setDrivingLicensePreviews(files.map(file => URL.createObjectURL(file)));
+      setDrivingLicense(file);
+      setDrivingLicensePreview(URL.createObjectURL(file));
     } else if (name === "Aadhaar") {
-      if (files.length > 2) {
-        alert('You can only upload up to 2 images for Aadhaar.');
-        return;
-      }
-      setAadhaarFiles(files);
-      setAadhaarPreviews(files.map(file => URL.createObjectURL(file)));
+      setAadhaar(file);
+      setAadhaarPreview(URL.createObjectURL(file));
     }
   };
 
@@ -37,8 +29,8 @@ const Documents = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    drivingLicenseFiles.forEach(file => formData.append("DrivingLicense", file));
-    aadhaarFiles.forEach(file => formData.append("Aadhaar", file));
+    formData.append("DrivingLicense", drivingLicense);
+    formData.append("Aadhaar", aadhaar);
     formData.append("userId", user.id);
     formData.append("name", user.fullName);
     formData.append("phoneNumber", user.primaryPhoneNumber.phoneNumber);
@@ -76,56 +68,49 @@ const Documents = () => {
           <div className="flex justify-center gap-20">
             <label className="border py-10 px-10">
               <div className="flex flex-col space-y-4">
-                <div>Driving License (Front and Back):</div>
-                <div className="flex flex-col gap-4">
+                <div>Driving License:</div>
+                <div className="flex justify-center">
                   <input
                     type="file"
                     name="DrivingLicense"
-                    accept="image/*"
-                    multiple
                     onChange={handleFileChange}
                   />
-                  {drivingLicensePreviews.length > 0 && (
-                    <div className="flex gap-4">
-                      {drivingLicensePreviews.map((preview, index) => (
-                        <img
-                          key={index}
-                          src={preview}
-                          alt={`Driving License Preview ${index + 1}`}
-                          className="w-48 h-auto"
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
+              {drivingLicensePreview && (
+                <div className="m-10">
+                  <div>Driving License Preview:</div>
+                  <img
+                    src={drivingLicensePreview}
+                    alt="Driving License Preview"
+                    className="w-48 h-auto"
+                  />
+                </div>
+              )}
             </label>
 
             <label className="border py-10 px-10">
               <div className="flex flex-col space-y-4">
-                <div>Aadhaar (Front and Back):</div>
-                <div className="flex flex-col gap-4">
+                <div>Aadhaar:</div>
+                <div className="flex justify-center">
                   <input
                     type="file"
                     name="Aadhaar"
-                    accept="image/*"
                     multiple
                     onChange={handleFileChange}
                   />
-                  {aadhaarPreviews.length > 0 && (
-                    <div className="flex gap-4">
-                      {aadhaarPreviews.map((preview, index) => (
-                        <img
-                          key={index}
-                          src={preview}
-                          alt={`Aadhaar Preview ${index + 1}`}
-                          className="w-48 h-auto border"
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
+              {aadhaarPreview && (
+                <div className="m-10">
+                  <div>Aadhaar Preview:</div>
+                  <img
+                    src={aadhaarPreview}
+                    alt="Aadhaar Preview"
+                    className="w-48 h-auto border"
+                  />
+                </div>
+              )}
             </label>
           </div>
           <div className="flex justify-center mt-20 ">
