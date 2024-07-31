@@ -4,7 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import Header from "../Header";
 import Footer from "../Footer";
 import axios from "axios";
-import { useRouter } from "next/router"; // Import useRouter from Next.js
+import { useRouter } from "next/navigation"; // Import useRouter from Next.js
 
 const Documents = () => {
   const { user } = useUser();
