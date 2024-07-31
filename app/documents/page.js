@@ -4,6 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import Header from "../Header";
 import Footer from "../Footer";
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation"; // Import useRouter from Next.js
 
 const Documents = () => {
@@ -20,6 +21,10 @@ const Documents = () => {
   const [aadhaarBackPreview, setAadhaarBackPreview] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false); // State for loading
+
+  const searchParams = useSearchParams();
+const pickupDateTime = searchParams.get("pickupDateTime");
+const dropoffDateTime = searchParams.get("dropoffDateTime");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
