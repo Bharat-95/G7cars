@@ -155,7 +155,7 @@ const Page = () => {
       if (!docStatusResponse.ok) {
         if (docStatusResponse.status === 404) {
 
-          router.push('/documents');
+          router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
         } else {
           const errorDetails = await docStatusResponse.text();
           throw new Error(`Failed to fetch document status: ${errorDetails}`);
@@ -199,7 +199,7 @@ const Page = () => {
         return;
       } else {
         alert('Please upload and verify your documents before confirming your booking.');
-        router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
+       router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
       }
   
     } catch (error) {
