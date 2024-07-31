@@ -4,9 +4,11 @@ import { useUser } from "@clerk/clerk-react";
 import Header from "../Header";
 import Footer from "../Footer";
 import axios from "axios";
+import { useRouter } from "next/router"; // Import useRouter from Next.js
 
 const Documents = () => {
   const { user } = useUser();
+  const router = useRouter(); // Initialize the router
   const [drivingLicenseFront, setDrivingLicenseFront] = useState(null);
   const [drivingLicenseBack, setDrivingLicenseBack] = useState(null);
   const [aadhaarFront, setAadhaarFront] = useState(null);
@@ -16,6 +18,8 @@ const Documents = () => {
   const [drivingLicenseBackPreview, setDrivingLicenseBackPreview] = useState(null);
   const [aadhaarFrontPreview, setAadhaarFrontPreview] = useState(null);
   const [aadhaarBackPreview, setAadhaarBackPreview] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false); // State for loading
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -44,6 +48,7 @@ const Documents = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const formData = new FormData();
     formData.append("DrivingLicenseFront", drivingLicenseFront);
@@ -67,12 +72,15 @@ const Documents = () => {
 
       if (response.status === 200) {
         alert("Documents uploaded successfully");
+        router.push("/SearchCars");
       } else {
         throw new Error("Failed to upload documents");
       }
     } catch (error) {
       console.error("Error uploading documents:", error);
       alert("Failed to upload documents");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -183,8 +191,9 @@ const Documents = () => {
             <button
               type="submit"
               className="bg-rose-950 text-white p-2 rounded-md hover:bg-rose-950/90"
+              disabled={isLoading} 
             >
-              Upload
+              {isLoading ? "Uploading..." : "Upload"} 
             </button>
           </div>
         </div>
