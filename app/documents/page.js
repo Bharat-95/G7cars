@@ -21,6 +21,12 @@ const Documents = () => {
     const file = e.target.files[0];
     const { name } = e.target;
 
+    const maxSize = 1 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert("File size should not exceed 1MB");
+      return; 
+    }
+
     if (name === "DrivingLicenseFront") {
       setDrivingLicenseFront(file);
       setDrivingLicenseFrontPreview(URL.createObjectURL(file));
