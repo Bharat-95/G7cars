@@ -199,7 +199,7 @@ const Page = () => {
         return;
       } else {
         alert('Please upload and verify your documents before confirming your booking.');
-        router.push('/documents');
+        router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
       }
   
     } catch (error) {

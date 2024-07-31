@@ -72,7 +72,7 @@ const Documents = () => {
 
       if (response.status === 200) {
         alert("Documents uploaded successfully");
-        router.push("/SearchCars");
+        router.push(`/SearchCars?pickupDateTime=${pickupDateTime}&dropoffDateTime=${dropoffDateTime}`);
       } else {
         throw new Error("Failed to upload documents");
       }
