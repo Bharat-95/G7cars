@@ -14,6 +14,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
 
+//this should work
 const Page = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +104,6 @@ const Page = () => {
       alert("This car is not available for booking");
       return;
     }
-
     const hours = Math.ceil(
       (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
     );
