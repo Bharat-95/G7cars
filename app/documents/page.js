@@ -5,11 +5,11 @@ import Header from "../Header";
 import Footer from "../Footer";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation"; // Import useRouter from Next.js
+import { useRouter } from "next/navigation";
 
 const Documents = () => {
   const { user } = useUser();
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
   const [drivingLicenseFront, setDrivingLicenseFront] = useState(null);
   const [drivingLicenseBack, setDrivingLicenseBack] = useState(null);
   const [aadhaarFront, setAadhaarFront] = useState(null);
@@ -20,7 +20,7 @@ const Documents = () => {
   const [aadhaarFrontPreview, setAadhaarFrontPreview] = useState(null);
   const [aadhaarBackPreview, setAadhaarBackPreview] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false); // State for loading
+  const [isLoading, setIsLoading] = useState(false); 
 
   const searchParams = useSearchParams();
 const pickupDateTime = searchParams.get("pickupDateTime");
