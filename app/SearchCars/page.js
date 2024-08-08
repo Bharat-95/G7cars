@@ -164,6 +164,10 @@ const Page = () => {
       }
   
       const docStatusData = await docStatusResponse.json();
+      
+      console.log(docStatusData)
+      console.log(docStatusData.status)
+
   
       if (docStatusData.status === 'verified') {
         const orderResponse = await fetch(
