@@ -14,7 +14,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
 
-//this should work
 const Page = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,9 +24,10 @@ const Page = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmingBooking, setConfirmingBooking] = useState(false);
   const [docStatusPending, setDocStatusPending] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [whatsappChecked, setWhatsappChecked] = useState(false);
+  const [selectedWash, setSelectedWash] = useState(null);
   const { user, isLoaded } = useUser();
-  
-
   const { isSignedIn } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -135,6 +135,11 @@ const Page = () => {
   };
 
   const confirmBooking = async () => {
+    if (!termsChecked || !whatsappChecked || !selectedWash) {
+      alert("Please accept all terms and select a wash option.");
+      return;
+    }
+
     if (!isSignedIn) {
       const redirectUrl = `/sign-in?from=${encodeURIComponent(
         "/SearchCars"
@@ -147,14 +152,12 @@ const Page = () => {
     try {
       const roundedPrice = Math.round(price);
 
-
       const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
   
       if (!docStatusResponse.ok) {
         if (docStatusResponse.status === 404) {
-
           router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
         } else {
           const errorDetails = await docStatusResponse.text();
@@ -164,10 +167,6 @@ const Page = () => {
       }
   
       const docStatusData = await docStatusResponse.json();
-      
-      console.log(docStatusData)
-      console.log(docStatusData.status)
-
   
       if (docStatusData.status === 'verified') {
         const orderResponse = await fetch(
@@ -213,15 +212,16 @@ const Page = () => {
       setConfirmingBooking(false);
     }
   };
-  
 
   const cancelConfirmation = () => {
     setShowConfirmation(false);
     setSelectedCar(null);
     setPrice(0);
     setDiscount(0);
+    setTermsChecked(false);
+    setWhatsappChecked(false);
+    setSelectedWash(null);
   };
-
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -336,84 +336,75 @@ const Page = () => {
       </div>
 
       {showConfirmation && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-xl">
-            <div className="flex justify-end">
-              <button onClick={cancelConfirmation}>
-                <IoIosClose size={30} />
-              </button>
-            </div>
-            <h2 className="text-2xl font-semibold text-rose-900">
-              Confirmation
-            </h2>
-            <div>
-              <p>
-                <strong>Car:</strong> {selectedCar.Name}
-              </p>
-              <p>
-                <strong>Pick-up Date & Time:</strong>{" "}
-                {pickupDateTime.toLocaleString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}
-              </p>
-              <p>
-                <strong>Drop-off Date & Time:</strong>{" "}
-                {dropoffDateTime.toLocaleString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}
-              </p>
-              <p>
-                <strong>Total Duration:</strong>{" "}
-                {Math.floor(
-                  (dropoffDateTime - pickupDateTime) / (1000 * 60 * 60 * 24)
-                )}{" "}
-                days and{" "}
-                {Math.ceil(
-                  ((dropoffDateTime - pickupDateTime) % (1000 * 60 * 60 * 24)) /
-                    (1000 * 60 * 60)
-                )}{" "}
-                hours
-              </p>
-              <p>
-                <strong>Total Price:</strong> ₹ {price.toFixed(2)}
-              </p>
-              {discount > 0 && (
-                <p>
-                  <strong>Discount:</strong> ₹ {discount.toFixed(2)}
-                </p>
-              )}
-            </div>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={confirmBooking}
-                disabled={confirmingBooking}
-                className={`bg-rose-900 text-white py-2 px-4 rounded-md ${
-                  confirmingBooking
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-rose-900/95"
-                }`}
-              >
-                {confirmingBooking ? (
-                  <div className="flex items-center justify-center">
-                    Confirming...
-                  </div>
-                ) : (
-                  "Confirm Booking"
-                )}
-              </button>
-            </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+          <button
+            onClick={cancelConfirmation}
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          >
+            <IoIosClose className="text-2xl" />
+          </button>
+          <h2 className="text-2xl font-bold mb-4">Confirm Booking</h2>
+          <p className="mb-4">
+            You have selected {selectedCar.Model} for {price} INR with a discount of {discount} INR.
+          </p>
+          <p className="mb-4">
+            Pickup Date: {pickupDateTime.toLocaleString()}
+          </p>
+          <p className="mb-4">
+            Dropoff Date: {dropoffDateTime.toLocaleString()}
+          </p>
+          <p className="mb-4">
+            <strong>Document Requirements:</strong>
+            <ul className="list-disc list-inside">
+              <li>Valid Driving License</li>
+              <li>Valid Aadhar Card</li>
+            </ul>
+          </p>
+          <div className="mb-4">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={termsChecked}
+              onChange={() => setTermsChecked(!termsChecked)}
+              className="mr-2"
+            />
+            <label htmlFor="terms">I accept the Terms and Conditions</label>
           </div>
+          <div className="mb-4">
+            <input
+              type="checkbox"
+              id="whatsapp"
+              checked={whatsappChecked}
+              onChange={() => setWhatsappChecked(!whatsappChecked)}
+              className="mr-2"
+            />
+            <label htmlFor="whatsapp">I agree to receive WhatsApp notifications</label>
+          </div>
+          <div className="mb-4">
+            <label htmlFor="wash" className="block text-gray-700">
+              Select Wash Option:
+            </label>
+            <select
+              id="wash"
+              value={selectedWash}
+              onChange={(e) => setSelectedWash(e.target.value)}
+              className="border rounded-lg w-full p-2"
+            >
+              <option value="">Select an option</option>
+              <option value="Basic">Basic Wash</option>
+              <option value="Premium">Premium Wash</option>
+            </select>
+          </div>
+          <button
+            onClick={confirmBooking}
+            disabled={confirmingBooking}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            {confirmingBooking ? "Confirming..." : "Confirm Booking"}
+          </button>
         </div>
+      </div>
       )}
 
       <Footer />
