@@ -392,8 +392,8 @@ const Page = () => {
               className="border rounded-lg w-full p-2"
             >
               <option value="">Select an option</option>
-              <option value="Basic">Basic Wash</option>
-              <option value="Premium">Premium Wash</option>
+              <option value="Basic">Basic Wash  -  ₹199</option>
+              <option value="Premium">Premium Wash - ₹299 </option>
             </select>
           </div>
           <button
