@@ -152,8 +152,12 @@ const Page = () => {
     setConfirmingBooking(true);
     
     try {
-      const roundedPrice = Math.round(price);
+      let roundedPrice = Math.round(price);
   
+      // Add washing charges to the total price
+      const washPrice = selectedWash === "Basic" ? 199 : selectedWash === "Premium" ? 299 : 0;
+      roundedPrice += washPrice;
+      
       const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
@@ -239,7 +243,6 @@ const Page = () => {
       setConfirmingBooking(false);
     }
   };
-
   const cancelConfirmation = () => {
     setShowConfirmation(false);
     setSelectedCar(null);
