@@ -139,7 +139,7 @@ const Page = () => {
       alert("Please accept all terms and select a wash option.");
       return;
     }
-
+  
     if (!isSignedIn) {
       const redirectUrl = `/sign-in?from=${encodeURIComponent(
         "/SearchCars"
@@ -147,11 +147,13 @@ const Page = () => {
       router.push(redirectUrl);
       return;
     }
+    
     if (confirmingBooking) return;
     setConfirmingBooking(true);
+    
     try {
       const roundedPrice = Math.round(price);
-
+  
       const docStatusResponse = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/users/${user.id}/documents/status`
       );
@@ -159,11 +161,11 @@ const Page = () => {
       if (!docStatusResponse.ok) {
         if (docStatusResponse.status === 404) {
           router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
+          return;
         } else {
           const errorDetails = await docStatusResponse.text();
           throw new Error(`Failed to fetch document status: ${errorDetails}`);
         }
-        return;
       }
   
       const docStatusData = await docStatusResponse.json();
@@ -198,11 +200,36 @@ const Page = () => {
         );
       } else if (docStatusData.status === 'pending') {
         setDocStatusPending(true);
-        setConfirmingBooking(false);
-        return;
+        const orderResponse = await fetch(
+          "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: roundedPrice,
+              currency: "INR",
+            }),
+          }
+        );
+  
+        if (!orderResponse.ok) {
+          const errorDetails = await orderResponse.json();
+          throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
+        }
+  
+        const orderData = await orderResponse.json();
+        const orderId = orderData.orderId;
+  
+        router.push(
+          `/payment?orderId=${orderId}&amount=${roundedPrice}&carId=${
+            selectedCar.G7cars123
+          }&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}&discount=${discount}`
+        );
       } else {
         alert('Please upload and verify your documents before confirming your booking.');
-       router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
+        router.push(`/documents?pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`);
       }
   
     } catch (error) {
