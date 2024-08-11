@@ -336,77 +336,77 @@ const Page = () => {
       </div>
 
       {showConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-          <button
-            onClick={cancelConfirmation}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-          >
-            <IoIosClose className="text-2xl" />
-          </button>
-          <h2 className="text-2xl font-bold mb-4">Confirm Booking</h2>
-          <p className="mb-4">
-            You have selected {selectedCar.Model} for {price} INR with a discount of {discount} INR.
-          </p>
-          <p className="mb-4">
-            Pickup Date: {pickupDateTime.toLocaleString()}
-          </p>
-          <p className="mb-4">
-            Dropoff Date: {dropoffDateTime.toLocaleString()}
-          </p>
-          <p className="mb-4">
-            <strong>Document Requirements:</strong>
-            <ul className="list-disc list-inside">
-              <li>Valid Driving License</li>
-              <li>Valid Aadhar Card</li>
-            </ul>
-          </p>
-          <div className="mb-4">
-            <input
-              type="checkbox"
-              id="terms"
-              checked={termsChecked}
-              onChange={() => setTermsChecked(!termsChecked)}
-              className="mr-2"
-            />
-            <label htmlFor="terms">I accept the Terms and Conditions</label>
-          </div>
-          <div className="mb-4">
-            <input
-              type="checkbox"
-              id="whatsapp"
-              checked={whatsappChecked}
-              onChange={() => setWhatsappChecked(!whatsappChecked)}
-              className="mr-2"
-            />
-            <label htmlFor="whatsapp">I agree to receive WhatsApp notifications</label>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="wash" className="block text-gray-700">
-              Select Wash Option:
-            </label>
-            <select
-              id="wash"
-              value={selectedWash}
-              onChange={(e) => setSelectedWash(e.target.value)}
-              className="border rounded-lg w-full p-2"
-            >
-              <option value="">Select an option</option>
-              <option value="Basic">Basic Wash  -  ₹199</option>
-              <option value="Premium">Premium Wash - ₹299 </option>
-            </select>
-          </div>
-          <button
-            onClick={confirmBooking}
-            disabled={confirmingBooking}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          >
-            {confirmingBooking ? "Confirming..." : "Confirm Booking"}
-          </button>
-        </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="relative bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <button
+        onClick={cancelConfirmation}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1"
+        aria-label="Close"
+      >
+        <IoIosClose className="text-2xl" />
+      </button>
+      <h2 className="text-2xl font-bold mb-4">Confirm Booking</h2>
+      <p className="mb-4">
+        You have selected {selectedCar.Model} for {price} INR with a discount of {discount} INR.
+      </p>
+      <p className="mb-4">
+        Pickup Date: {pickupDateTime.toLocaleString()}
+      </p>
+      <p className="mb-4">
+        Dropoff Date: {dropoffDateTime.toLocaleString()}
+      </p>
+      <p className="mb-4">
+        <strong>Document Requirements:</strong>
+        <ul className="list-disc list-inside">
+          <li>Valid Driving License</li>
+          <li>Valid Aadhar Card</li>
+        </ul>
+      </p>
+      <div className="mb-4">
+        <input
+          type="checkbox"
+          id="terms"
+          checked={termsChecked}
+          onChange={() => setTermsChecked(!termsChecked)}
+          className="mr-2"
+        />
+        <label htmlFor="terms">I accept the Terms and Conditions</label>
       </div>
-      )}
-
+      <div className="mb-4">
+        <input
+          type="checkbox"
+          id="whatsapp"
+          checked={whatsappChecked}
+          onChange={() => setWhatsappChecked(!whatsappChecked)}
+          className="mr-2"
+        />
+        <label htmlFor="whatsapp">I agree to receive WhatsApp notifications</label>
+      </div>
+      <div className="mb-4">
+        <label htmlFor="wash" className="block text-gray-700">
+          Select Wash Option:
+        </label>
+        <select
+          id="wash"
+          value={selectedWash}
+          onChange={(e) => setSelectedWash(e.target.value)}
+          className="border rounded-lg w-full p-2"
+        >
+          <option value="">Select an option</option>
+          <option value="Basic">Basic Wash - ₹199</option>
+          <option value="Premium">Premium Wash - ₹299</option>
+        </select>
+      </div>
+      <button
+        onClick={confirmBooking}
+        disabled={confirmingBooking}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+      >
+        {confirmingBooking ? "Confirming..." : "Confirm Booking"}
+      </button>
+    </div>
+  </div>
+)}
       <Footer />
     </div>
   );
