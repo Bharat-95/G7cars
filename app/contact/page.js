@@ -4,7 +4,7 @@ import Header from '../Header'
 import Footer from '../Footer'
 import emailjs from 'emailjs-com';
 import { useRef } from 'react';
-import { SignedIn } from '@clerk/nextjs';
+
 
 const ContactForm = () => {
 
@@ -31,7 +31,7 @@ const ContactForm = () => {
   };
 
   return (
-    <SignedIn>
+    <div>
       <Header />
 
       <div className='lg:mx-80 my-10 py-14 space-y-16 border-[4px] border-rose-900 bg-white rounded-xl shadow-xl'>
@@ -78,7 +78,7 @@ const ContactForm = () => {
       </div>
 
       <Footer />
-    </SignedIn>
+    </div>
   )
 }
 
