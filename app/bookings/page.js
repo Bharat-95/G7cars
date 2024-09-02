@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, SignedIn } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
 
@@ -53,7 +53,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <SignedIn className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-screen-lg">
@@ -90,7 +90,7 @@ const Page = () => {
         </div>
       </div>
       <Footer />
-    </div>
+    </SignedIn>
   );
 };
 

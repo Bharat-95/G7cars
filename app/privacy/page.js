@@ -2,10 +2,11 @@ import React from 'react'
 import Header from '../Header'
 import Footer from '../Footer'
 import Link from 'next/link'
+import { SignedIn } from '@clerk/nextjs'
 
 const page = () => {
   return (
-    <div className=''>
+    <SignedIn className=''>
       <Header />
       <div className='lg:text-3xl md:text-2xl md:p-10 text-xl p-4 underline text-white flex justify-center lg:p-10 '>Privacy Policy</div>
       <div className='lg:m-20 md:m-10 m-10 text-white lg:space-y-10 md:space-y-10 space-y-4'>
@@ -90,7 +91,7 @@ const page = () => {
 
       </div>
       <Footer />
-    </div>
+    </SignedIn>
   )
 }
 
