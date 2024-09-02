@@ -1,3 +1,4 @@
+"use client"
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
