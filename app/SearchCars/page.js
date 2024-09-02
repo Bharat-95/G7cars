@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { SignedIn } from "@clerk/nextjs";
 import Header from "../Header";
 import Footer from "../Footer";
 import { TbManualGearboxFilled } from "react-icons/tb";
@@ -154,6 +153,8 @@ const Page = () => {
     
     try {
       let roundedPrice = Math.round(price);
+  
+      // Add washing charges to the total price
       const washPrice = selectedWash === "Basic" ? 199 : selectedWash === "Premium" ? 299 : 0;
       roundedPrice += washPrice;
       
@@ -252,7 +253,7 @@ const Page = () => {
     setSelectedWash(null);
   };
   return (
-    <SignedIn className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       <Header />
       
       {docStatusPending && (
@@ -437,7 +438,7 @@ const Page = () => {
   </div>
 )}
       <Footer />
-    </SignedIn>
+    </div>
   );
 };
 
