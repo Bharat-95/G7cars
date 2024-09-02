@@ -90,7 +90,7 @@ const dropoffDateTime = searchParams.get("dropoffDateTime");
   };
 
   return (
-    <div>
+    <SignedIn>
       <Header />
       <form onSubmit={handleSubmit}>
         <div className="flex justify-center m-10 text-2xl font-semibold text-white">
@@ -204,7 +204,7 @@ const dropoffDateTime = searchParams.get("dropoffDateTime");
         </div>
       </form>
       <Footer />
-    </div>
+    </SignedIn>
   );
 };
 

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { SignedIn } from "@clerk/nextjs";
 import Header from "../Header";
 import Footer from "../Footer";
 import { TbManualGearboxFilled } from "react-icons/tb";
@@ -253,7 +254,7 @@ const Page = () => {
     setSelectedWash(null);
   };
   return (
-    <div className="min-h-screen bg-white">
+    <SignedIn className="min-h-screen bg-white">
       <Header />
       
       {docStatusPending && (
@@ -438,7 +439,7 @@ const Page = () => {
   </div>
 )}
       <Footer />
-    </div>
+    </SignedIn>
   );
 };
 
