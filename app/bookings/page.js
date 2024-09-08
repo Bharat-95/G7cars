@@ -48,6 +48,11 @@ const Page = () => {
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
 
+  const handleExtendBooking = (bookingId) => {
+
+    console.log(`Extend booking for ID: ${bookingId}`);
+  };
+
   if (!isLoaded) {
     return <div>Loading user information...</div>;
   }
@@ -82,6 +87,16 @@ const Page = () => {
                   <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
                   <div>Payment ID: {booking.paymentId}</div>
                   <div>Status: {booking.status}</div>
+
+                
+                  {booking.status === 'active' && (
+                    <button
+                      onClick={() => handleExtendBooking(booking.bookingId)}
+                      className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Extend Booking
+                    </button>
+                  )}
                 </div>
               </div>
             ))
