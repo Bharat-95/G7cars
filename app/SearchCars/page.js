@@ -53,7 +53,6 @@ const Page = () => {
 
   const now = new Date();
   const minPickupDateTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
-
   const filterTime = (time) => {
       return time.getTime() >= minPickupDateTime.getTime();
   };
@@ -347,17 +346,18 @@ const Page = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleBookCar(car)}
-                  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
-                    car.Availability === "Available"
-                      ? "bg-rose-900 text-white hover:bg-rose-900/95"
-                      : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  }`}
-                >
-                  {car.Availability === "Available"
-                    ? "Rent car"
-                    : "Not available"}
-                </button>
+  onClick={() => handleBookCar(car)}
+  className={`flex justify-center py-4 px-2 rounded-md w-52 ${
+    car.Availability === "Available"
+      ? "bg-rose-900 text-white hover:bg-rose-900/95"
+      : "bg-gray-300 text-gray-600 cursor-not-allowed"
+  }`}
+  disabled={car.Availability !== "Available"}  
+>
+  {car.Availability === "Available"
+    ? "Rent car"
+    : "Not available"}
+</button>
               </div>
             </div>
           ))
