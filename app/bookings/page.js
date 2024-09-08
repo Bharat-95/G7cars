@@ -89,7 +89,7 @@ const Page = () => {
                   <div>Status: {booking.status}</div>
 
                 
-                  {booking.status === 'active' && (
+                  {booking.status === 'Active' && (
                     <button
                       onClick={() => handleExtendBooking(booking.bookingId)}
                       className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
