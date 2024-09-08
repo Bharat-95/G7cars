@@ -154,7 +154,6 @@ const Page = () => {
     try {
       let roundedPrice = Math.round(price);
   
-      // Add washing charges to the total price
       const washPrice = selectedWash === "Basic" ? 199 : selectedWash === "Premium" ? 299 : 0;
       roundedPrice += washPrice;
       

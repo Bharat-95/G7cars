@@ -81,6 +81,7 @@ const Page = () => {
                   <div>Pickup DateTime: {formatDate(booking.pickupDateTime)}</div>
                   <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
                   <div>Payment ID: {booking.paymentId}</div>
+                  <div>Status: {booking.status}</div>
                 </div>
               </div>
             ))
