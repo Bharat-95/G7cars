@@ -154,7 +154,7 @@ const Page = () => {
     try {
       let roundedPrice = Math.round(price);
   
-      const washPrice = selectedWash === "Basic" ? 199 : selectedWash === "Premium" ? 299 : 0;
+      const washPrice = selectedWash === "Basic" ? 0 : selectedWash === "Premium" ? 299 : 0;
       roundedPrice += washPrice;
       
       const docStatusResponse = await fetch(
