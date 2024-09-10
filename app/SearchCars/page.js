@@ -12,7 +12,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from 'axios';
+
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -352,7 +352,7 @@ const Page = () => {
       ? "bg-rose-900 text-white hover:bg-rose-900/95"
       : "bg-gray-300 text-gray-600 cursor-not-allowed"
   }`}
-  disabled={car.Availability !== "Available"}  // Disable button if car is not available
+  disabled={car.Availability !== "Available"} 
 >
   {car.Availability === "Available"
     ? "Rent car"
