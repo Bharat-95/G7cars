@@ -65,7 +65,6 @@ const Page = () => {
       [bookingId]: {
         isExtending: true,
         minDate: new Date(dropoffDateTime),
-        minTime: new Date(dropoffDateTime), // Set minimum time for the current date
         selectedDate: null, // Clear the selected date initially
       },
     }));
@@ -164,25 +163,17 @@ const Page = () => {
                   {/* Calendar opens and Extend Booking button is hidden */}
                   {extendedDate[booking.bookingId]?.isExtending && (
                     <div>
-              <DatePicker
-  selected={extendedDate[booking.bookingId]?.selectedDate}
-  onChange={(date) => handleDateChange(date, booking.bookingId)}
-  showTimeSelect
-  timeFormat="h:mm aa"
-  timeIntervals={15}
-  dateFormat="dd/MM/yyyy h:mm aa"
-  minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
-  minTime={
-    extendedDate[booking.bookingId]?.selectedDate &&
-    extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate()
-      ? new Date(extendedDate[booking.bookingId]?.minTime) // Ensure minTime is a Date object
-      : new Date().setHours(0, 0)
-  }
-  maxTime={new Date().setHours(23, 59)} // Ensure maxTime is a valid time (end of day)
-  className="mt-4 border p-2 rounded"
-  inline // Calendar shows inline
-/>
-
+                      <DatePicker
+                        selected={extendedDate[booking.bookingId]?.selectedDate}
+                        onChange={(date) => handleDateChange(date, booking.bookingId)}
+                        showTimeSelect
+                        timeFormat="h:mm aa"
+                        timeIntervals={15}
+                        dateFormat="dd/MM/yyyy h:mm aa"
+                        minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
+                        className="mt-4 border p-2 rounded"
+                        inline // Calendar shows inline
+                      />
 
                       {/* Show selected date and time after user selects it */}
                       {extendedDate[booking.bookingId]?.selectedDate && (
