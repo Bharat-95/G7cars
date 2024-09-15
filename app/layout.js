@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
         />
       </Head>
       <html lang="en">
-        <body className={`${inter.className} bg-rose-950`}>
+        <body className={`${inter.className} bg-rose-950 lg:w-screen md:w-screen sm:w-screen`}>
           {children}
         </body>
       </html>
