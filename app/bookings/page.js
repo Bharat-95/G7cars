@@ -9,9 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 const Page = () => {
   const [data, setData] = useState([]);
   const [carDetails, setCarDetails] = useState({});
-  const [extendBookingId, setExtendBookingId] = useState(null);
-  const [extendedDate, setExtendedDate] = useState(null);
-  const [minExtendDate, setMinExtendDate] = useState(null); // Store the min date for extension
+  const [extendedDate, setExtendedDate] = useState({});
   const { user, isLoaded } = useUser();
 
   const fetchData = async () => {
@@ -61,29 +59,48 @@ const Page = () => {
   };
 
   const handleExtendBooking = (bookingId, dropoffDateTime) => {
-    setExtendBookingId(bookingId);
-    setMinExtendDate(new Date(dropoffDateTime)); // Set the minimum date for the DatePicker
+    // When "Extend Booking" is clicked, show the DatePicker for this booking and set the min date
+    setExtendedDate((prev) => ({
+      ...prev,
+      [bookingId]: {
+        isExtending: true,
+        minDate: new Date(dropoffDateTime),
+      },
+    }));
   };
 
-  const handleDateChange = (date) => {
-    setExtendedDate(date);
+  const handleDateChange = (date, bookingId) => {
+    setExtendedDate((prev) => ({
+      ...prev,
+      [bookingId]: {
+        ...prev[bookingId],
+        selectedDate: date,
+      },
+    }));
+
+    // Here you can send the date directly to the backend if needed after selection
+    saveExtendedBooking(bookingId, date);
   };
 
-  const saveExtendedBooking = async () => {
-    if (!extendedDate || !extendBookingId) return;
-    
+  const saveExtendedBooking = async (bookingId, newDropoffDateTime) => {
     try {
       const response = await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${extendBookingId}`,
+        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${bookingId}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ newDropoffDateTime: extendedDate }),
+          body: JSON.stringify({ newDropoffDateTime }),
         }
       );
       if (response.ok) {
         alert('Booking extended successfully');
-        setExtendBookingId(null); // Close the calendar popup after saving
+        setExtendedDate((prev) => ({
+          ...prev,
+          [bookingId]: {
+            ...prev[bookingId],
+            isExtending: false, // Close the calendar after the extension is saved
+          },
+        }));
         fetchData(); // Reload bookings data
       } else {
         console.error('Failed to extend booking');
@@ -136,28 +153,22 @@ const Page = () => {
                       Extend Booking
                     </button>
                   )}
-                </div>
 
-                {extendBookingId === booking.bookingId && (
-                  <div className="mt-4">
+                  {/* Directly show calendar after clicking Extend */}
+                  {extendedDate[booking.bookingId]?.isExtending && (
                     <DatePicker
-                      selected={extendedDate}
-                      onChange={handleDateChange}
+                      selected={extendedDate[booking.bookingId]?.selectedDate}
+                      onChange={(date) => handleDateChange(date, booking.bookingId)}
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={15}
                       dateFormat="dd/MM/yyyy h:mm aa"
-                      minDate={minExtendDate} // Ensure date is later than dropoff
-                      className="border p-2 rounded"
+                      minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
+                      className="mt-4 border p-2 rounded"
+                      inline // Calendar shows inline
                     />
-                    <button
-                      onClick={saveExtendedBooking}
-                      className="mt-2 bg-green-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Save Extension
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))
           ) : (
