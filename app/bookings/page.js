@@ -164,20 +164,21 @@ const Page = () => {
                   {/* Calendar opens and Extend Booking button is hidden */}
                   {extendedDate[booking.bookingId]?.isExtending && (
                     <div>
-                      <DatePicker
-                        selected={extendedDate[booking.bookingId]?.selectedDate}
-                        onChange={(date) => handleDateChange(date, booking.bookingId)}
-                        showTimeSelect
-                        timeFormat="h:mm aa"
-                        timeIntervals={15}
-                        dateFormat="dd/MM/yyyy h:mm aa"
-                        minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
-                        minTime={extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate() 
-                          ? extendedDate[booking.bookingId]?.minTime 
-                          : new Date().setHours(0, 0)} // Set time only if the date is the same as the dropoff date
-                        className="mt-4 border p-2 rounded"
-                        inline // Calendar shows inline
-                      />
+                     <DatePicker
+  selected={extendedDate[booking.bookingId]?.selectedDate}
+  onChange={(date) => handleDateChange(date, booking.bookingId)}
+  showTimeSelect
+  timeFormat="HH:mm"
+  timeIntervals={15}
+  dateFormat="dd/MM/yyyy h:mm aa"
+  minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
+  minTime={extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate()
+    ? extendedDate[booking.bookingId]?.minTime
+    : new Date().setHours(0, 0)} // Set min time for the same day
+  maxTime={new Date().setHours(23, 59)} // Set max time to the end of the day
+  className="mt-4 border p-2 rounded"
+  inline // Calendar shows inline
+/>
 
                       {/* Show selected date and time after user selects it */}
                       {extendedDate[booking.bookingId]?.selectedDate && (
