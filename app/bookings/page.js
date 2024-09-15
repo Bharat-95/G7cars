@@ -1,15 +1,12 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from 'react';
 import { useUser, SignedIn } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 const Page = () => {
   const [data, setData] = useState([]);
   const [carDetails, setCarDetails] = useState({});
-  const [extendedDate, setExtendedDate] = useState({});
   const { user, isLoaded } = useUser();
 
   const fetchData = async () => {
@@ -58,61 +55,9 @@ const Page = () => {
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
 
-  const handleExtendBooking = (bookingId, dropoffDateTime) => {
-    // When "Extend Booking" is clicked, show the DatePicker for this booking and set the min date
-    setExtendedDate((prev) => ({
-      ...prev,
-      [bookingId]: {
-        isExtending: true,
-        minDate: new Date(dropoffDateTime),
-        selectedDate: null, // Clear the selected date initially
-      },
-    }));
-  };
+  const handleExtendBooking = (bookingId) => {
 
-  const handleDateChange = (date, bookingId) => {
-    setExtendedDate((prev) => ({
-      ...prev,
-      [bookingId]: {
-        ...prev[bookingId],
-        selectedDate: date, // Save selected date
-      },
-    }));
-  };
-
-  const saveExtendedBooking = async (bookingId) => {
-    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
-
-    if (!newDropoffDateTime) {
-      alert('Please select a new drop-off date and time');
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${bookingId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ newDropoffDateTime }),
-        }
-      );
-      if (response.ok) {
-        alert('Booking extended successfully');
-        setExtendedDate((prev) => ({
-          ...prev,
-          [bookingId]: {
-            ...prev[bookingId],
-            isExtending: false, // Close the calendar after the extension is saved
-          },
-        }));
-        fetchData(); // Reload bookings data
-      } else {
-        console.error('Failed to extend booking');
-      }
-    } catch (error) {
-      console.error('Error extending booking:', error);
-    }
+    console.log(`Extend booking for ID: ${bookingId}`);
   };
 
   if (!isLoaded) {
@@ -123,7 +68,7 @@ const Page = () => {
     <SignedIn className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-grow flex items-center justify-center">
-        <div className="w-full max-w-screen">
+        <div className="w-full max-w-screen-lg">
           {data.length > 0 ? (
             data.map((booking) => (
               <div
@@ -150,46 +95,14 @@ const Page = () => {
                   <div>Payment ID: {booking.paymentId}</div>
                   <div>Status: {booking.status}</div>
 
-                  {/* Show Extend button or DatePicker */}
-                  {booking.status === 'Active' && !extendedDate[booking.bookingId]?.isExtending && (
+                
+                  {booking.status === 'Active' && (
                     <button
-                      onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
+                      onClick={() => handleExtendBooking(booking.bookingId)}
                       className="mt-2 bg-black text-white font-bold py-2 px-4 rounded"
                     >
                       Extend Booking
                     </button>
-                  )}
-
-                  {/* Calendar opens and Extend Booking button is hidden */}
-                  {extendedDate[booking.bookingId]?.isExtending && (
-                    <div>
-                      <DatePicker
-                        selected={extendedDate[booking.bookingId]?.selectedDate}
-                        onChange={(date) => handleDateChange(date, booking.bookingId)}
-                        showTimeSelect
-                        timeFormat="h:mm aa"
-                        timeIntervals={15}
-                        dateFormat="dd/MM/yyyy h:mm aa"
-                        minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
-                        className="mt-4 border p-2 rounded"
-                        inline // Calendar shows inline
-                      />
-
-                      {/* Show selected date and time after user selects it */}
-                      {extendedDate[booking.bookingId]?.selectedDate && (
-                        <div className="mt-4">
-                          <p className="font-semibold">
-                            New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
-                          </p>
-                          <button
-                            onClick={() => saveExtendedBooking(booking.bookingId)}
-                            className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
-                          >
-                            Confirm New Dropoff Date
-                          </button>
-                        </div>
-                      )}
-                    </div>
                   )}
                 </div>
               </div>
