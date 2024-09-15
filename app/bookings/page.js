@@ -7,6 +7,7 @@ import Footer from '../Footer';
 const Page = () => {
   const [data, setData] = useState([]);
   const [carDetails, setCarDetails] = useState({});
+  const [extendedDate, setExtendedDate] = useState({});
   const { user, isLoaded } = useUser();
 
   const fetchData = async () => {
@@ -55,14 +56,68 @@ const Page = () => {
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
 
-  const handleExtendBooking = (bookingId) => {
+  const handleExtendBooking = (bookingId, dropoffDateTime) => {
+    setExtendedDate((prev) => ({
+      ...prev,
+      [bookingId]: {
+        isExtending: true,
+        minDate: new Date(dropoffDateTime),
+        minTime: new Date(dropoffDateTime),
+        selectedDate: null,
+      },
+    }));
+  };
 
-    console.log(`Extend booking for ID: ${bookingId}`);
+  const handleDateChange = (date, bookingId) => {
+    setExtendedDate((prev) => ({
+      ...prev,
+      [bookingId]: {
+        ...prev[bookingId],
+        selectedDate: date, // Save selected date
+      },
+    }));
+  };
+
+
+  const saveExtendedBooking = async (bookingId) => {
+    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
+
+    if (!newDropoffDateTime) {
+      alert('Please select a new drop-off date and time');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${bookingId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newDropoffDateTime }),
+        }
+      );
+      if (response.ok) {
+        alert('Booking extended successfully');
+        setExtendedDate((prev) => ({
+          ...prev,
+          [bookingId]: {
+            ...prev[bookingId],
+            isExtending: false, // Close the calendar after the extension is saved
+          },
+        }));
+        fetchData(); // Reload bookings data
+      } else {
+        console.error('Failed to extend booking');
+      }
+    } catch (error) {
+      console.error('Error extending booking:', error);
+    }
   };
 
   if (!isLoaded) {
     return <div>Loading user information...</div>;
   }
+
 
   return (
     <SignedIn className="flex flex-col min-h-screen">
@@ -110,6 +165,40 @@ const Page = () => {
           ) : (
             <div>No bookings found</div>
           )}
+
+{extendedDate[booking.bookingId]?.isExtending && (
+                    <div>
+                      <DatePicker
+                        selected={extendedDate[booking.bookingId]?.selectedDate}
+                        onChange={(date) => handleDateChange(date, booking.bookingId)}
+                        showTimeSelect
+                        timeFormat="h:mm aa"
+                        timeIntervals={15}
+                        dateFormat="dd/MM/yyyy h:mm aa"
+                        minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
+                        minTime={extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate() 
+                          ? extendedDate[booking.bookingId]?.minTime 
+                          : new Date().setHours(0, 0)} // Set time only if the date is the same as the dropoff date
+                        className="mt-4 border p-2 rounded"
+                        inline // Calendar shows inline
+                      />
+
+                      {/* Show selected date and time after user selects it */}
+                      {extendedDate[booking.bookingId]?.selectedDate && (
+                        <div className="mt-4">
+                          <p className="font-semibold">
+                            New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
+                          </p>
+                          <button
+                            onClick={() => saveExtendedBooking(booking.bookingId)}
+                            className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                          >
+                            Confirm New Dropoff Date
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
         </div>
       </div>
       <Footer />
