@@ -123,7 +123,7 @@ const Page = () => {
     <SignedIn className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-grow flex items-center justify-center">
-        <div className="w-full max-w-screen-lg">
+        <div className="w-full max-w-screen">
           {data.length > 0 ? (
             data.map((booking) => (
               <div
