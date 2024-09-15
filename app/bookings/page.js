@@ -65,6 +65,7 @@ const Page = () => {
       [bookingId]: {
         isExtending: true,
         minDate: new Date(dropoffDateTime),
+        selectedDate: null, // Clear the selected date initially
       },
     }));
   };
@@ -74,15 +75,19 @@ const Page = () => {
       ...prev,
       [bookingId]: {
         ...prev[bookingId],
-        selectedDate: date,
+        selectedDate: date, // Save selected date
       },
     }));
-
-    // Here you can send the date directly to the backend if needed after selection
-    saveExtendedBooking(bookingId, date);
   };
 
-  const saveExtendedBooking = async (bookingId, newDropoffDateTime) => {
+  const saveExtendedBooking = async (bookingId) => {
+    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
+
+    if (!newDropoffDateTime) {
+      alert('Please select a new drop-off date and time');
+      return;
+    }
+
     try {
       const response = await fetch(
         `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${bookingId}`,
@@ -145,7 +150,8 @@ const Page = () => {
                   <div>Payment ID: {booking.paymentId}</div>
                   <div>Status: {booking.status}</div>
 
-                  {booking.status === 'Active' && (
+                  {/* Show Extend button or DatePicker */}
+                  {booking.status === 'Active' && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
                       onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
                       className="mt-2 bg-black text-white font-bold py-2 px-4 rounded"
@@ -154,19 +160,36 @@ const Page = () => {
                     </button>
                   )}
 
-                  {/* Directly show calendar after clicking Extend */}
+                  {/* Calendar opens and Extend Booking button is hidden */}
                   {extendedDate[booking.bookingId]?.isExtending && (
-                    <DatePicker
-                      selected={extendedDate[booking.bookingId]?.selectedDate}
-                      onChange={(date) => handleDateChange(date, booking.bookingId)}
-                      showTimeSelect
-                      timeFormat="HH:mm"
-                      timeIntervals={15}
-                      dateFormat="dd/MM/yyyy h:mm aa"
-                      minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
-                      className="mt-4 border p-2 rounded"
-                      inline // Calendar shows inline
-                    />
+                    <div>
+                      <DatePicker
+                        selected={extendedDate[booking.bookingId]?.selectedDate}
+                        onChange={(date) => handleDateChange(date, booking.bookingId)}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        dateFormat="dd/MM/yyyy h:mm aa"
+                        minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
+                        className="mt-4 border p-2 rounded"
+                        inline // Calendar shows inline
+                      />
+
+                      {/* Show selected date and time after user selects it */}
+                      {extendedDate[booking.bookingId]?.selectedDate && (
+                        <div className="mt-4">
+                          <p className="font-semibold">
+                            New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
+                          </p>
+                          <button
+                            onClick={() => saveExtendedBooking(booking.bookingId)}
+                            className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                          >
+                            Confirm New Dropoff Date
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
