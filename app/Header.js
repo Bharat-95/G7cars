@@ -17,7 +17,7 @@ const Header = () => {
         <Image src={Logo} alt="No Logo Found" className="lg:w-40 md:w-20 lg:h-20 md:h-10 h-4 w-6" />
       </Link>
       <div>
-        <ul className="flex lg:space-x-20 md:space-x-10 space-x-4 lg:text-lg text-[10px]">
+        <ul className="flex lg:space-x-20 md:space-x-10 space-x-4 lg:text-lg md:text-md text-[10px]">
           <Link href="/"><li className="hover:text-rose-200 ">Home</li></Link>
           <Link href="/about"><li className="hover:text-rose-200">About Us</li></Link>
           <SignedIn>
