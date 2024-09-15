@@ -164,7 +164,7 @@ const Page = () => {
                   {/* Calendar opens and Extend Booking button is hidden */}
                   {extendedDate[booking.bookingId]?.isExtending && (
                     <div>
-                     <DatePicker
+              <DatePicker
   selected={extendedDate[booking.bookingId]?.selectedDate}
   onChange={(date) => handleDateChange(date, booking.bookingId)}
   showTimeSelect
@@ -175,13 +175,14 @@ const Page = () => {
   minTime={
     extendedDate[booking.bookingId]?.selectedDate &&
     extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate()
-      ? new Date(extendedDate[booking.bookingId]?.minTime) // Convert minTime to Date object
+      ? new Date(extendedDate[booking.bookingId]?.minTime) // Ensure minTime is a Date object
       : new Date().setHours(0, 0)
   }
-  maxTime={new Date().setHours(23, 59)} // Set max time to the end of the day
+  maxTime={new Date().setHours(23, 59)} // Ensure maxTime is a valid time (end of day)
   className="mt-4 border p-2 rounded"
   inline // Calendar shows inline
 />
+
 
                       {/* Show selected date and time after user selects it */}
                       {extendedDate[booking.bookingId]?.selectedDate && (
