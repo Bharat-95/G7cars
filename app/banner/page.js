@@ -47,7 +47,7 @@ const Banner = () => {
 
     return (
         <div className='text-white bg-rose-900 w-screen'>
-            <Image src={Bg} alt='No Image Found' className='W-screen lg:h-[800px] md:h-[600px] opacity-70 ' />
+            <Image src={Bg} alt='No Image Found' className='lg:W-screen md:w-screen w-screen lg:h-[800px] md:h-[600px] opacity-70 ' />
             <div className='absolute lg:top-[30%] md:top-[20%] top-[10%] lg:left-[8%] md:left-[4%] lg:space-y-10 md:space-y-4 space-y-4'>
                 <div className='flex lg:w-[60%] md:w-[80%] lg:mx-56 md:mx-20 leading-relaxed lg:text-4xl md:text-2xl text-lg font-extrabold text-center '> Fast & Easy Way To Rent A Car in Hyderabad Price starting from 69/hr</div>
                 <div className="flex justify-center">
