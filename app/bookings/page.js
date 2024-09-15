@@ -167,10 +167,10 @@ const Page = () => {
                         selected={extendedDate[booking.bookingId]?.selectedDate}
                         onChange={(date) => handleDateChange(date, booking.bookingId)}
                         showTimeSelect
-                        timeFormat="HH:mm"
+                        timeFormat="h:mm aa"
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy h:mm aa"
-                        minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
+                        minDate={extendedDate[booking.bookingId]?.minDate}
                         className="mt-4 border p-2 rounded"
                         inline // Calendar shows inline
                       />
