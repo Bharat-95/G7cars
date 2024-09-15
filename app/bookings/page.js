@@ -65,6 +65,7 @@ const Page = () => {
       [bookingId]: {
         isExtending: true,
         minDate: new Date(dropoffDateTime),
+        minTime: new Date(dropoffDateTime), // Set minimum time for the current date
         selectedDate: null, // Clear the selected date initially
       },
     }));
@@ -171,6 +172,9 @@ const Page = () => {
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy h:mm aa"
                         minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
+                        minTime={extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate() 
+                          ? extendedDate[booking.bookingId]?.minTime 
+                          : new Date().setHours(0, 0)} // Set time only if the date is the same as the dropoff date
                         className="mt-4 border p-2 rounded"
                         inline // Calendar shows inline
                       />
