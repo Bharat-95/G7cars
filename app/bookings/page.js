@@ -11,6 +11,7 @@ const Page = () => {
   const [carDetails, setCarDetails] = useState({});
   const [extendBookingId, setExtendBookingId] = useState(null);
   const [extendedDate, setExtendedDate] = useState(null);
+  const [minExtendDate, setMinExtendDate] = useState(null); // Store the min date for extension
   const { user, isLoaded } = useUser();
 
   const fetchData = async () => {
@@ -59,8 +60,9 @@ const Page = () => {
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
 
-  const handleExtendBooking = (bookingId) => {
+  const handleExtendBooking = (bookingId, dropoffDateTime) => {
     setExtendBookingId(bookingId);
+    setMinExtendDate(new Date(dropoffDateTime)); // Set the minimum date for the DatePicker
   };
 
   const handleDateChange = (date) => {
@@ -81,8 +83,8 @@ const Page = () => {
       );
       if (response.ok) {
         alert('Booking extended successfully');
-        setExtendBookingId(null); 
-        fetchData(); 
+        setExtendBookingId(null); // Close the calendar popup after saving
+        fetchData(); // Reload bookings data
       } else {
         console.error('Failed to extend booking');
       }
@@ -128,7 +130,7 @@ const Page = () => {
 
                   {booking.status === 'Active' && (
                     <button
-                      onClick={() => handleExtendBooking(booking.bookingId)}
+                      onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
                       className="mt-2 bg-black text-white font-bold py-2 px-4 rounded"
                     >
                       Extend Booking
@@ -145,7 +147,7 @@ const Page = () => {
                       timeFormat="HH:mm"
                       timeIntervals={15}
                       dateFormat="dd/MM/yyyy h:mm aa"
-                      minDate={new Date()}
+                      minDate={minExtendDate} // Ensure date is later than dropoff
                       className="border p-2 rounded"
                     />
                     <button
