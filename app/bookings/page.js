@@ -1,12 +1,16 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 import { useUser, SignedIn } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Page = () => {
   const [data, setData] = useState([]);
   const [carDetails, setCarDetails] = useState({});
+  const [extendBookingId, setExtendBookingId] = useState(null);
+  const [extendedDate, setExtendedDate] = useState(null);
   const { user, isLoaded } = useUser();
 
   const fetchData = async () => {
@@ -56,8 +60,35 @@ const Page = () => {
   };
 
   const handleExtendBooking = (bookingId) => {
+    setExtendBookingId(bookingId);
+  };
 
-    console.log(`Extend booking for ID: ${bookingId}`);
+  const handleDateChange = (date) => {
+    setExtendedDate(date);
+  };
+
+  const saveExtendedBooking = async () => {
+    if (!extendedDate || !extendBookingId) return;
+    
+    try {
+      const response = await fetch(
+        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${extendBookingId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newDropoffDateTime: extendedDate }),
+        }
+      );
+      if (response.ok) {
+        alert('Booking extended successfully');
+        setExtendBookingId(null); 
+        fetchData(); 
+      } else {
+        console.error('Failed to extend booking');
+      }
+    } catch (error) {
+      console.error('Error extending booking:', error);
+    }
   };
 
   if (!isLoaded) {
@@ -95,7 +126,6 @@ const Page = () => {
                   <div>Payment ID: {booking.paymentId}</div>
                   <div>Status: {booking.status}</div>
 
-                
                   {booking.status === 'Active' && (
                     <button
                       onClick={() => handleExtendBooking(booking.bookingId)}
@@ -105,6 +135,27 @@ const Page = () => {
                     </button>
                   )}
                 </div>
+
+                {extendBookingId === booking.bookingId && (
+                  <div className="mt-4">
+                    <DatePicker
+                      selected={extendedDate}
+                      onChange={handleDateChange}
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={15}
+                      dateFormat="dd/MM/yyyy h:mm aa"
+                      minDate={new Date()}
+                      className="border p-2 rounded"
+                    />
+                    <button
+                      onClick={saveExtendedBooking}
+                      className="mt-2 bg-green-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Save Extension
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           ) : (
