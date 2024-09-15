@@ -6,7 +6,7 @@ import { SignedIn } from "@clerk/nextjs";
 
 const AboutPage = () => {
   return (
-    <SignedIn className="min-h-screen">
+    <div className="min-h-screen">
       <Header />
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-semibold text-white lg:mb-10 md:mb-4 mb-4 underline underline-offset-8">
@@ -37,7 +37,7 @@ const AboutPage = () => {
         </div>
 
       <Footer />
-    </SignedIn>
+    </div>
   );
 };
 
