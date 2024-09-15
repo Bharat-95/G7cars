@@ -1,8 +1,10 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 import { useUser, SignedIn } from '@clerk/clerk-react';
 import Header from '../Header';
 import Footer from '../Footer';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -57,13 +59,13 @@ const Page = () => {
   };
 
   const handleExtendBooking = (bookingId, dropoffDateTime) => {
+    // When "Extend Booking" is clicked, show the DatePicker for this booking and set the min date
     setExtendedDate((prev) => ({
       ...prev,
       [bookingId]: {
         isExtending: true,
         minDate: new Date(dropoffDateTime),
-        minTime: new Date(dropoffDateTime),
-        selectedDate: null,
+        selectedDate: null, // Clear the selected date initially
       },
     }));
   };
@@ -77,7 +79,6 @@ const Page = () => {
       },
     }));
   };
-
 
   const saveExtendedBooking = async (bookingId) => {
     const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
@@ -118,7 +119,6 @@ const Page = () => {
     return <div>Loading user information...</div>;
   }
 
-
   return (
     <SignedIn className="flex flex-col min-h-screen">
       <Header />
@@ -150,35 +150,27 @@ const Page = () => {
                   <div>Payment ID: {booking.paymentId}</div>
                   <div>Status: {booking.status}</div>
 
-                
-                  {booking.status === 'Active' && (
+                  {/* Show Extend button or DatePicker */}
+                  {booking.status === 'Active' && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
-                      onClick={() => handleExtendBooking(booking.bookingId)}
+                      onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
                       className="mt-2 bg-black text-white font-bold py-2 px-4 rounded"
                     >
                       Extend Booking
                     </button>
                   )}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div>No bookings found</div>
-          )}
 
-{extendedDate[booking.bookingId]?.isExtending && (
+                  {/* Calendar opens and Extend Booking button is hidden */}
+                  {extendedDate[booking.bookingId]?.isExtending && (
                     <div>
                       <DatePicker
                         selected={extendedDate[booking.bookingId]?.selectedDate}
                         onChange={(date) => handleDateChange(date, booking.bookingId)}
                         showTimeSelect
-                        timeFormat="h:mm aa"
+                        timeFormat="HH:mm"
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy h:mm aa"
                         minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
-                        minTime={extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate() 
-                          ? extendedDate[booking.bookingId]?.minTime 
-                          : new Date().setHours(0, 0)} // Set time only if the date is the same as the dropoff date
                         className="mt-4 border p-2 rounded"
                         inline // Calendar shows inline
                       />
@@ -199,6 +191,12 @@ const Page = () => {
                       )}
                     </div>
                   )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div>No bookings found</div>
+          )}
         </div>
       </div>
       <Footer />
