@@ -168,13 +168,16 @@ const Page = () => {
   selected={extendedDate[booking.bookingId]?.selectedDate}
   onChange={(date) => handleDateChange(date, booking.bookingId)}
   showTimeSelect
-  timeFormat="HH:mm"
+  timeFormat="h:mm aa"
   timeIntervals={15}
   dateFormat="dd/MM/yyyy h:mm aa"
   minDate={extendedDate[booking.bookingId]?.minDate} // Ensure date is later than dropoff
-  minTime={extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate()
-    ? extendedDate[booking.bookingId]?.minTime
-    : new Date().setHours(0, 0)} // Set min time for the same day
+  minTime={
+    extendedDate[booking.bookingId]?.selectedDate &&
+    extendedDate[booking.bookingId]?.selectedDate?.getDate() === extendedDate[booking.bookingId]?.minDate?.getDate()
+      ? new Date(extendedDate[booking.bookingId]?.minTime) // Convert minTime to Date object
+      : new Date().setHours(0, 0)
+  }
   maxTime={new Date().setHours(23, 59)} // Set max time to the end of the day
   className="mt-4 border p-2 rounded"
   inline // Calendar shows inline
