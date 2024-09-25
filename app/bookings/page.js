@@ -58,17 +58,12 @@ const Page = () => {
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
   const handleExtendBooking = async () => {
-    if (!isSignedIn) {
-      const redirectUrl = `/sign-in?from=${encodeURIComponent(
-        "/SearchCars"
-      )}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
-      router.push(redirectUrl);
-      return;
-    }
   
-    const newDropoffDateTime = dropoffDateTime; // Use the new dropoff date selected by the user
+    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
+
+    console.log(newDropoffDateTime);
   
-    // Calculate the price for the extended period
+    
     const hours = Math.ceil(
       (newDropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
     );
@@ -235,7 +230,7 @@ const Page = () => {
                             New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
                           </p>
                           <button
-                            onClick={() => saveExtendedBooking(booking.bookingId)}
+                            onClick={() => handleExtendBooking}
                             className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
                           >
                             Confirm New Dropoff Date
