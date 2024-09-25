@@ -57,25 +57,80 @@ const Page = () => {
     };
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
-
-  const handleExtendBooking = (bookingId, dropoffDateTime) => {
-    // When "Extend Booking" is clicked, show the DatePicker for this booking and set the min date
-    setExtendedDate((prev) => ({
-      ...prev,
-      [bookingId]: {
-        isExtending: true,
-        minDate: new Date(dropoffDateTime),
-        selectedDate: null, // Clear the selected date initially
-      },
-    }));
+  const handleExtendBooking = async () => {
+    if (!isSignedIn) {
+      const redirectUrl = `/sign-in?from=${encodeURIComponent(
+        "/SearchCars"
+      )}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${dropoffDateTime.toISOString()}`;
+      router.push(redirectUrl);
+      return;
+    }
+  
+    const newDropoffDateTime = dropoffDateTime; // Use the new dropoff date selected by the user
+  
+    // Calculate the price for the extended period
+    const hours = Math.ceil(
+      (newDropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
+    );
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
+    const carPricePerHour = carPricePerDay / 24;
+    let totalPrice = Math.round(
+      carPricePerDay * days + carPricePerHour * remainingHours
+    );
+  
+    let discountAmount = 0;
+    if (days === 0 && remainingHours < 24) {
+      totalPrice *= 1.4;
+    }
+  
+    if (days >= 10) {
+      discountAmount = Math.round(totalPrice * 0.1);
+      totalPrice *= 0.9;
+    } else if (days >= 4) {
+      discountAmount = Math.round(totalPrice * 0.05);
+      totalPrice *= 0.95;
+    }
+  
+    try {
+      const orderResponse = await fetch(
+        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: Math.round(totalPrice),
+            currency: "INR",
+          }),
+        }
+      );
+  
+      if (!orderResponse.ok) {
+        const errorDetails = await orderResponse.json();
+        throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
+      }
+  
+      const orderData = await orderResponse.json();
+      const orderId = orderData.orderId;
+  
+      router.push(
+        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}`
+      );
+    } catch (error) {
+      console.error("Error extending booking:", error);
+      alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
+    }
   };
-
+  
   const handleDateChange = (date, bookingId) => {
     setExtendedDate((prev) => ({
       ...prev,
       [bookingId]: {
         ...prev[bookingId],
-        selectedDate: date, // Save selected date
+        selectedDate: date, 
       },
     }));
   };
@@ -103,10 +158,10 @@ const Page = () => {
           ...prev,
           [bookingId]: {
             ...prev[bookingId],
-            isExtending: false, // Close the calendar after the extension is saved
+            isExtending: false,
           },
         }));
-        fetchData(); // Reload bookings data
+        fetchData();
       } else {
         console.error('Failed to extend booking');
       }
@@ -150,7 +205,6 @@ const Page = () => {
                   <div>Payment ID: {booking.paymentId}</div>
                   <div>Status: {booking.status}</div>
 
-                  {/* Show Extend button or DatePicker */}
                   {booking.status === 'Active' && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
                       onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
@@ -160,7 +214,6 @@ const Page = () => {
                     </button>
                   )}
 
-                  {/* Calendar opens and Extend Booking button is hidden */}
                   {extendedDate[booking.bookingId]?.isExtending && (
                     <div>
                       <DatePicker
@@ -172,10 +225,10 @@ const Page = () => {
                         dateFormat="dd/MM/yyyy h:mm aa"
                         minDate={extendedDate[booking.bookingId]?.minDate}
                         className="mt-4 border p-2 rounded"
-                        inline // Calendar shows inline
+                        inline 
                       />
 
-                      {/* Show selected date and time after user selects it */}
+                      
                       {extendedDate[booking.bookingId]?.selectedDate && (
                         <div className="mt-4">
                           <p className="font-semibold">
@@ -193,7 +246,7 @@ const Page = () => {
                   )}
                 </div>
               </div>
-            ))
+            ))  
           ) : (
             <div>No bookings found</div>
           )}
