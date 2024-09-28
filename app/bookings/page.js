@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
 import { useUser, SignedIn } from "@clerk/clerk-react";
 import Header from "../Header";
@@ -122,6 +122,12 @@ const Page = () => {
       totalPrice -= discountAmount; // Subtract discount from total
     }
 
+    // Log the results for debugging
+    console.log("Car Price Per Day:", carPricePerDay);
+    console.log("Days:", days);
+    console.log("Remaining Hours:", remainingHours);
+    console.log("Total Price Before Discounts:", totalPrice);
+
     try {
       // Create order
       const orderResponse = await fetch(
@@ -150,14 +156,13 @@ const Page = () => {
       router.push(
         `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}&bookingId=${bookingId}`
       );
-
-      // After successful payment, confirm the payment and update the booking
       confirmPayment({
         orderId,
         amount: totalPrice,
         bookingId, // Pass the bookingId to confirmPayment
         newDropoffDateTime: newDropoffDateTime.toISOString(), // Pass the new dropoff date
       });
+
 
     } catch (error) {
       console.error("Error extending booking:", error);
@@ -175,7 +180,7 @@ const Page = () => {
       const status = "Completed"; // or whatever status you want to set
 
       try {
-        const response = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/update-dropoff-date', {
+        const response = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/update-dropoff', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -200,6 +205,8 @@ const Page = () => {
       }
     }
   };
+
+
 
   if (!isLoaded) {
     return <div>Loading user information...</div>;
@@ -252,15 +259,20 @@ const Page = () => {
                       <DatePicker
                         selected={extendedDate[booking.bookingId]?.selectedDate}
                         onChange={(date) => handleDateChange(date, booking.bookingId)}
-                        minDate={extendedDate[booking.bookingId].minDate}
                         showTimeSelect
-                        dateFormat="Pp"
+                        timeFormat="h:mm aa"
+                        timeIntervals={15}
+                        dateFormat="dd/MM/yyyy h:mm aa"
+                        minDate={extendedDate[booking.bookingId]?.minDate}
+                        className="mt-4 border p-2 rounded"
+                        inline
                       />
+
                       <button
                         onClick={() => saveExtendedBooking(booking, booking.bookingId, booking.pickupDateTime, carDetails[booking.carId])}
-                        className="mt-2 bg-green-500 text-white font-bold py-2 px-4 rounded"
+                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded"
                       >
-                        Confirm Extension
+                        Save Changes
                       </button>
                     </div>
                   )}
@@ -268,7 +280,7 @@ const Page = () => {
               </div>
             ))
           ) : (
-            <div>No bookings found.</div>
+            <p>No bookings found.</p>
           )}
         </div>
       </div>
