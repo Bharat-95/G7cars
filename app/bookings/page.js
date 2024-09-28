@@ -83,26 +83,36 @@ const Page = () => {
   };
 
   const saveExtendedBooking = async (bookingId, pickupDateTime, selectedCar) => {
-    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
+    
 
     if (!newDropoffDateTime) {
       alert("Please select a new drop-off date and time");
       return;
     }
 
-    const hours = Math.ceil(
-      (newDropoffDateTime - new Date(pickupDateTime)) / (1000 * 60 * 60)
-    );
+    const originalDropoffDateTime = new Date(booking.dropoffDateTime);
+    const newDropoffDateTime = extendedDate[booking.bookingId]?.selectedDate;
+    
+    // Calculate the difference in time between the new drop-off and original drop-off
+    const timeDifference = newDropoffDateTime - originalDropoffDateTime;
+    
+    // Calculate the difference in hours and days
+    const hours = Math.ceil(timeDifference / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
     
+    // Ensure that days and remaining hours are not negative
+    if (days < 0 || (days === 0 && remainingHours < 0)) {
+      alert("New drop-off date must be after the original drop-off date.");
+      return;
+    }
+    
+    // Get the price per day and per hour
     const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
     
-    // Calculate total price based on days and remaining hours
-    let totalPrice = Math.round(
-      (carPricePerDay * days) + (carPricePerHour * remainingHours)
-    );
+    // Calculate total price for the extension period
+    let totalPrice = Math.round((carPricePerDay * days) + (carPricePerHour * remainingHours));
     
     // Apply discounts
     let discountAmount = 0;
@@ -113,11 +123,13 @@ const Page = () => {
       discountAmount = Math.round(totalPrice * 0.05);
       totalPrice -= discountAmount; // Subtract discount from total
     }
-
+    
+    // Log the results for debugging
     console.log("Car Price Per Day:", carPricePerDay);
-console.log("Days:", days);
-console.log("Remaining Hours:", remainingHours);
-console.log("Total Price Before Discounts:", totalPrice);
+    console.log("Days:", days);
+    console.log("Remaining Hours:", remainingHours);
+    console.log("Total Price Before Discounts:", totalPrice);
+    
 
     try {
       // Create order
