@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useUser, SignedIn } from '@clerk/clerk-react';
-import Header from '../Header';
-import Footer from '../Footer';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { useRouter } from 'next/navigation'; 
+import React, { useState, useEffect } from "react";
+import { useUser, SignedIn } from "@clerk/clerk-react";
+import Header from "../Header";
+import Footer from "../Footer";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [data, setData] = useState([]);
@@ -28,8 +28,10 @@ const Page = () => {
         const carUrl = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars/${booking.carId}`;
         const carResponse = await fetch(carUrl);
         const carData = await carResponse.json();
-        return { carId: booking.carId, carData };
+        return { carId: booking.carId, carData }; // carData includes Price
       });
+
+      console.log(carDetails)
 
       const carDetailsArray = await Promise.all(carDetailsPromises);
       const carDetailsObject = carDetailsArray.reduce((acc, { carId, carData }) => {
@@ -39,7 +41,7 @@ const Page = () => {
 
       setCarDetails(carDetailsObject);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -51,14 +53,14 @@ const Page = () => {
 
   const formatDate = (dateString) => {
     const options = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
       hour12: true,
     };
-    return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
+    return new Intl.DateTimeFormat("en-GB", options).format(new Date(dateString));
   };
 
   const handleExtendBooking = (bookingId, minDate) => {
@@ -86,31 +88,37 @@ const Page = () => {
     const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
 
     if (!newDropoffDateTime) {
-      alert('Please select a new drop-off date and time');
+      alert("Please select a new drop-off date and time");
       return;
     }
 
+    // Calculate total time in hours between the old and new dropoff dates
     const hours = Math.ceil(
       (newDropoffDateTime - new Date(pickupDateTime)) / (1000 * 60 * 60)
     );
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
+
+    // Use the car price from car details
     const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
+
+    // Calculate total price based on extension
     let totalPrice = Math.round(
       carPricePerDay * days + carPricePerHour * remainingHours
     );
 
-    // Add discount based on booking duration
+    // Add discount based on the number of days
     let discountAmount = 0;
     if (days >= 10) {
-      discountAmount = Math.round(totalPrice * 0.1);
+      discountAmount = Math.round(totalPrice * 0.1); // 10% discount for 10+ days
       totalPrice *= 0.9;
     } else if (days >= 4) {
-      discountAmount = Math.round(totalPrice * 0.05);
+      discountAmount = Math.round(totalPrice * 0.05); // 5% discount for 4-9 days
       totalPrice *= 0.95;
     }
 
+    // Send data to the server to create a new order and proceed with payment
     try {
       const orderResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
@@ -120,7 +128,7 @@ const Page = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            amount: Math.round(totalPrice),
+            amount: Math.round(totalPrice), // Total amount
             currency: "INR",
           }),
         }
@@ -134,6 +142,7 @@ const Page = () => {
       const orderData = await orderResponse.json();
       const orderId = orderData.orderId;
 
+      // Redirect user to the payment page
       router.push(
         `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}`
       );
@@ -170,7 +179,9 @@ const Page = () => {
                 <div className="ml-4 flex-grow">
                   {carDetails[booking.carId] && (
                     <div>
-                      <div className="text-lg font-semibold">Car Name: {carDetails[booking.carId].Name}</div>
+                      <div className="text-lg font-semibold">
+                        Car Name: {carDetails[booking.carId].Name}
+                      </div>
                     </div>
                   )}
                   <div>Pickup DateTime: {formatDate(booking.pickupDateTime)}</div>
@@ -178,7 +189,7 @@ const Page = () => {
                   <div>Payment ID: {booking.paymentId}</div>
                   <div>Status: {booking.status}</div>
 
-                  {booking.status === 'Active' && !extendedDate[booking.bookingId]?.isExtending && (
+                  {booking.status === "Active" && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
                       onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
                       className="mt-2 bg-black text-white font-bold py-2 px-4 rounded"
@@ -207,11 +218,13 @@ const Page = () => {
                             New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
                           </p>
                           <button
-                            onClick={() => saveExtendedBooking(
-                              booking.bookingId,
-                              booking.pickupDateTime,
-                              carDetails[booking.carId]
-                            )}
+                            onClick={() =>
+                              saveExtendedBooking(
+                                booking.bookingId,
+                                booking.pickupDateTime,
+                                carDetails[booking.carId]
+                              )
+                            }
                             className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
                           >
                             Confirm New Dropoff Date
