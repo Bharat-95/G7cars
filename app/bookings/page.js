@@ -5,7 +5,7 @@ import Header from '../Header';
 import Footer from '../Footer';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useRouter } from 'next/router'; // For redirecting after payment
+import { useRouter } from 'next/navigation'; 
 
 const Page = () => {
   const [data, setData] = useState([]);
