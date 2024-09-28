@@ -83,16 +83,14 @@ const Page = () => {
   };
 
   const saveExtendedBooking = async (bookingId, pickupDateTime, selectedCar) => {
-    const newDropoffDateTime = extendedDate[booking.bookingId]?.selectedDate;
+    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate; // Changed from `booking.bookingId` to `bookingId`
 
     if (!newDropoffDateTime) {
-      alert("Please select a new drop-off date and time");
-      return;
+        alert("Please select a new drop-off date and time");
+        return;
     }
 
     const originalDropoffDateTime = new Date(booking.dropoffDateTime);
-    
-    
     
     // Calculate the difference in time between the new drop-off and original drop-off
     const timeDifference = newDropoffDateTime - originalDropoffDateTime;
@@ -101,28 +99,28 @@ const Page = () => {
     const hours = Math.ceil(timeDifference / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
-    
+
     // Ensure that days and remaining hours are not negative
     if (days < 0 || (days === 0 && remainingHours < 0)) {
-      alert("New drop-off date must be after the original drop-off date.");
-      return;
+        alert("New drop-off date must be after the original drop-off date.");
+        return;
     }
     
     // Get the price per day and per hour
     const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
-    
+
     // Calculate total price for the extension period
     let totalPrice = Math.round((carPricePerDay * days) + (carPricePerHour * remainingHours));
     
     // Apply discounts
     let discountAmount = 0;
     if (days >= 10) {
-      discountAmount = Math.round(totalPrice * 0.1);
-      totalPrice -= discountAmount; // Subtract discount from total
+        discountAmount = Math.round(totalPrice * 0.1);
+        totalPrice -= discountAmount; // Subtract discount from total
     } else if (days >= 4) {
-      discountAmount = Math.round(totalPrice * 0.05);
-      totalPrice -= discountAmount; // Subtract discount from total
+        discountAmount = Math.round(totalPrice * 0.05);
+        totalPrice -= discountAmount; // Subtract discount from total
     }
     
     // Log the results for debugging
@@ -131,41 +129,41 @@ const Page = () => {
     console.log("Remaining Hours:", remainingHours);
     console.log("Total Price Before Discounts:", totalPrice);
     
-
     try {
-      // Create order
-      const orderResponse = await fetch(
-        "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: Math.round(totalPrice),
-            currency: "INR",
-          }),
+        // Create order
+        const orderResponse = await fetch(
+            "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    amount: Math.round(totalPrice),
+                    currency: "INR",
+                }),
+            }
+        );
+
+        if (!orderResponse.ok) {
+            const errorDetails = await orderResponse.json();
+            throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
         }
-      );
 
-      if (!orderResponse.ok) {
-        const errorDetails = await orderResponse.json();
-        throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
-      }
+        const orderData = await orderResponse.json();
+        const orderId = orderData.orderId;
 
-      const orderData = await orderResponse.json();
-      const orderId = orderData.orderId;
-
-      // Redirect to payment page
-      router.push(
-        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}&bookingId=${bookingId}` // Include bookingId in the query
-      );
+        // Redirect to payment page
+        router.push(
+            `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}&bookingId=${bookingId}` // Include bookingId in the query
+        );
 
     } catch (error) {
-      console.error("Error extending booking:", error);
-      alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
+        console.error("Error extending booking:", error);
+        alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
     }
-  };
+};
+
 
   if (!isLoaded) {
     return <div>Loading user information...</div>;
