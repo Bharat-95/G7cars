@@ -1,4 +1,4 @@
-"use client"
+"use client "
 import React, { useState, useEffect } from "react";
 import { useUser, SignedIn } from "@clerk/clerk-react";
 import Header from "../Header";
@@ -66,7 +66,7 @@ const Page = () => {
       [bookingId]: {
         isExtending: true,
         minDate: new Date(minDate),
-        selectedDate: null,
+        selectedDate: null, // Ensure selectedDate is initialized
       },
     }));
   };
@@ -156,57 +156,12 @@ const Page = () => {
       router.push(
         `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}&bookingId=${bookingId}`
       );
-      confirmPayment({
-        orderId,
-        amount: totalPrice,
-        bookingId, // Pass the bookingId to confirmPayment
-        newDropoffDateTime: newDropoffDateTime.toISOString(), // Pass the new dropoff date
-      });
-
 
     } catch (error) {
       console.error("Error extending booking:", error);
       alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
     }
   };
-
-  const confirmPayment = async (paymentDetails) => {
-    // Check if payment is successful
-    const paymentSuccessful = true; // Replace with actual payment confirmation logic
-
-    if (paymentSuccessful) {
-      const bookingId = paymentDetails.bookingId;
-      const newDropoffDateTime = paymentDetails.newDropoffDateTime; // Pass this
-      const status = "Completed"; // or whatever status you want to set
-
-      try {
-        const response = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/update-dropoff', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            bookingId,
-            newDropoffDateTime,
-            status,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update booking');
-        }
-
-        const result = await response.json();
-        console.log(result.message); // Booking updated successfully
-        // You can redirect to a success page or update the UI accordingly
-      } catch (error) {
-        console.error("Error confirming payment:", error);
-        alert(`An error occurred while confirming your payment. Please try again.\nError details: ${error.message}`);
-      }
-    }
-  };
-
-
 
   if (!isLoaded) {
     return <div>Loading user information...</div>;
