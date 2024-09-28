@@ -82,8 +82,8 @@ const Page = () => {
     }));
   };
 
-  const saveExtendedBooking = async (booking, bookingId, pickupDateTime, selectedCar) => {
-    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate; // Changed from `booking.bookingId` to `bookingId`
+  const saveExtendedBooking = async (booking, bookingId, pickupDateTime, selectedCar) => { // Added booking as a parameter
+    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
 
     if (!newDropoffDateTime) {
         alert("Please select a new drop-off date and time");
