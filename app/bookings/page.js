@@ -5,13 +5,16 @@ import Header from '../Header';
 import Footer from '../Footer';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useRouter } from 'next/router'; // For redirecting after payment
 
 const Page = () => {
   const [data, setData] = useState([]);
   const [carDetails, setCarDetails] = useState({});
   const [extendedDate, setExtendedDate] = useState({});
   const { user, isLoaded } = useUser();
+  const router = useRouter(); // For redirecting
 
+  // Fetch data for bookings and car details
   const fetchData = async () => {
     if (!user) return;
 
@@ -53,19 +56,42 @@ const Page = () => {
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true, 
+      hour12: true,
     };
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
-  const handleExtendBooking = async () => {
-  
+
+  const handleExtendBooking = (bookingId, minDate) => {
+    setExtendedDate((prev) => ({
+      ...prev,
+      [bookingId]: {
+        ...prev[bookingId],
+        isExtending: true,
+        minDate: new Date(minDate),
+      },
+    }));
+  };
+
+  const handleDateChange = (date, bookingId) => {
+    setExtendedDate((prev) => ({
+      ...prev,
+      [bookingId]: {
+        ...prev[bookingId],
+        selectedDate: date,
+      },
+    }));
+  };
+
+  const saveExtendedBooking = async (bookingId, pickupDateTime, selectedCar) => {
     const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
 
-    console.log(newDropoffDateTime);
-  
-    
+    if (!newDropoffDateTime) {
+      alert('Please select a new drop-off date and time');
+      return;
+    }
+
     const hours = Math.ceil(
-      (newDropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
+      (newDropoffDateTime - new Date(pickupDateTime)) / (1000 * 60 * 60)
     );
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
@@ -74,12 +100,9 @@ const Page = () => {
     let totalPrice = Math.round(
       carPricePerDay * days + carPricePerHour * remainingHours
     );
-  
+
+    // Add discount based on booking duration
     let discountAmount = 0;
-    if (days === 0 && remainingHours < 24) {
-      totalPrice *= 1.4;
-    }
-  
     if (days >= 10) {
       discountAmount = Math.round(totalPrice * 0.1);
       totalPrice *= 0.9;
@@ -87,7 +110,7 @@ const Page = () => {
       discountAmount = Math.round(totalPrice * 0.05);
       totalPrice *= 0.95;
     }
-  
+
     try {
       const orderResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
@@ -102,67 +125,21 @@ const Page = () => {
           }),
         }
       );
-  
+
       if (!orderResponse.ok) {
         const errorDetails = await orderResponse.json();
         throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
       }
-  
+
       const orderData = await orderResponse.json();
       const orderId = orderData.orderId;
-  
+
       router.push(
-        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}`
+        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}`
       );
     } catch (error) {
       console.error("Error extending booking:", error);
       alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
-    }
-  };
-  
-  const handleDateChange = (date, bookingId) => {
-    setExtendedDate((prev) => ({
-      ...prev,
-      [bookingId]: {
-        ...prev[bookingId],
-        selectedDate: date, 
-      },
-    }));
-  };
-
-  //Hello
-  const saveExtendedBooking = async (bookingId) => {
-    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
-
-    if (!newDropoffDateTime) {
-      alert('Please select a new drop-off date and time');
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${bookingId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ newDropoffDateTime }),
-        }
-      );
-      if (response.ok) {
-        alert('Booking extended successfully');
-        setExtendedDate((prev) => ({
-          ...prev,
-          [bookingId]: {
-            ...prev[bookingId],
-            isExtending: false,
-          },
-        }));
-        fetchData();
-      } else {
-        console.error('Failed to extend booking');
-      }
-    } catch (error) {
-      console.error('Error extending booking:', error);
     }
   };
 
@@ -203,7 +180,7 @@ const Page = () => {
 
                   {booking.status === 'Active' && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
-                      onClick={() => saveExtendedBooking(booking.bookingId, booking.dropoffDateTime)}
+                      onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
                       className="mt-2 bg-black text-white font-bold py-2 px-4 rounded"
                     >
                       Extend Booking
@@ -221,17 +198,20 @@ const Page = () => {
                         dateFormat="dd/MM/yyyy h:mm aa"
                         minDate={extendedDate[booking.bookingId]?.minDate}
                         className="mt-4 border p-2 rounded"
-                        inline 
+                        inline
                       />
 
-                      
                       {extendedDate[booking.bookingId]?.selectedDate && (
                         <div className="mt-4">
                           <p className="font-semibold">
                             New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
                           </p>
                           <button
-                            onClick={() => handleExtendBooking}
+                            onClick={() => saveExtendedBooking(
+                              booking.bookingId,
+                              booking.pickupDateTime,
+                              carDetails[booking.carId]
+                            )}
                             className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
                           >
                             Confirm New Dropoff Date
@@ -242,7 +222,7 @@ const Page = () => {
                   )}
                 </div>
               </div>
-            ))  
+            ))
           ) : (
             <div>No bookings found</div>
           )}
