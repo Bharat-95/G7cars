@@ -42,6 +42,10 @@ const Page = () => {
     initialDropoffDateTime
   );
 
+  const generateBookingId = () => {
+    return `booking-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  };
+
   const handleMinDropOffTime = (time) => {
     if (!pickupDateTime) return filterTime(time);
   
@@ -171,6 +175,8 @@ const Page = () => {
       }
   
       const docStatusData = await docStatusResponse.json();
+
+      const bookingId = generateBookingId();
   
       if (docStatusData.status === 'verified') {
         const orderResponse = await fetch(
@@ -183,6 +189,7 @@ const Page = () => {
             body: JSON.stringify({
               amount: roundedPrice,
               currency: "INR",
+              bookingId:bookingId,
             }),
           }
         );
