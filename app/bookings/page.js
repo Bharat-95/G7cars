@@ -231,7 +231,7 @@ const Page = () => {
                             New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
                           </p>
                           <button
-                            onClick={() => handleExtendBooking}
+                            onClick={() => saveExtendedBooking}
                             className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
                           >
                             Confirm New Dropoff Date
