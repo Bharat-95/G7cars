@@ -98,7 +98,7 @@ const PaymentPage = () => {
                   paymentId: response.razorpay_payment_id,
                   orderId: response.razorpay_order_id,
                   carId: carId,
-                  bookingId: bookingId, 
+                  bookingId: bookingId,
                   pickupDateTime:pickupDate,
                   dropoffDateTime:dropDate,
                   phoneNumber: user.phoneNumbers,
