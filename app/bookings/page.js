@@ -1,4 +1,4 @@
-"use client "
+"use client"
 import React, { useState, useEffect } from "react";
 import { useUser, SignedIn } from "@clerk/clerk-react";
 import Header from "../Header";
