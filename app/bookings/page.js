@@ -82,7 +82,7 @@ const Page = () => {
     }));
   };
 
-  const saveExtendedBooking = async (bookingId, pickupDateTime, selectedCar) => {
+  const saveExtendedBooking = async (booking, bookingId, pickupDateTime, selectedCar) => {
     const newDropoffDateTime = extendedDate[bookingId]?.selectedDate; // Changed from `booking.bookingId` to `bookingId`
 
     if (!newDropoffDateTime) {
