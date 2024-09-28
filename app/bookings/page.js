@@ -95,22 +95,29 @@ const Page = () => {
     );
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
-
+    
     const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
-
+    
+    // Calculate total price based on days and remaining hours
     let totalPrice = Math.round(
-      carPricePerDay * days + carPricePerHour * remainingHours
+      (carPricePerDay * days) + (carPricePerHour * remainingHours)
     );
-
+    
+    // Apply discounts
     let discountAmount = 0;
     if (days >= 10) {
       discountAmount = Math.round(totalPrice * 0.1);
-      totalPrice *= 0.9;
+      totalPrice -= discountAmount; // Subtract discount from total
     } else if (days >= 4) {
       discountAmount = Math.round(totalPrice * 0.05);
-      totalPrice *= 0.95;
+      totalPrice -= discountAmount; // Subtract discount from total
     }
+
+    console.log("Car Price Per Day:", carPricePerDay);
+console.log("Days:", days);
+console.log("Remaining Hours:", remainingHours);
+console.log("Total Price Before Discounts:", totalPrice);
 
     try {
       // Create order
