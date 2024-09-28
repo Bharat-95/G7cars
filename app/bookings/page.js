@@ -31,8 +31,6 @@ const Page = () => {
         return { carId: booking.carId, carData };
       });
 
-      console.log(carDetails)
-
       const carDetailsArray = await Promise.all(carDetailsPromises);
       const carDetailsObject = carDetailsArray.reduce((acc, { carId, carData }) => {
         acc[carId] = carData;
@@ -86,34 +84,34 @@ const Page = () => {
 
   const saveExtendedBooking = async (bookingId, pickupDateTime, selectedCar) => {
     const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
-  
+
     if (!newDropoffDateTime) {
       alert("Please select a new drop-off date and time");
       return;
     }
-  
+
     const hours = Math.ceil(
       (newDropoffDateTime - new Date(pickupDateTime)) / (1000 * 60 * 60)
     );
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
-  
+
     const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
-  
+
     let totalPrice = Math.round(
       carPricePerDay * days + carPricePerHour * remainingHours
     );
-  
+
     let discountAmount = 0;
     if (days >= 10) {
-      discountAmount = Math.round(totalPrice * 0.1); 
+      discountAmount = Math.round(totalPrice * 0.1);
       totalPrice *= 0.9;
     } else if (days >= 4) {
-      discountAmount = Math.round(totalPrice * 0.05); 
+      discountAmount = Math.round(totalPrice * 0.05);
       totalPrice *= 0.95;
     }
-  
+
     try {
       // Create order
       const orderResponse = await fetch(
@@ -124,52 +122,30 @@ const Page = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            amount: Math.round(totalPrice), 
+            amount: Math.round(totalPrice),
             currency: "INR",
           }),
         }
       );
-  
+
       if (!orderResponse.ok) {
         const errorDetails = await orderResponse.json();
         throw new Error(`Failed to create order: ${JSON.stringify(errorDetails)}`);
       }
-  
+
       const orderData = await orderResponse.json();
       const orderId = orderData.orderId;
-  
+
       // Redirect to payment page
       router.push(
-        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}`
+        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}&bookingId=${bookingId}` // Include bookingId in the query
       );
-  
-      // Once the payment is confirmed, update the booking
-      const updateBookingResponse = await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/update`, // Use your actual update booking API endpoint
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            bookingId: bookingId,
-            newDropoffDateTime: newDropoffDateTime.toISOString(),
-          }),
-        }
-      );
-  
-      if (!updateBookingResponse.ok) {
-        const errorDetails = await updateBookingResponse.json();
-        throw new Error(`Failed to update booking: ${JSON.stringify(errorDetails)}`);
-      }
-  
-      console.log('Booking updated successfully!');
+
     } catch (error) {
       console.error("Error extending booking:", error);
       alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
     }
   };
-  
 
   if (!isLoaded) {
     return <div>Loading user information...</div>;
