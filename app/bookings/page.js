@@ -99,7 +99,7 @@ const Page = () => {
 
     // Prepare the request to update the drop-off date
     try {
-      const response = await fetch("/update-dropoff-date", {
+      const response = await fetch("https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/update-dropoff-date", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
