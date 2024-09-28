@@ -203,7 +203,7 @@ const Page = () => {
 
                   {booking.status === 'Active' && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
-                      onClick={() => handleExtendBooking(booking.bookingId, booking.dropoffDateTime)}
+                      onClick={() => saveExtendedBooking(booking.bookingId, booking.dropoffDateTime)}
                       className="mt-2 bg-black text-white font-bold py-2 px-4 rounded"
                     >
                       Extend Booking
@@ -231,7 +231,7 @@ const Page = () => {
                             New Dropoff DateTime: {formatDate(extendedDate[booking.bookingId]?.selectedDate)}
                           </p>
                           <button
-                            onClick={() => saveExtendedBooking}
+                            onClick={() => handleExtendBooking}
                             className="mt-2 bg-blue-500 text-white font-bold py-2 px-4 rounded"
                           >
                             Confirm New Dropoff Date
