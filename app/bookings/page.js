@@ -83,7 +83,7 @@ const Page = () => {
   };
 
   const saveExtendedBooking = async (bookingId, pickupDateTime, selectedCar) => {
-    
+    const newDropoffDateTime = extendedDate[booking.bookingId]?.selectedDate;
 
     if (!newDropoffDateTime) {
       alert("Please select a new drop-off date and time");
@@ -91,7 +91,8 @@ const Page = () => {
     }
 
     const originalDropoffDateTime = new Date(booking.dropoffDateTime);
-    const newDropoffDateTime = extendedDate[booking.bookingId]?.selectedDate;
+    
+    
     
     // Calculate the difference in time between the new drop-off and original drop-off
     const timeDifference = newDropoffDateTime - originalDropoffDateTime;
