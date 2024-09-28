@@ -59,7 +59,7 @@ const Page = () => {
 
   const fetchData = async () => {
     try {
-      const url = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com//cars?pickupDateTime=${encodeURIComponent(
+      const url = `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/cars?pickupDateTime=${encodeURIComponent(
         pickupDateTime.toISOString()
       )}&dropoffDateTime=${encodeURIComponent(
         dropoffDateTime.toISOString()
