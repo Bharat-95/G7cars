@@ -14,6 +14,11 @@ const PaymentPage = () => {
   const [dropDate, setDropDate] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [carId, setCarId] = useState(null);
+  const [bookingId, setBookingId] = useState(null);
+
+  const generateBookingId = () => {
+    return `booking-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  };
   
   useEffect(() => {
     if (!isLoaded || !user) return;
@@ -37,6 +42,9 @@ const PaymentPage = () => {
       } else {
         console.error('Invalid amount parameter:', amountParam);
       }
+
+      const generatedBookingId = generateBookingId();
+      setBookingId(generatedBookingId);
     } else {
       console.error('Required parameters are missing');
     }
@@ -90,7 +98,7 @@ const PaymentPage = () => {
                   paymentId: response.razorpay_payment_id,
                   orderId: response.razorpay_order_id,
                   carId: carId,
-                  bookingId: response.razorpay_booking_id,
+                  bookingId: bookingId, 
                   pickupDateTime:pickupDate,
                   dropoffDateTime:dropDate,
                   phoneNumber: user.phoneNumbers,

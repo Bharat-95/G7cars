@@ -189,7 +189,6 @@ const Page = () => {
             body: JSON.stringify({
               amount: roundedPrice,
               currency: "INR",
-              bookingId:bookingId,
             }),
           }
         );
