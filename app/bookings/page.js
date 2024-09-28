@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { useUser, SignedIn } from "@clerk/clerk-react";
 import Header from "../Header";
@@ -66,7 +66,7 @@ const Page = () => {
       [bookingId]: {
         isExtending: true,
         minDate: new Date(minDate),
-        selectedDate: null, // Ensure selectedDate is initialized
+        selectedDate: null,
       },
     }));
   };
@@ -122,12 +122,6 @@ const Page = () => {
       totalPrice -= discountAmount; // Subtract discount from total
     }
 
-    // Log the results for debugging
-    console.log("Car Price Per Day:", carPricePerDay);
-    console.log("Days:", days);
-    console.log("Remaining Hours:", remainingHours);
-    console.log("Total Price Before Discounts:", totalPrice);
-
     try {
       // Create order
       const orderResponse = await fetch(
@@ -157,9 +151,53 @@ const Page = () => {
         `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}&bookingId=${bookingId}`
       );
 
+      // After successful payment, confirm the payment and update the booking
+      confirmPayment({
+        orderId,
+        amount: totalPrice,
+        bookingId, // Pass the bookingId to confirmPayment
+        newDropoffDateTime: newDropoffDateTime.toISOString(), // Pass the new dropoff date
+      });
+
     } catch (error) {
       console.error("Error extending booking:", error);
       alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
+    }
+  };
+
+  const confirmPayment = async (paymentDetails) => {
+    // Check if payment is successful
+    const paymentSuccessful = true; // Replace with actual payment confirmation logic
+
+    if (paymentSuccessful) {
+      const bookingId = paymentDetails.bookingId;
+      const newDropoffDateTime = paymentDetails.newDropoffDateTime; // Pass this
+      const status = "Completed"; // or whatever status you want to set
+
+      try {
+        const response = await fetch('https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/update-dropoff-date', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bookingId,
+            newDropoffDateTime,
+            status,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update booking');
+        }
+
+        const result = await response.json();
+        console.log(result.message); // Booking updated successfully
+        // You can redirect to a success page or update the UI accordingly
+      } catch (error) {
+        console.error("Error confirming payment:", error);
+        alert(`An error occurred while confirming your payment. Please try again.\nError details: ${error.message}`);
+      }
     }
   };
 
@@ -214,20 +252,15 @@ const Page = () => {
                       <DatePicker
                         selected={extendedDate[booking.bookingId]?.selectedDate}
                         onChange={(date) => handleDateChange(date, booking.bookingId)}
+                        minDate={extendedDate[booking.bookingId].minDate}
                         showTimeSelect
-                        timeFormat="h:mm aa"
-                        timeIntervals={15}
-                        dateFormat="dd/MM/yyyy h:mm aa"
-                        minDate={extendedDate[booking.bookingId]?.minDate}
-                        className="mt-4 border p-2 rounded"
-                        inline
+                        dateFormat="Pp"
                       />
-
                       <button
                         onClick={() => saveExtendedBooking(booking, booking.bookingId, booking.pickupDateTime, carDetails[booking.carId])}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                        className="mt-2 bg-green-500 text-white font-bold py-2 px-4 rounded"
                       >
-                        Save Changes
+                        Confirm Extension
                       </button>
                     </div>
                   )}
@@ -235,7 +268,7 @@ const Page = () => {
               </div>
             ))
           ) : (
-            <p>No bookings found.</p>
+            <div>No bookings found.</div>
           )}
         </div>
       </div>
