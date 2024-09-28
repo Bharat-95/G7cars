@@ -130,46 +130,6 @@ const Page = () => {
     }));
   };
 
-  //Hello
-  const saveExtendedBooking = async (bookingId) => {
-    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
-
-    if (!newDropoffDateTime) {
-      alert('Please select a new drop-off date and time');
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${bookingId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ newDropoffDateTime }),
-        }
-      );
-      if (response.ok) {
-        alert('Booking extended successfully');
-        setExtendedDate((prev) => ({
-          ...prev,
-          [bookingId]: {
-            ...prev[bookingId],
-            isExtending: false,
-          },
-        }));
-        fetchData();
-      } else {
-        console.error('Failed to extend booking');
-      }
-    } catch (error) {
-      console.error('Error extending booking:', error);
-    }
-  };
-
-  if (!isLoaded) {
-    return <div>Loading user information...</div>;
-  }
-
   return (
     <SignedIn className="flex flex-col min-h-screen">
       <Header />
