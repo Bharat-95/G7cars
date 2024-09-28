@@ -57,17 +57,19 @@ const Page = () => {
     };
     return new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
   };
-  const handleExtendBooking = async (bookingId, pickupDateTime) => {
-    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
+  const handleExtendBooking = async () => {
   
+    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
+
     console.log(newDropoffDateTime);
   
+    
     const hours = Math.ceil(
       (newDropoffDateTime - pickupDateTime) / (1000 * 60 * 60)
     );
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
-    const carPricePerDay = parseFloat(carDetails[bookingId].Price.replace(/[^\d.-]/g, ""));
+    const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
     let totalPrice = Math.round(
       carPricePerDay * days + carPricePerHour * remainingHours
@@ -87,26 +89,6 @@ const Page = () => {
     }
   
     try {
-      // Send update to the backend to update the booking with the new dropoffDateTime
-      const updateBookingResponse = await fetch(
-        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/${bookingId}`, 
-        {
-          method: "PUT",  // Assuming you're using PUT for updates
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            dropoffDateTime: newDropoffDateTime.toISOString(),
-          }),
-        }
-      );
-  
-      if (!updateBookingResponse.ok) {
-        const errorDetails = await updateBookingResponse.json();
-        throw new Error(`Failed to update booking: ${JSON.stringify(errorDetails)}`);
-      }
-  
-      // Proceed with payment if necessary
       const orderResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
         {
@@ -130,13 +112,63 @@ const Page = () => {
       const orderId = orderData.orderId;
   
       router.push(
-        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${carDetails[bookingId].G7cars123}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}`
+        `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime.toISOString()}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}`
       );
     } catch (error) {
       console.error("Error extending booking:", error);
       alert(`An error occurred while extending your booking. Please try again.\nError details: ${error.message}`);
     }
   };
+  
+  const handleDateChange = (date, bookingId) => {
+    setExtendedDate((prev) => ({
+      ...prev,
+      [bookingId]: {
+        ...prev[bookingId],
+        selectedDate: date, 
+      },
+    }));
+  };
+
+  //Hello
+  const saveExtendedBooking = async (bookingId) => {
+    const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
+
+    if (!newDropoffDateTime) {
+      alert('Please select a new drop-off date and time');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/bookings/extend/${bookingId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newDropoffDateTime }),
+        }
+      );
+      if (response.ok) {
+        alert('Booking extended successfully');
+        setExtendedDate((prev) => ({
+          ...prev,
+          [bookingId]: {
+            ...prev[bookingId],
+            isExtending: false,
+          },
+        }));
+        fetchData();
+      } else {
+        console.error('Failed to extend booking');
+      }
+    } catch (error) {
+      console.error('Error extending booking:', error);
+    }
+  };
+
+  if (!isLoaded) {
+    return <div>Loading user information...</div>;
+  }
 
   return (
     <SignedIn className="flex flex-col min-h-screen">
