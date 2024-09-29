@@ -14,6 +14,27 @@ const Page = () => {
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
+
+  const renderCarStatus = (carStatus) => {
+    const statuses = ["Preparing", "Washing", "Ready"];
+    return (
+      <div className="flex items-center justify-center mt-4">
+        {statuses.map((status, index) => (
+          <div key={status} className={`relative ${carStatus === status ? "font-bold" : ""}`}>
+            <span className={`px-4 py-2 rounded-full ${carStatus === status ? "bg-yellow-300" : "bg-gray-300"}`}>
+              {status}
+            </span>
+            {index < statuses.length - 1 && (
+              <div className={`absolute top-1/2 left-full transform -translate-y-1/2 w-10 h-1 ${carStatus === status ? "bg-yellow-300" : "bg-gray-300"}`}></div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+
+
   const fetchData = async () => {
     if (!user) return;
 
@@ -191,7 +212,7 @@ const Page = () => {
                   <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
                   <div>Booking ID: {booking.bookingId}</div>
                   <div>Status: {booking.status}</div>
-                  <div>Car Status: {booking.carStatus}</div>
+                   {renderCarStatus(booking.carStatus)} 
 
                   {booking.status === "Active" && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
@@ -212,7 +233,7 @@ const Page = () => {
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy h:mm aa"
                         minDate={extendedDate[booking.bookingId]?.minDate}
-                        filterTime={(time) => filterTime(time, booking.bookingId)} // Pass bookingId to filterTime
+                        filterTime={(time) => filterTime(time, booking.bookingId)} 
                         className="mt-4 border p-2 rounded"
                         inline
                       />
