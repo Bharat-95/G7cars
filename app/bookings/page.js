@@ -18,7 +18,7 @@ const Page = () => {
   const renderCarStatus = (carStatus) => {
     const statuses = ["Preparing", "Washing", "Ready"];
     return (
-      <div className="flex items-center my-4 space-x-4">
+      <div className="flex items-center my-4 space-x-10">
         {statuses.map((status, index) => (
           <div key={status} className={`relative ${carStatus === status ? "font-bold" : ""}`}>
             <span className={`px-4 py-2 rounded-full ${carStatus === status ? "bg-rose-300" : "bg-gray-300"}`}>
