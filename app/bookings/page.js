@@ -17,22 +17,31 @@ const Page = () => {
 
   const renderCarStatus = (carStatus) => {
     const statuses = ["Preparing", "Washing", "Ready"];
-    return (
-      <div className="flex items-center my-4 space-x-10">
-        {statuses.map((status, index) => (
-          <div key={status} className={`relative ${carStatus === status ? "font-bold" : ""}`}>
-            <span className={`px-4 py-2 rounded-full ${carStatus === status ? "bg-rose-300" : "bg-gray-300"}`}>
-              {status}
-            </span>
-            {index < statuses.length - 1 && (
-              <div className={`absolute top-1/2 left-full transform -translate-y-1/2 w-10 h-1 ${carStatus === status ? "bg-rose-300" : "bg-gray-300"}`}></div>
-            )}
-          </div>
-        ))}
-      </div>
-    );
+
+  const getStatusColor = (status) => {
+    if (carStatus === "Ready") {
+      return "bg-rose-300"; 
+    }
+    return status === "Preparing" || status === "Washing" ? "bg-rose-300" : "bg-gray-300";
   };
 
+  return (
+    <div className="flex items-center my-4 space-x-10">
+      {statuses.map((status, index) => (
+        <div key={status} className={`relative ${carStatus === status ? "font-bold" : ""}`}>
+          <span className={`px-4 py-2 rounded-full ${getStatusColor(status)}`}>
+            {status}
+          </span>
+          {index < statuses.length - 1 && (
+            <div
+              className={`absolute top-1/2 left-full transform -translate-y-1/2 w-10 h-1 ${getStatusColor(status)}`}
+            ></div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 
   const fetchData = async () => {
