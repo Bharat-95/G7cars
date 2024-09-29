@@ -28,7 +28,7 @@ const Page = () => {
   return (
     <div className="flex items-center my-4 space-x-10">
       {statuses.map((status, index) => (
-        <div key={status} className={`relative ${carStatus === status ? "font-bold" : ""}`}>
+        <div key={status} className={`relative ${carStatus === status ? "font-bold  text-white" : ""}`}>
           <span className={`px-4 py-2 rounded-full ${getStatusColor(status)}`}>
             {status}
           </span>
