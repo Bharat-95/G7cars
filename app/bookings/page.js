@@ -1,4 +1,3 @@
-"use client"
 import React, { useState, useEffect } from "react";
 import { useUser, SignedIn } from "@clerk/clerk-react";
 import Header from "../Header";
@@ -61,14 +60,13 @@ const Page = () => {
   };
 
   const handleExtendBooking = (bookingId, originalDropoffDateTime) => {
-    // Calculate the minimum date (4 hours after the original drop-off time)
     const minDate = new Date(new Date(originalDropoffDateTime).getTime() + 4 * 60 * 60 * 1000);
     
     setExtendedDate((prev) => ({
       ...prev,
       [bookingId]: {
         isExtending: true,
-        minDate: minDate, // Set the calculated minDate
+        minDate: minDate,
         selectedDate: null,
       },
     }));
@@ -84,6 +82,11 @@ const Page = () => {
     }));
   };
 
+  const filterTime = (time) => {
+    const minTime = extendedDate[bookingId]?.minDate;
+    return time >= minTime;
+  };
+
   const saveExtendedBooking = async (booking, bookingId, pickupDateTime, selectedCar) => {
     const newDropoffDateTime = extendedDate[bookingId]?.selectedDate;
 
@@ -93,46 +96,30 @@ const Page = () => {
     }
 
     const originalDropoffDateTime = new Date(booking.dropoffDateTime);
-
-    // Calculate the difference in time between the new drop-off and original drop-off
     const timeDifference = newDropoffDateTime - originalDropoffDateTime;
-
-    // Calculate the difference in hours and days
     const hours = Math.ceil(timeDifference / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     const remainingHours = hours % 24;
 
-    // Ensure that days and remaining hours are not negative
     if (days < 0 || (days === 0 && remainingHours < 0)) {
       alert("New drop-off date must be after the original drop-off date.");
       return;
     }
 
-    // Get the price per day and per hour
     const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
     const carPricePerHour = carPricePerDay / 24;
-
-    // Calculate total price for the extension period
     let totalPrice = Math.round((carPricePerDay * days) + (carPricePerHour * remainingHours));
-
-    // Apply discounts
     let discountAmount = 0;
+
     if (days >= 10) {
       discountAmount = Math.round(totalPrice * 0.1);
-      totalPrice -= discountAmount; // Subtract discount from total
+      totalPrice -= discountAmount;
     } else if (days >= 4) {
       discountAmount = Math.round(totalPrice * 0.05);
-      totalPrice -= discountAmount; // Subtract discount from total
+      totalPrice -= discountAmount;
     }
 
-    // Log the results for debugging
-    console.log("Car Price Per Day:", carPricePerDay);
-    console.log("Days:", days);
-    console.log("Remaining Hours:", remainingHours);
-    console.log("Total Price Before Discounts:", totalPrice);
-
     try {
-      // Create order
       const orderResponse = await fetch(
         "https://pvmpxgfe77.execute-api.us-east-1.amazonaws.com/order",
         {
@@ -155,7 +142,6 @@ const Page = () => {
       const orderData = await orderResponse.json();
       const orderId = orderData.orderId;
 
-      // Redirect to payment page
       router.push(
         `/payment?orderId=${orderId}&amount=${totalPrice}&carId=${selectedCar.G7cars123}&pickupDateTime=${pickupDateTime}&dropoffDateTime=${newDropoffDateTime.toISOString()}&discount=${discountAmount}&bookingId=${bookingId}`
       );
@@ -221,7 +207,8 @@ const Page = () => {
                         timeFormat="h:mm aa"
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy h:mm aa"
-                        minDate={extendedDate[booking.bookingId]?.minDate} // This is where minDate is used
+                        minDate={extendedDate[booking.bookingId]?.minDate}
+                        filterTime={filterTime} // Use the filterTime function to control selectable times
                         className="mt-4 border p-2 rounded"
                         inline
                       />
