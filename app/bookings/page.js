@@ -14,31 +14,25 @@ const Page = () => {
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
-  const renderCarStatusTimeline = (carStatus) => {
+
+  const renderCarStatus = (carStatus) => {
     const statuses = ["Preparing", "Washing", "Ready"];
-    const currentIndex = statuses.indexOf(carStatus);
-    
     return (
-      <div className="w-full flex flex-col items-center mt-4">
-        <div className="relative w-full flex items-center">
-          {statuses.map((status, index) => (
-            <div key={status} className="flex-1">
-              <div className={`px-4 py-2 rounded-full ${index <= currentIndex ? "bg-yellow-300" : "bg-gray-300"}`}>
-                {status}
-              </div>
-              {index < statuses.length - 1 && (
-                <div
-                  className={`h-1 w-full ${index < currentIndex ? "bg-yellow-300" : "bg-gray-300"}`}
-                ></div>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="absolute top-0 left-0 h-full w-full bg-gray-300 transition-all duration-500" 
-             style={{ width: `${((currentIndex + 1) / statuses.length) * 100}%` }} />
+      <div className="flex items-center justify-center mt-4">
+        {statuses.map((status, index) => (
+          <div key={status} className={`relative ${carStatus === status ? "font-bold" : ""}`}>
+            <span className={`px-4 py-2 rounded-full ${carStatus === status ? "bg-rose-300" : "bg-gray-300"}`}>
+              {status}
+            </span>
+            {index < statuses.length - 1 && (
+              <div className={`absolute top-1/2 left-full transform -translate-y-1/2 w-10 h-1 ${carStatus === status ? "bg-rose-300" : "bg-gray-300"}`}></div>
+            )}
+          </div>
+        ))}
       </div>
     );
   };
+
 
 
   const fetchData = async () => {
@@ -218,7 +212,7 @@ const Page = () => {
                   <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
                   <div>Booking ID: {booking.bookingId}</div>
                   <div>Status: {booking.status}</div>
-                  {renderCarStatusTimeline(booking.carStatus)}
+                   <div>{renderCarStatus(booking.carStatus)} </div>
 
                   {booking.status === "Active" && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
