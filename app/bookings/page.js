@@ -233,7 +233,7 @@ const Page = () => {
                   )}
 
                   {extendedDate[booking.bookingId]?.isExtending && (
-                    <div className="flex flex-col w-1/3">
+                    <div className="flex flex-col w-1/2">
                       <DatePicker
                         selected={extendedDate[booking.bookingId]?.selectedDate}
                         onChange={(date) => handleDateChange(date, booking.bookingId)}
