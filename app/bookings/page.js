@@ -60,13 +60,16 @@ const Page = () => {
     return new Intl.DateTimeFormat("en-GB", options).format(new Date(dateString));
   };
 
-  const handleExtendBooking = (bookingId, minDate) => {
+  const handleExtendBooking = (bookingId, originalDropoffDateTime) => {
+    // Calculate the minimum date (4 hours after the original drop-off time)
+    const minDate = new Date(new Date(originalDropoffDateTime).getTime() + 4 * 60 * 60 * 1000);
+    
     setExtendedDate((prev) => ({
       ...prev,
       [bookingId]: {
         isExtending: true,
-        minDate: new Date(minDate),
-        selectedDate: null, 
+        minDate: minDate, // Set the calculated minDate
+        selectedDate: null,
       },
     }));
   };
@@ -218,7 +221,7 @@ const Page = () => {
                         timeFormat="h:mm aa"
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy h:mm aa"
-                        minDate={extendedDate[booking.bookingId]?.minDate}
+                        minDate={extendedDate[booking.bookingId]?.minDate} // This is where minDate is used
                         className="mt-4 border p-2 rounded"
                         inline
                       />
