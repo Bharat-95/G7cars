@@ -233,7 +233,7 @@ const Page = () => {
                   )}
 
                   {extendedDate[booking.bookingId]?.isExtending && (
-                    <div>
+                    <div className="flex flex-col">
                       <DatePicker
                         selected={extendedDate[booking.bookingId]?.selectedDate}
                         onChange={(date) => handleDateChange(date, booking.bookingId)}
@@ -249,7 +249,7 @@ const Page = () => {
 
                       <button
                         onClick={() => saveExtendedBooking(booking, booking.bookingId, booking.pickupDateTime, carDetails[booking.carId])}
-                        className="mt-20 bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                        className="mt-20 bg-black text-white font-bold py-2 px-4 rounded"
                       >
                         Save Changes
                       </button>
