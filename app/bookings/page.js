@@ -109,6 +109,7 @@ const Page = () => {
     }
 
     const carPricePerDay = parseFloat(selectedCar.Price.replace(/[^\d.-]/g, ""));
+    console.log("Car Price:", carPricePerDay)
     const carPricePerHour = carPricePerDay / 24;
     let totalPrice = Math.round((carPricePerDay * days) + (carPricePerHour * remainingHours));
     let discountAmount = 0;
