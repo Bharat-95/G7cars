@@ -29,6 +29,7 @@ const PaymentPage = () => {
     const pickupDateParam = params.get('pickupDateTime');
     const dropDateParam = params.get('dropoffDateTime');
     const carIdParam = params.get('carId');
+    const existingBookingId = params.get('bookingId'); // Retrieve existing bookingId if available
 
     if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
@@ -43,8 +44,13 @@ const PaymentPage = () => {
         console.error('Invalid amount parameter:', amountParam);
       }
 
-      const generatedBookingId = generateBookingId();
-      setBookingId(generatedBookingId);
+      // Use existing bookingId if available, otherwise generate a new one
+      if (existingBookingId) {
+        setBookingId(existingBookingId);
+      } else {
+        const generatedBookingId = generateBookingId();
+        setBookingId(generatedBookingId);
+      }
     } else {
       console.error('Required parameters are missing');
     }
@@ -99,10 +105,10 @@ const PaymentPage = () => {
                   orderId: response.razorpay_order_id,
                   carId: carId,
                   bookingId: bookingId,
-                  pickupDateTime:pickupDate,
-                  dropoffDateTime:dropDate,
+                  pickupDateTime: pickupDate,
+                  dropoffDateTime: dropDate,
                   phoneNumber: user.phoneNumbers,
-                  ownerNumber:'+918341226196',
+                  ownerNumber: '+918341226196',
                   userId: user.id
                 }),    
               });

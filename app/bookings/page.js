@@ -66,7 +66,7 @@ const Page = () => {
       [bookingId]: {
         isExtending: true,
         minDate: new Date(minDate),
-        selectedDate: null, // Ensure selectedDate is initialized
+        selectedDate: null, 
       },
     }));
   };
