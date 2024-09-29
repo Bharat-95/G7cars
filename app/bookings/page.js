@@ -1,4 +1,3 @@
-"use client"
 import React, { useState, useEffect } from "react";
 import { useUser, SignedIn } from "@clerk/clerk-react";
 import Header from "../Header";
@@ -83,9 +82,10 @@ const Page = () => {
     }));
   };
 
-  const filterTime = (time) => {
+  // Updated filterTime function to accept bookingId as a parameter
+  const filterTime = (time, bookingId) => {
     const minTime = extendedDate[bookingId]?.minDate;
-    return time >= minTime;
+    return minTime ? time >= minTime : true; // Return true if minTime is not set
   };
 
   const saveExtendedBooking = async (booking, bookingId, pickupDateTime, selectedCar) => {
@@ -209,7 +209,7 @@ const Page = () => {
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy h:mm aa"
                         minDate={extendedDate[booking.bookingId]?.minDate}
-                        filterTime={filterTime} // Use the filterTime function to control selectable times
+                        filterTime={(time) => filterTime(time, booking.bookingId)} // Pass bookingId to filterTime
                         className="mt-4 border p-2 rounded"
                         inline
                       />
