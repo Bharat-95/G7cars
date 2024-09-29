@@ -244,14 +244,14 @@ const Page = () => {
                         dateFormat="dd/MM/yyyy h:mm aa"
                         minDate={extendedDate[booking.bookingId]?.minDate}
                         filterTime={(time) => filterTime(time, booking.bookingId)} 
-                        className="mt-4 border p-2 rounded"
+                        className="mt-10 border p-2 rounded"
                         inline
                       />
                       </div>
 
                       <button
                         onClick={() => saveExtendedBooking(booking, booking.bookingId, booking.pickupDateTime, carDetails[booking.carId])}
-                        className="mt-10 bg-black text-white font-bold py-2 px-4 rounded"
+                        className="mt-4 bg-black text-white font-bold py-2 px-4 rounded"
                       >
                         Save Changes
                       </button>
