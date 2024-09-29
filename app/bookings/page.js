@@ -249,7 +249,7 @@ const Page = () => {
 
                       <button
                         onClick={() => saveExtendedBooking(booking, booking.bookingId, booking.pickupDateTime, carDetails[booking.carId])}
-                        className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                        className="mt-20 bg-blue-500 text-white font-bold py-2 px-4 rounded"
                       >
                         Save Changes
                       </button>
