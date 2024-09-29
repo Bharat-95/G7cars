@@ -191,6 +191,7 @@ const Page = () => {
                   <div>Dropoff DateTime: {formatDate(booking.dropoffDateTime)}</div>
                   <div>Booking ID: {booking.bookingId}</div>
                   <div>Status: {booking.status}</div>
+                  <div>Car Status: {booking.carStatus}</div>
 
                   {booking.status === "Active" && !extendedDate[booking.bookingId]?.isExtending && (
                     <button
