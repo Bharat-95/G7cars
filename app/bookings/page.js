@@ -18,31 +18,31 @@ const Page = () => {
   const renderCarStatus = (carStatus) => {
     const statuses = ["Preparing", "Washing", "Ready"];
 
-  const getStatusColor = (status) => {
-    if (carStatus === "Ready") {
-      return "bg-rose-300"; 
-    }
-    return status === "Preparing" || status === "Washing" ? "bg-rose-300" : "bg-gray-300";
+    const getStatusColor = (status) => {
+      if (carStatus === "Ready") {
+        return "bg-rose-300"; 
+      }
+      return status === "Preparing" || status === "Washing" ? "bg-rose-300" : "bg-gray-300";
+    };
+  
+    return (
+      <div className="flex items-center my-4 space-x-10">
+        {statuses.map((status, index) => (
+          <div key={status} className={`relative`}>
+            <span className={`px-4 py-2 rounded-full ${getStatusColor(status)} ${carStatus === status ? "font-bold text-black" : "text-black"}`}>
+              {status}
+            </span>
+            {index < statuses.length - 1 && (
+              <div
+                className={`absolute top-1/2 left-full transform -translate-y-1/2 w-10 h-1 ${getStatusColor(status)}`}
+              ></div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
-
-  return (
-    <div className="flex items-center my-4 space-x-10">
-      {statuses.map((status, index) => (
-        <div key={status} className={`relative ${carStatus === status ? "font-bold  text-white" : ""}`}>
-          <span className={`px-4 py-2 rounded-full ${getStatusColor(status)}`}>
-            {status}
-          </span>
-          {index < statuses.length - 1 && (
-            <div
-              className={`absolute top-1/2 left-full transform -translate-y-1/2 w-10 h-1 ${getStatusColor(status)}`}
-            ></div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
-
+  
 
   const fetchData = async () => {
     if (!user) return;
@@ -233,7 +233,7 @@ const Page = () => {
                   )}
 
                   {extendedDate[booking.bookingId]?.isExtending && (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col w-1/3">
                       <DatePicker
                         selected={extendedDate[booking.bookingId]?.selectedDate}
                         onChange={(date) => handleDateChange(date, booking.bookingId)}
@@ -249,7 +249,7 @@ const Page = () => {
 
                       <button
                         onClick={() => saveExtendedBooking(booking, booking.bookingId, booking.pickupDateTime, carDetails[booking.carId])}
-                        className="mt-20 bg-black text-white font-bold py-2 px-4 rounded"
+                        className="mt-10 bg-black text-white font-bold py-2 px-4 rounded"
                       >
                         Save Changes
                       </button>
