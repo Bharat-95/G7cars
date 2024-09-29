@@ -117,7 +117,7 @@ const PaymentPage = () => {
 
               if (verifyResponse.ok) {
                 alert('Payment successful!');
-                router.push(`/success?orderId=${orderId}&pickupDate=${pickupDate.toISOString()}&dropDate=${dropDate.toISOString()}&amount=${amount}`);
+                router.push(`/sucess?orderId=${orderId}&pickupDate=${pickupDate.toISOString()}&dropDate=${dropDate.toISOString()}&amount=${amount}`);
               } else {
                 console.error(`Payment verification failed: ${responseBody}`);
                 throw new Error(`Payment verification failed: ${responseBody}`);
