@@ -16,11 +16,6 @@ const PaymentPage = () => {
   const [carId, setCarId] = useState(null);
   const [bookingId, setBookingId] = useState(null);
 
-
-  
-
-
-
   const generateBookingId = () => {
     return `booking-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   };
@@ -112,7 +107,7 @@ const PaymentPage = () => {
                   bookingId: bookingId,
                   pickupDateTime: pickupDate,
                   dropoffDateTime: dropDate,
-                  phoneNumber: user.primaryPhoneNumber[0].phoneNumber,
+                  phoneNumber: user.phoneNumbers[0].phoneNumber,
                   ownerNumber: '+918341226196',
                   userId: user.id
                 }),    
