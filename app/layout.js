@@ -13,7 +13,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      {/* Head for metadata and favicon */}
       <Head>
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />

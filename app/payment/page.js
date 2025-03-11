@@ -29,7 +29,7 @@ const PaymentPage = () => {
     const pickupDateParam = params.get('pickupDateTime');
     const dropDateParam = params.get('dropoffDateTime');
     const carIdParam = params.get('carId');
-    const existingBookingId = params.get('bookingId'); // Retrieve existing bookingId if available
+    const existingBookingId = params.get('bookingId');
 
     if (orderIdParam && pickupDateParam && dropDateParam) {
       setOrderId(orderIdParam);
@@ -44,7 +44,6 @@ const PaymentPage = () => {
         console.error('Invalid amount parameter:', amountParam);
       }
 
-      // Use existing bookingId if available, otherwise generate a new one
       if (existingBookingId) {
         setBookingId(existingBookingId);
       } else {
